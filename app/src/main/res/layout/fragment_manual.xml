@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match_parent_style">
+
+    <LinearLayout
+        style="@style/match_parent_style"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.AppCompatAutoCompleteTextView
+            android:id="@+id/autoCompleteText"
+            style="@style/text_input_edittext_common"
+            android:hint="@string/app_name"/>
+    </LinearLayout>
+</LinearLayout>

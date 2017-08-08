@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary"> #ce2127</color>
+    <color name="colorPrimaryDark">#a51b38</color>
+    <color name="colorPrimaryLight">#C8E6C9</color>
+    <color name="colorAccent">#AC1D37</color>
+    <color name="colorDivider">#B6B6B6</color>
+    <color name="colorBackground">#333333</color>
+
+    <color name="colorNavLbl">#2d353c</color>
+    <color name="colorButton">#AC1D37</color>
+    <color name="btnClear">#ff5b57</color>
+    <color name="colorUnlike">#ADAFAF</color>
+
+    <color name="primary_text">#FFFFFF</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="color_fifty_percentage_accent">#50C41230</color>
+
+    <color name="colorWhite">#fff</color>
+    <color name="colorBlack">#111</color>
+    <color name="colorBlue">#044092</color>
+    <color name="color_fab">#3FB5A3</color> <!-- #7C4DFF , #3FB5A3 -->
+    <color name="color_light_grey">#ededed</color>
+    <color name="color_red">#FF0000</color>
+    <color name="color_active">#49b6d6</color>
+    <color name="color_inactive">#ff4800</color>
+    <color name="color_enrolled">#ffb300</color>
+    <color name="color_gray">#646569</color>
+
+    <color name="transparent">#00FFFFFF</color>
+    <color name="color_divider_half_transparent">#50B6B6B6</color>
+    <color name="color_black_half_transparent">#80111111</color>
+    <color name="color_white_half_transparent">#50ffffff</color>
+    <color name="color_white_eight_percentage_transparent">#80ffffff</color>
+    <color name="color_white_ninety_percentage_transparent">#90ffffff</color>
+    <color name="calendarBackground">#efeef0</color>
+</resources>

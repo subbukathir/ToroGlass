@@ -1,0 +1,93 @@
+<resources>
+    <string name="app_name">Toro</string>
+    <string name="lbl_inspection">Inspection</string>
+    <string name="lbl_okay">Okay</string>
+    <string name="action_logo">Logo</string>
+    <string name="lbl_welcome">Welcome</string>
+
+    <!--login labels-->
+    <string name="lbl_username">Username</string>
+    <string name="lbl_password">Password</string>
+    <string name="lbl_login">Login</string>
+    <string name="msg_enter_username">Enter your username</string>
+    <string name="msg_enter_password">Enter your password</string>
+    <string name="msg_username_empty">Please enter your username</string>
+    <string name="msg_password_empty">Please enter your password</string>
+    <string name="msg_username_violation">Username should be meaningful</string>
+    <string name="msg_password_violation">Password should contain at least 4 characters</string>
+
+    <!--forgot password labels-->
+    <string name="lbl_forget_password">Forgot Password</string>
+    <string name="msg_forget_password">Forgot Password?</string>
+    <string name="lbl_email">E-mail</string>
+    <string name="lbl_send_email">Send E-mail</string>
+    <string name="msg_enter_email">Enter your E-mail </string>
+    <string name="msg_email_empty">Please enter your E-mail </string>
+    <string name="msg_email_violation">Please enter proper E-mail </string>
+    <string name="lbl_barcode_scan">Scan the Location / Asset Code</string>
+
+    <string name="lbl_model_1">Reelmaster 3100-A</string>
+    <string name="lbl_model_2">Reelmaster 3100-B</string>
+    <string name="lbl_model_3">Reelmaster 3100-C</string>
+    <string name="lbl_model_4">Reelmaster 3100-D</string>
+
+    <string name="lbl_basic_check">Basic Checks</string>
+    <string name="lbl_1_by_3">1/3</string>
+    <string name="lbl_2_by_3">2/3</string>
+    <string name="lbl_3_by_3">3/3</string>
+
+    <string name="lbl_ques_1">1. ROPS Installed</string>\
+    <string name="lbl_ques_2">2. Grease fittings lubricated</string>
+    <string name="lbl_ques_3">3. Toe-in set properly</string>
+
+    <string name="lbl_loading">Loading...</string>
+    <string name="msg_receive_inspection_empty">Inspection data empty</string>
+    <string name="lbl_select_model">Select model</string>
+    <string name="lbl_retry">Retry</string>
+    <string name="lbl_yes">Yes</string>
+    <string name="lbl_no">No</string>
+    <string name="lbl_choose">Choose</string>
+    <string name="lbl_agree">Agree</string>
+    <string name="lbl_disagree">Disagree</string>
+    <string name="lbl_save">Save</string>
+    <string name="lbl_next">Next</string>
+    <string name="lbl_previous">Previous</string>
+    <string name="lbl_capture">Capture</string>
+    <string name="lbl_gallery">Gallery</string>
+    <string name="lbl_select_photo">Select photo option</string>
+
+    <string name="lbl_choose_by_model">Choose by model Name</string>
+    <string name="lbl_read_by_barcode">Choose by barcode scanner</string>
+
+    <string name="lbl_remarks_any">Remarks any...</string>
+    <string name="lbl_attach_or_capture">Attach / Capture Photo</string>
+
+    <string-array name="array_title_bottom">
+        <item>@string/lbl_choose_by_model</item>
+        <item>@string/lbl_read_by_barcode</item>
+    </string-array>
+    <string-array name="array_photo_option">
+        <item>@string/lbl_capture</item>
+        <item>@string/lbl_gallery</item>
+    </string-array>
+    <string-array name="array_model">
+        <item>Reelmaster 3100-E</item>
+        <item>Reelmaster 3100-B</item>
+        <item>Reelmaster 3100-A</item>
+        <item>Reelmaster 3100-C</item>
+        <item>Reelmaster 3100-F</item>
+        <item>Reelmaster 3100-D</item>
+    </string-array>
+    <!--strings for google vision-->
+    <string name="ok">OK</string>
+    <string name="lbl_barcode_inspection">Barcode Inspection</string>
+    <string name="lbl_success">Success</string>
+    <string name="lbl_failure">Failure</string>
+    <string name="lbl_barcode_error">Barcode error</string>
+    <string name="lbl_read_barcode">Read Barcode</string>
+    <string name="lbl_auto_focus">Auto Focus</string>
+    <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
+    <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
+    <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
+    <string name="msg_click_button_to_read_barcode">Click button Read Barcode to scan the barcode</string>
+</resources>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match_parent_style">
+
+    <LinearLayout
+        style="@style/match_parent_style"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/btn_manual"
+            style="@style/btn_common"
+            android:text="@string/lbl_choose_by_model"
+            android:layout_margin="@dimen/_15sdp"/>
+        <Button
+            android:id="@+id/btn_read_barcode"
+            style="@style/btn_common"
+            android:text="@string/lbl_read_by_barcode"
+            android:layout_margin="@dimen/_15sdp"/>
+    </LinearLayout>
+</LinearLayout>

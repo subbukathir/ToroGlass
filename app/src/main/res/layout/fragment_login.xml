@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/match_parent_style"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nsv_login"
+        android:fillViewport="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        style="@style/match_parent_style">
+        <LinearLayout
+            style="@style/match_wrap_style"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+            <com.toroapp.toro.components.CustomTextInputLayout
+                android:id="@+id/til_username"
+                style="@style/text_input_layout_common">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tie_username"
+                    style="@style/text_input_edittext_common"
+                    android:hint="@string/msg_enter_username"/>
+            </com.toroapp.toro.components.CustomTextInputLayout>
+            <com.toroapp.toro.components.CustomTextInputLayout
+                android:id="@+id/til_password"
+                style="@style/text_input_layout_common">
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tie_password"
+                    style="@style/text_input_edittext_common"
+                    android:imeOptions="actionDone"
+                    android:inputType="textPassword"
+                    android:hint="@string/msg_enter_password"/>
+            </com.toroapp.toro.components.CustomTextInputLayout>
+            <Button
+                android:id="@+id/btnLogin"
+                android:text="@string/lbl_login"
+                android:layout_marginLeft="@dimen/_35sdp"
+                android:layout_marginRight="@dimen/_35sdp"
+                style="@style/btn_common" />
+            <TextView
+                android:id="@+id/tv_forgot_password"
+                style="@style/textview_label"
+                android:text="@string/msg_forget_password"
+                android:textAlignment="textEnd"
+                android:textColor="@color/colorPrimary"/>
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>

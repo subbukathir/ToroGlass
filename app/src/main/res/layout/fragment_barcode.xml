@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match_parent_style"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/txtview_barcode_result"
+        style="@style/match_wrap_style"
+        android:text="@string/msg_click_button_to_read_barcode"/>
+    <LinearLayout
+        style="@style/match_wrap_style"
+        android:orientation="horizontal">
+    <Switch
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/auto_focus"
+        android:textSize="@dimen/text_size_large"
+        android:layout_margin="@dimen/space_layout_margin"
+        android:padding="@dimen/space_layout_padding"
+        android:checked="false" />
+        <TextView
+            android:id="@+id/tv_lbl_autofocus"
+            style="@style/match_wrap_style"
+            android:layout_margin="@dimen/space_layout_margin"
+            android:padding="@dimen/space_layout_padding"
+            android:text="@string/lbl_auto_focus"/>
+    </LinearLayout>
+    <Button
+        android:id="@+id/btnReadBarcode"
+        style="@style/match_wrap_style"
+        android:background="@color/btnClear"
+        android:layout_margin="@dimen/space_layout_margin"
+        android:text="@string/lbl_read_barcode"/>
+</LinearLayout>
