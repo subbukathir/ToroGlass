@@ -25,7 +25,6 @@ import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.fragment.Fragment_Barcode;
-import com.toroapp.toro.fragment.Fragment_Main;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.ConnectivityStatus;
 import com.toroapp.toro.utils.Font;

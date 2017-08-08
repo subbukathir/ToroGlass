@@ -26,6 +26,8 @@ import android.widget.TextView;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.activities.MainActivity;
+import com.toroapp.toro.listeners.InspectionDataListener;
+import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
@@ -56,6 +58,8 @@ public class Fragment_Login extends Fragment implements View.OnClickListener{
     private Button btnLogin;
     private Fragment mFragment = null;
     private View rootView;
+
+    private InspectionDbInitializer inspectionDbInitializer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

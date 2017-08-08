@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -12,33 +11,25 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 
-import com.afollestad.materialdialogs.DialogAction;
-import com.afollestad.materialdialogs.MaterialDialog;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
  * Created by subbu on 25/11/16.
  */
 
-public class Fragment_Main extends Fragment implements View.OnClickListener
+public class Fragment_Final extends Fragment implements View.OnClickListener
 {
-    private static final String TAG =Fragment_Main.class.getSimpleName();
+    private static final String TAG =Fragment_Final.class.getSimpleName();
 
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -47,7 +38,7 @@ public class Fragment_Main extends Fragment implements View.OnClickListener
     private SharedPreferences.Editor mEditor;
     private FragmentManager mManager;
     private Handler mHandler;
-    private Button btnManual,btnBarcode;
+    private Button btnContinue, btnSelectNewModel;
 
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
@@ -78,7 +69,7 @@ public class Fragment_Main extends Fragment implements View.OnClickListener
         Log.e(TAG,"onCreateView");
         View rootView=null;
         try {
-            rootView = (View) inflater.inflate(R.layout.fragment_main,container,false);
+            rootView = (View) inflater.inflate(R.layout.fragment_final,container,false);
             initUI(rootView);
             setProperties();
         }catch (Exception ex)  {
@@ -91,8 +82,8 @@ public class Fragment_Main extends Fragment implements View.OnClickListener
         Log.e(TAG,"initUI");
         try {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
-            btnManual = (Button) rootView.findViewById(R.id.btn_manual);
-            btnBarcode = (Button) rootView.findViewById(R.id.btn_read_barcode);
+            btnContinue = (Button) rootView.findViewById(R.id.btn_continue);
+            btnSelectNewModel = (Button) rootView.findViewById(R.id.btn_select_new_model);
 
             setupActionBar();
         }catch (Exception ex) {  ex.printStackTrace();  }
@@ -107,28 +98,32 @@ public class Fragment_Main extends Fragment implements View.OnClickListener
     }
     private void setProperties()    {
         Log.e(TAG,"setProperties");
-        btnManual.setTypeface(font.getHelveticaRegular());
-        btnBarcode.setTypeface(font.getHelveticaRegular());
-        btnManual.setOnClickListener(this);
-        btnBarcode.setOnClickListener(this);
+        btnContinue.setTypeface(font.getHelveticaRegular());
+        btnSelectNewModel.setTypeface(font.getHelveticaRegular());
+        btnContinue.setOnClickListener(this);
+        btnSelectNewModel.setOnClickListener(this);
     }
 
     private void gotoFragment(Fragment fragment,String tag) {
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTransaction.replace(R.id.frame_container, fragment,tag);
-        fragmentTransaction.addToBackStack(tag);
+        if(tag.equals(AppUtils.TAG_MANUAL)){
+            for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
+                mManager.popBackStack();
+            }
+        }else fragmentTransaction.addToBackStack(tag);
         fragmentTransaction.commit();
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-            case R.id.btn_manual:
-                gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
+            case R.id.btn_continue:
+                gotoFragment(new Fragment_ViewInspectionList(),AppUtils.TAG_INSPECTIONLIST);
                 break;
-            case R.id.btn_read_barcode:
-                gotoFragment(new Fragment_Barcode(),AppUtils.TAG_BARCODE);
+            case R.id.btn_select_new_model:
+                gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
                 break;
         }
     }

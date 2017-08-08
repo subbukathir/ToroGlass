@@ -86,9 +86,12 @@ public class AppUtils extends Dialog {
      */
     public static final String TAG_FORGOT_PASSWORD = "forgot password";
     public static final String TAG_FRAGMENT_INSPECTION = "fragment inspection";
+    public static final String TAG_FRAGMENT_INSPECTION2 = "fragment inspection2";
+    public static final String TAG_FRAGMENT_INSPECTION3 = "fragment inspection3";
+    public static final String TAG_INSPECTIONLIST = "fragment inspection list";
     public static final String TAG_MANUAL = "fragment manual";
     public static final String TAG_BARCODE = "fragment barcode";
-
+    public static final String TAG_FINAL = "fragment final";
     public static final int CAMERA_FACING_BACK = Camera.CameraInfo.CAMERA_FACING_BACK;
     @SuppressLint("InlinedApi")
     public static final int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;

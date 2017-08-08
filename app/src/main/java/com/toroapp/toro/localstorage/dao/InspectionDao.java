@@ -21,8 +21,8 @@ public interface InspectionDao {
     @Query("SELECT COUNT(*) from InspectionEntity")
     int count();
 
-    @Query("SELECT COUNT(*) from InspectionEntity where inspectionName LIKE  :inspectionName")
-    int countByInspectionName(String inspectionName);
+    @Query("SELECT COUNT(*) from InspectionEntity where uniqueKey LIKE  :uniqueKey")
+    int countByUniqueKey(String uniqueKey);
 
     @Query("SELECT COUNT(*) from InspectionEntity where modelName LIKE  :modelName")
     int countByModelName(String modelName);
@@ -34,10 +34,10 @@ public interface InspectionDao {
     void insertAll(List<InspectionEntity> inspectionEntities);
 
     @Insert
-    void insert(InspectionEntity... inspectionEntities);
+    void insert(InspectionEntity inspectionEntities);
 
     @Update
-    void update(InspectionEntity... inspectionEntities);
+    void update(InspectionEntity inspectionEntities);
 
     @Delete
     void delete(InspectionEntity inspectionEntity);

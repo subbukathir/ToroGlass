@@ -66,7 +66,7 @@ public class InspectionDbInitializer {
     }
     private static void insertSingle(final AppDatabase db, InspectionEntity inspectionEntity) {
         Log.e(TAG, "insertSingle");
-        mCount = db.inspectionDao().countByInspectionName(inspectionEntity.getInspectionName());
+        mCount = db.inspectionDao().countByUniqueKey(inspectionEntity.getUniqueKey());
         if(mCount>0) db.inspectionDao().update(inspectionEntity);
         else  db.inspectionDao().insert(inspectionEntity);
     }
@@ -106,7 +106,8 @@ public class InspectionDbInitializer {
                 case AppUtils.MODE_INSERT:
                     insertSingle(mDb, mInspectionEntity);
                     break;
-                case AppUtils.MODE_GET:
+                case AppUtils.MODE_DELETE_ALL:
+                    deleteAll(mDb);
                     break;
                 case AppUtils.MODE_GETALL_USING_MODEL:
                     getAllByModelName(mDb,mModelName);

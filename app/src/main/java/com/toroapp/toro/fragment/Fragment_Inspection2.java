@@ -1,25 +1,19 @@
 package com.toroapp.toro.fragment;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -66,9 +60,9 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
  * Created by subbu on 25/11/16.
  */
 
-public class Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
+public class Fragment_Inspection2 extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
         InspectionDataListener{
-    private static final String TAG = Fragment_Inspection.class.getSimpleName();
+    private static final String TAG = Fragment_Inspection2.class.getSimpleName();
 
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -89,7 +83,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
     Bitmap myBitmap;
     Uri picUri;
-    private String mUniqueKey=null, mModelName=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
+    private String mUniqueKey,mModelName=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
 
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
@@ -120,7 +114,6 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             font = MyApplication.getInstance().getFontInstance();
             mArgs = getArguments();
             mInspectionDb = new InspectionDbInitializer(this);
-            mInspectionDb.getInspectionData(AppDatabase.getAppDatabase(mActivity),AppUtils.MODE_DELETE_ALL);
             permissions.add(CAMERA);
             permissions.add(READ_EXTERNAL_STORAGE);
             permissions.add(WRITE_EXTERNAL_STORAGE);
@@ -143,7 +136,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.e(TAG, "onCreateView");
         try {
-            rootView = (View) inflater.inflate(R.layout.fragment_inspect1, container, false);
+            rootView = (View) inflater.inflate(R.layout.fragment_inspect2, container, false);
             initUI(rootView);
             setProperties();
         } catch (Exception ex) {
@@ -200,7 +193,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         if(mArgs!=null){
             if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
                 mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
-                mInspectionName = getString(R.string.lbl_ques_1);
+                mInspectionName = getString(R.string.lbl_ques_2);
                 mInspectionName = mInspectionName.substring(3);
                 mUniqueKey = mInspectionName + mModelName;
                 Log.e(TAG,"Substring ins name :"+ mInspectionName);
@@ -228,7 +221,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 if(mTested!=null){
                     InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData);
                     mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
-                    gotoFragmentInspection2();
+                    gotoFragmentInspection3();
                 }else AppUtils.showDialog(mActivity,"Kindly choose yes or no");
             }else AppUtils.showDialog(mActivity,"Inspection name is empty");
         }else AppUtils.showDialog(mActivity,"Model name is empty");
@@ -329,7 +322,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                                 break;
                             case 1:
                                 Log.e(TAG,"option b");
-                                Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                Intent intent = new   Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(intent, 2);
                                 break;
                             default:
@@ -354,7 +347,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             e.printStackTrace();
         }
         mImageCaptureUri = FileProvider.getUriForFile(mActivity, AUTHORITY, file);
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intent, 101);
@@ -422,15 +415,15 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         Log.e(TAG,"onDataReceivedErr");
         AppUtils.showDialog(mActivity,strErr);
     }
-    private void gotoFragmentInspection2() {
-        Fragment fragment = new Fragment_Inspection2();
+    private void gotoFragmentInspection3() {
+        Fragment fragment = new Fragment_Inspection3();
         Bundle data = new Bundle();
         data.putString(AppUtils.ARGS_MODEL,mModelName);
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION2);
-        fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
+        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION3);
+        fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION3);
         fragmentTransaction.commit();
     }
 }

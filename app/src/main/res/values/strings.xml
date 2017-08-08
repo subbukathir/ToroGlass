@@ -52,6 +52,8 @@
     <string name="lbl_save">Save</string>
     <string name="lbl_next">Next</string>
     <string name="lbl_previous">Previous</string>
+    <string name="lbl_continue">Continue</string>
+    <string name="lbl_select_new_model">Select New Model</string>
     <string name="lbl_capture">Capture</string>
     <string name="lbl_gallery">Gallery</string>
     <string name="lbl_select_photo">Select photo option</string>

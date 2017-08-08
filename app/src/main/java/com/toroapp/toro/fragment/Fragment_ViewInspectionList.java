@@ -270,5 +270,6 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
     @Override
     public void onDataReceivedErr(String strErr) {
         Log.e(TAG,"onDataReceivedErr " + strErr);
+        showEmptyView(strErr);
     }
 }

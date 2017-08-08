@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/match_parent_style">
+
+    <android.support.v4.widget.NestedScrollView
+        style="@style/match_parent_style"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            style="@style/match_parent_style"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tv_lbl_title_model_name"
+                style="@style/textview_label"
+                android:text="@string/app_name"
+                android:textSize="@dimen/_15sdp"
+                android:textStyle="bold" />
+            <LinearLayout
+                style="@style/match_wrap_style"
+                android:weightSum="2"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tv_lbl_basic_check"
+                    style="@style/textview_label"
+                    android:text="@string/lbl_basic_check"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tv_lbl_quesno"
+                    style="@style/textview_label"
+                    android:text="@string/lbl_2_by_3"
+                    android:layout_weight="1"
+                    android:textSize="@dimen/_13sdp"
+                    android:textAlignment="textEnd"
+                    android:textStyle="bold" />
+            </LinearLayout>
+            <LinearLayout
+                style="@style/match_wrap_style"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tv_lbl_question"
+                    style="@style/textview_label"
+                    android:text="@string/lbl_ques_2"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight=".6"
+                    android:textStyle="bold" />
+                <LinearLayout
+                    style="@style/match_wrap_style"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+                    <RadioGroup
+                        android:id="@+id/radiogroup"
+                        style="@style/match_wrap_style"
+                        android:orientation="horizontal">
+                        <RadioButton
+                            android:id="@+id/rdb_yes"
+                            android:text="@string/lbl_yes"
+                            android:layout_weight="1"
+                            style="@style/radio_button_common" />
+                        <RadioButton
+                            android:id="@+id/rdb_no"
+                            android:text="@string/lbl_no"
+                            android:layout_weight="1"
+                            style="@style/radio_button_common" />
+                    </RadioGroup>
+                </LinearLayout>
+            </LinearLayout>
+            <EditText
+                android:id="@+id/et_remarks"
+                style="@style/edit_text_remarks"/>
+            <Button
+                android:id="@+id/btn_capture_photo"
+                style="@style/btn_common_wrap_content"
+                android:layout_margin="@dimen/_10sdp"
+                android:text="@string/lbl_attach_or_capture"/>
+            <ImageView
+                android:id="@+id/iv_captured_image"
+                android:layout_width="@dimen/_100sdp"
+                android:layout_height="@dimen/_100sdp" />
+            <Button
+                android:id="@+id/btn_next"
+                style="@style/btn_common"
+                android:layout_margin="@dimen/_10sdp"
+                android:text="@string/lbl_next"/>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

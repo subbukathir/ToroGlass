@@ -12,6 +12,9 @@ import android.support.annotation.Nullable;
 public class InspectionEntity {
 
     @PrimaryKey
+    @ColumnInfo(name="uniqueKey")
+    private String uniqueKey;
+
     @ColumnInfo(name = "inspectionName")
     private String inspectionName;
 
@@ -29,7 +32,8 @@ public class InspectionEntity {
     @ColumnInfo(name = "imageData")
     private String imageData;
 
-    public InspectionEntity(String inspectionName, String modelName, String testedValue, String remarks, String imageData) {
+    public InspectionEntity(String uniqueKey,String inspectionName, String modelName, String testedValue, String remarks, String imageData) {
+        this.uniqueKey = uniqueKey;
         this.inspectionName = inspectionName;
         this.modelName = modelName;
         this.testedValue = testedValue;
@@ -76,5 +80,13 @@ public class InspectionEntity {
 
     public void setImageData(String imageData) {
         this.imageData = imageData;
+    }
+
+    public String getUniqueKey() {
+        return uniqueKey;
+    }
+
+    public void setUniqueKey(String uniqueKey) {
+        this.uniqueKey = uniqueKey;
     }
 }

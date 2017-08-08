@@ -10,7 +10,7 @@ import com.toroapp.toro.localstorage.entity.InspectionEntity;
 import com.toroapp.toro.localstorage.entity.ReceiveComplaintItemEntity;
 import com.toroapp.toro.utils.AppUtils;
 
-@Database(entities = {InspectionEntity.class}, version = 1)
+@Database(entities = {InspectionEntity.class}, version = 3)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase INSTANCE;
