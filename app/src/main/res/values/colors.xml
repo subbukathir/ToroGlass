@@ -11,6 +11,8 @@
     <color name="colorButton">#AC1D37</color>
     <color name="btnClear">#ff5b57</color>
     <color name="colorUnlike">#ADAFAF</color>
+    <color name="color_green">#00FF00</color>
+    <color name="color_spring_green">#00FF7F</color>
 
     <color name="primary_text">#FFFFFF</color>
     <color name="secondary_text">#727272</color>

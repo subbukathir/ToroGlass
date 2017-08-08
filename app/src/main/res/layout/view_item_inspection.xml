@@ -4,7 +4,6 @@
     android:orientation="vertical">
     <RelativeLayout
         style="@style/match_wrap_style"
-        android:padding="@dimen/_5sdp"
         android:orientation="horizontal">
         <TextView
             android:id="@+id/tv_inspection_name"
@@ -16,9 +15,8 @@
             android:id="@+id/iv_tested_value"
             style="@style/wrapcontent_style"
             android:src="@drawable/ic_checkbox_fill"
-            android:layout_centerInParent="true"
-            android:layout_toRightOf="@+id/tv_inspection_name"
-            android:layout_toLeftOf="@+id/iv_captured_image"/>
+            android:layout_toLeftOf="@+id/iv_captured_image"
+            android:layout_centerInParent="true"/>
         <ImageView
             android:id="@+id/iv_captured_image"
             style="@style/imageview_item"

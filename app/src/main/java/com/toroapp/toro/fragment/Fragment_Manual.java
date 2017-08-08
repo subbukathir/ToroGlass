@@ -124,7 +124,7 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mModelName = listModel.get(i);
                 new MaterialDialog.Builder(mActivity)
-                        .content("Selected model is "+ listModel.get(i))
+                        .content("Selected model is \n"+ listModel.get(i))
                         .positiveText(R.string.lbl_agree)
                         .negativeText(R.string.lbl_disagree)
                         .onPositive(new MaterialDialog.SingleButtonCallback() {

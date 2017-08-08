@@ -19,6 +19,7 @@
             <LinearLayout
                 style="@style/match_wrap_style"
                 android:weightSum="2"
+                android:background="@color/colorBlack"
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/tv_lbl_basic_check"
@@ -36,8 +37,12 @@
                     android:textAlignment="textEnd"
                     android:textStyle="bold" />
             </LinearLayout>
+            <View
+                style="@style/match_wrap_style"
+                android:background="@drawable/item_divider"/>
             <LinearLayout
                 style="@style/match_wrap_style"
+                android:background="@color/colorBlack"
                 android:orientation="horizontal">
                 <TextView
                     android:id="@+id/tv_lbl_question"

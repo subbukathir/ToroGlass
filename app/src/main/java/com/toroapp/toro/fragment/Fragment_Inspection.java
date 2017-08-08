@@ -120,7 +120,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             font = MyApplication.getInstance().getFontInstance();
             mArgs = getArguments();
             mInspectionDb = new InspectionDbInitializer(this);
-            mInspectionDb.getInspectionData(AppDatabase.getAppDatabase(mActivity),AppUtils.MODE_DELETE_ALL);
+            //mInspectionDb.getInspectionData(AppDatabase.getAppDatabase(mActivity),AppUtils.MODE_DELETE_ALL);
             permissions.add(CAMERA);
             permissions.add(READ_EXTERNAL_STORAGE);
             permissions.add(WRITE_EXTERNAL_STORAGE);

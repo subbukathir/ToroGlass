@@ -182,6 +182,9 @@ public class MainActivity extends AppCompatActivity {
             public void run()
             {
                 // update the main content by replacing fragments
+                for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
+                    mManager.popBackStack();
+                }
                 Fragment fragment = getFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
                 fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
@@ -280,7 +283,6 @@ public class MainActivity extends AppCompatActivity {
                 // manual testing
                 return new Fragment_Manual();
             case 1:
-
                 return new Fragment_Barcode();
 
             default:

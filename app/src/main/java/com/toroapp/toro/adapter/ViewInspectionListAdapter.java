@@ -75,8 +75,8 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
                 InspectionListHolder holder = (InspectionListHolder) mHolder;
                 InspectionEntity item = inspectionEntityList.get(position);
                 holder.tv_inspection_name.setText(item.getInspectionName());
-                if(item.getTestedValue().equals("Yes")) holder.iv_tested.setImageResource(R.drawable.ic_checkbox_fill);
-                else holder.iv_tested.setImageResource(R.drawable.ic_checkbox_fill);
+                if(item.getTestedValue().equals("Yes")) holder.iv_tested.setImageResource(R.drawable.ic_tick_green);
+                else holder.iv_tested.setImageResource(R.drawable.ic_cross_red);
                 holder.iv_capturedImage.setImageResource(R.drawable.ic_logo);
             } else if (mHolder instanceof LoadingMessageHolder) {
                 LoadingMessageHolder holder = (LoadingMessageHolder) mHolder;
