@@ -92,4 +92,6 @@
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
     <string name="low_storage_error">Face detector dependencies cannot be downloaded due to low device storage</string>
     <string name="msg_click_button_to_read_barcode">Click button Read Barcode to scan the barcode</string>
+    <string name="lbl_selected_model_is">Selected model is</string>
+    <string name="lbl_back">Back</string>
 </resources>

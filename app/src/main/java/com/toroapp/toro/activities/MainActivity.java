@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
 
         //create items
         ahbChooseByModel= new AHBottomNavigationItem(R.string.lbl_choose_by_model,R.drawable.ic_chooseby_model,R.color.colorWhite);
-        ahbChooseByBarcode = new AHBottomNavigationItem(R.string.lbl_read_by_barcode,R.drawable.ic_chooseby_barcode,R.color.colorWhite);
+        ahbChooseByBarcode = new AHBottomNavigationItem(R.string.lbl_read_barcode,R.drawable.ic_chooseby_barcode,R.color.colorWhite);
 
         // Add items
         bottomNavigation.addItem(ahbChooseByModel);
