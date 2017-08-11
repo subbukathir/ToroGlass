@@ -6,10 +6,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.widget.DatePicker;
 
@@ -21,6 +23,7 @@ import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.DatePickerDialogListener;
 
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +32,7 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -80,6 +84,11 @@ public class AppUtils extends Dialog {
     public static final int MODE_DELETE = 2004;
     public static final int MODE_DELETE_ALL = 2005;
     public static final int MODE_GETALL_USING_MODEL = 2006;
+
+    public static final int REQUEST_TAKE_PHOTO = 1;
+    public static final int REQUEST_PICK_PHOTO = 2;
+
+    public final static int ALL_PERMISSIONS_RESULT = 107;
 
     /**
      * Global fragment tags
@@ -136,6 +145,25 @@ public class AppUtils extends Dialog {
 
         MaterialDialog dialog = builder.build();
         dialog.show();
+    }
+    public static String encodeImage(Bitmap bm)
+    {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        byte[] b = baos.toByteArray();
+        String encImage = Base64.encodeToString(b, Base64.DEFAULT);
+        Log.e(TAG,"encoded string ::" + encImage);
+        return encImage;
+    }
+    public static String convertBitmapToBase64(String path){
+        Log.e(TAG,"convertBitmapToBase64");
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        Bitmap bitmap = BitmapFactory.decodeFile(path);
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        String encImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
+        Log.e(TAG,"encoded string ::" + encImage);
+        return encImage;
     }
 
     static ProgressDialog progressDialog;

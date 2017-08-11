@@ -220,8 +220,6 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
-
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -235,7 +233,6 @@ public class MainActivity extends AppCompatActivity {
                 mEditor.putString(AppUtils.IS_NETWORK_AVAILABLE, AppUtils.NETWORK_AVAILABLE);
                 mEditor.commit();
                 mNetworkInfo = AppUtils.NETWORK_AVAILABLE;
-
             }
         }
     };
@@ -250,8 +247,6 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
-
-
     public void clearPreferences()    {
         Log.d(TAG,"clearPreferences");
 
@@ -265,7 +260,6 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -274,8 +268,7 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.action_logo).setIcon(drawableLogo);
         return true;
     }
-    private Fragment getFragment()
-    {
+    private Fragment getFragment(){
         Log.e(TAG,"getFragment");
         switch (tabIndex)
         {

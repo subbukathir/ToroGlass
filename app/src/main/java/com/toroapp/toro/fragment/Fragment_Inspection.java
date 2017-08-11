@@ -1,5 +1,6 @@
 package com.toroapp.toro.fragment;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.ComponentName;
@@ -13,6 +14,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -43,6 +45,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
@@ -54,19 +57,31 @@ import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import permissions.dispatcher.NeedsPermission;
+import permissions.dispatcher.OnShowRationale;
+import permissions.dispatcher.PermissionRequest;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
+import static com.toroapp.toro.utils.AppUtils.REQUEST_PICK_PHOTO;
+import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
 
 /**
  * Created by subbu on 25/11/16.
  */
 
-public class Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
+public class  Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
         InspectionDataListener{
     private static final String TAG = Fragment_Inspection.class.getSimpleName();
 
@@ -90,12 +105,12 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     Bitmap myBitmap;
     Uri picUri;
     private String mUniqueKey=null, mModelName=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
-
+    private String mCurrentPhotoPath;
+    public static int mRequest = 0;
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
 
-    private final static int ALL_PERMISSIONS_RESULT = 107;
     private static final String AUTHORITY="com.toroapp.toro";
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
@@ -112,6 +127,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         super.onCreate(savedInstanceState);
         try {
             mActivity = (AppCompatActivity) getActivity();
+            setRetainInstance(true);
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
             mEditor = mPreferences.edit();
             mHandler = new Handler();
@@ -213,7 +229,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_capture_photo:
-                //ShowSelectPhotoOption();
+                ShowSelectPhotoOption();
                 break;
             case R.id.btn_next:
                 submitData();
@@ -265,10 +281,95 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+        new AlertDialog.Builder(mActivity)
+                .setMessage(message)
+                .setPositiveButton("OK", okListener)
+                .setNegativeButton("Cancel", null)
+                .create()
+                .show();
+    }
+
+    /*vikram code*/
+    private void ShowSelectPhotoOption()    {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.lbl_select_photo)
+                .setItems(R.array.array_photo_option, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                startCamera();
+                                break;
+                            case 1:
+                                Log.e(TAG,"option b");
+                                Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(intent, 2);
+                                break;
+                            default:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+
+    }
+    @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    public void startCamera() {
+        try {
+            dispatchTakePictureIntent();
+        } catch (IOException e) {
+        }
+    }
+    private void setImageToImageView(String path){
+        Log.e(TAG,"setImageToImageView");
+        Uri imageUri = Uri.parse(path);
+        File file = new File(imageUri.getPath());
+        try {
+            InputStream mStreamPic = new FileInputStream(file);
+            iv_captured_image.setImageBitmap(BitmapFactory.decodeStream(mStreamPic));
+            if(mRequest==REQUEST_PICK_PHOTO) AppUtils.convertBitmapToBase64(path);
+            else if (mRequest ==REQUEST_TAKE_PHOTO) AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
+        } catch (FileNotFoundException e) {
+            return;
+        }
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == mActivity.RESULT_OK) {
+            mRequest = REQUEST_TAKE_PHOTO;
+            // Show the thumbnail on ImageView
+            setImageToImageView(mCurrentPhotoPath);
+
+            /*// ScanFile so it will be appeared on Gallery
+            MediaScannerConnection.scanFile(mActivity,
+                    new String[]{imageUri.getPath()}, null,
+                    new MediaScannerConnection.OnScanCompletedListener() {
+                        public void onScanCompleted(String path, Uri uri) {
+                        }
+                    });*/
+        }
+        if(requestCode==REQUEST_PICK_PHOTO){
+            mRequest = REQUEST_PICK_PHOTO;
+            Uri selectedImage = data.getData();
+            String[] filePath = { MediaStore.Images.Media.DATA };
+            Cursor c = mActivity.getContentResolver().query(selectedImage,filePath, null, null, null);
+            c.moveToFirst();
+            int columnIndex = c.getColumnIndex(filePath[0]);
+            String picturePath = c.getString(columnIndex);
+            c.close();
+            setImageToImageView(picturePath);
+            /*Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
+            Log.w("path of image from gallery......******************.........", picturePath+"");
+            iv_captured_image.setImageBitmap(thumbnail);*/
+        }
+    }
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //MainActivityPermissionsDispatcher.onRequestPermissionsResult(mActivity, requestCode, grantResults);
         switch (requestCode) {
 
             case ALL_PERMISSIONS_RESULT:
@@ -306,112 +407,49 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
                 break;
         }
-
-    }
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(mActivity)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
     }
 
-    /*vikram code*/
-    private void ShowSelectPhotoOption()    {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.lbl_select_photo)
-                .setItems(R.array.array_photo_option, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                //dispatchTakePictureIntent();
-                                break;
-                            case 1:
-                                Log.e(TAG,"option b");
-                                Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, 2);
-                                break;
-                            default:
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
-                });
-        builder.show();
+    private File createImageFile() throws IOException {
+        // Create an image file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        String imageFileName = "JPEG_" + timeStamp + "_";
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DCIM), "Camera");
+        File image = File.createTempFile(
+                imageFileName,  /* prefix */
+                ".jpg",         /* suffix */
+                storageDir      /* directory */
+        );
 
+        // Save a file: path for use with ACTION_VIEW intents
+        mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+        return image;
     }
-    private void dispatchTakePictureIntent()    {
-        Log.d(TAG,"dispatchTakePictureIntent");
 
-        String path= mActivity.getExternalFilesDir(Environment.DIRECTORY_PICTURES)+"";
-        //File file = new File("IMG_"+System.currentTimeMillis()+".jpg");
-        //file.getParentFile().mkdirs();
-        File file = new File(mActivity.getFilesDir(),"test.jpg");
-        try {
-            file.createNewFile();
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-        mImageCaptureUri = FileProvider.getUriForFile(mActivity, AUTHORITY, file);
-        Intent intent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        startActivityForResult(intent, 101);
-    }
-    private void beginCrop(Uri source)
-    {
-        //String Str_ImagePath ="file://" + AppUtils.getProfilePicturePath(mActivity) + "/" + mUser.getMobile_Number() + ".png";
-        String Str_ImagePath = AppUtils.getProfilePicturePath(mActivity) + "/" + "ques1" + ".png";
-        Uri destination = Uri.fromFile(new File(Str_ImagePath));
-        Crop.of(source, destination).withMaxSize(640,420).start(mActivity, this, 10);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        Log.d(TAG,"onActivityResult" + " requestCode ::: " + requestCode);
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode ==mActivity.RESULT_OK){
-
-        if (requestCode == 101 && resultCode==mActivity.RESULT_OK)
-        {
-            beginCrop(mImageCaptureUri);
-        }
-        else if (requestCode == 10)
-        {
-            handleCrop(resultCode, data);
-        }
-        else if(requestCode==2){
-            Uri selectedImage = data.getData();
-            String[] filePath = { MediaStore.Images.Media.DATA };
-            Cursor c = mActivity.getContentResolver().query(selectedImage,filePath, null, null, null);
-            c.moveToFirst();
-            int columnIndex = c.getColumnIndex(filePath[0]);
-            String picturePath = c.getString(columnIndex);
-            c.close();
-            Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
-            Log.w("path of image from gallery......******************.........", picturePath+"");
-            iv_captured_image.setImageBitmap(thumbnail);
-        }
-        }
-    }
-    private void handleCrop(int resultCode, Intent result)    {
-        if (resultCode == getActivity().RESULT_OK)        {
-            try            {
-                iv_captured_image.setImageDrawable(null);
-
+    private void dispatchTakePictureIntent() throws IOException {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(mActivity.getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = createImageFile();
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+                return;
             }
-            catch (Exception e)            {
-                e.printStackTrace();
-            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
 
-        }
-        else if (resultCode == Crop.RESULT_ERROR)        {
-            Log.d(TAG,"result error " + ":::" + Crop.getError(result).getMessage());
+                //Uri photoURI = Uri.fromFile(createImageFile());
+                Uri photoURI = FileProvider.getUriForFile(mActivity,
+                        BuildConfig.APPLICATION_ID + ".provider",
+                        createImageFile());
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+            }
         }
     }
-
-
     @Override
     public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList) {
     Log.e(TAG,"onDataReceivedSuccess");

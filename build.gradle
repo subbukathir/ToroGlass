@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.3.3'
-
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -27,4 +27,5 @@ ext {
     archRoomVersion = "1.0.0-alpha3"
     retrofitVersion = "2.3.0"
     okHttpVersion = "3.8.1"
+    permissionDispatcher = "2.1.3"
 }

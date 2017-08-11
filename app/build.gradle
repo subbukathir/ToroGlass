@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'android-apt'
 android {
     compileSdkVersion 26
     buildToolsVersion "26.0.1"
@@ -55,4 +55,6 @@ dependencies {
     compile 'com.aurelhubert:ahbottomnavigation:2.0.2'
     compile 'com.soundcloud.android:android-crop:1.0.1@aar'
     compile 'com.commonsware.cwac:provider:0.4.3'
+    compile 'com.github.hotchemi:permissionsdispatcher:' + rootProject.permissionDispatcher;
+    apt 'com.github.hotchemi:permissionsdispatcher-processor:' + rootProject.permissionDispatcher;
 }

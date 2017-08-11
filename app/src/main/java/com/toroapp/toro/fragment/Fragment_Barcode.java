@@ -146,7 +146,7 @@ public class Fragment_Barcode extends Fragment {
         Bundle data = new Bundle();
         data.putString(AppUtils.ARGS_MODEL,mModelName);
         fragment.setArguments(data);
-        FragmentTransaction fragmentTransaction = mManager.beginTransaction();
+        FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION);
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION);
