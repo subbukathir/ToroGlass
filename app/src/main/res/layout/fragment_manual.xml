@@ -4,12 +4,21 @@
 
     <LinearLayout
         style="@style/match_parent_style"
-        android:gravity="center_vertical"
         android:orientation="vertical">
 
-        <android.support.v7.widget.AppCompatAutoCompleteTextView
-            android:id="@+id/autoCompleteText"
-            style="@style/text_input_edittext_common"
-            android:hint="@string/app_name"/>
+        <com.toroapp.toro.components.CustomTextInputLayout
+            android:id="@+id/til_password"
+            style="@style/text_input_layout_common">
+
+            <android.support.v7.widget.AppCompatAutoCompleteTextView
+                android:id="@+id/autoCompleteText"
+                style="@style/text_input_edittext_common"
+                android:hint="@string/lbl_search_model"
+                android:imeOptions="actionDone"
+                android:inputType="textAutoComplete" />
+
+        </com.toroapp.toro.components.CustomTextInputLayout>
+
     </LinearLayout>
+
 </LinearLayout>

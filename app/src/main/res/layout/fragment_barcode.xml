@@ -1,30 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/match_parent_style"
-    android:gravity="center"
-    android:orientation="vertical">
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/match_parent_style">
 
-    <TextView
-        android:id="@+id/txtview_barcode_result"
-        style="@style/textview_label"
-        android:text="@string/msg_click_button_to_read_barcode"/>
     <LinearLayout
-        style="@style/match_wrap_style"
-        android:orientation="horizontal">
-    <Switch
-        android:id="@+id/auto_focus"
-        style="@style/textview_label"
-        android:layout_weight="1"
-        android:checked="false" />
+        style="@style/match_parent_style"
+        android:orientation="vertical"
+        android:padding="@dimen/_16sdp">
+
         <TextView
-            android:id="@+id/tv_lbl_autofocus"
+            android:id="@+id/tv_lbl_barcode_result"
             style="@style/textview_label"
-            android:layout_weight=".2"
-            android:text="@string/lbl_auto_focus"/>
+            android:text="@string/msg_click_button_to_read_barcode"
+            android:textSize="@dimen/_14sdp" />
+
+        <LinearLayout
+            style="@style/match_wrap_style"
+            android:layout_margin="@dimen/_16sdp"
+            android:orientation="horizontal"
+            android:padding="@dimen/_16sdp">
+
+            <TextView
+                android:id="@+id/tv_lbl_autofocus"
+                style="@style/textview_label"
+                android:layout_width="wrap_content"
+                android:text="@string/lbl_auto_focus"
+                android:textSize="@dimen/_14sdp" />
+
+            <Switch
+                android:id="@+id/auto_focus"
+                style="@style/match_wrap_style"
+                android:layout_gravity="right|center_vertical"
+                android:checked="false" />
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnReadBarcode"
+            style="@style/btn_common"
+            android:text="@string/lbl_read_barcode" />
+
+
+        <TextView
+            android:id="@+id/tv_scan_format"
+            style="@style/textview_label"
+            android:layout_width="wrap_content"
+            android:text="@string/lbl_auto_focus"
+            android:textSize="@dimen/_14sdp" />
+
+        <TextView
+            android:id="@+id/tv_scan_content"
+            style="@style/textview_label"
+            android:layout_width="wrap_content"
+            android:text="@string/lbl_auto_focus"
+            android:textSize="@dimen/_14sdp" />
+
     </LinearLayout>
-    <Button
-        android:id="@+id/btnReadBarcode"
-        style="@style/btn_common"
-        android:layout_margin="@dimen/_15sdp"
-        android:text="@string/lbl_read_barcode"/>
-</LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>
