@@ -85,7 +85,7 @@
                 android:id="@+id/iv_captured_image"
                 android:layout_width="120dp"
                 android:layout_height="120dp"
-                android:layout_margin="@dimen/space_layout_margin"
+                android:layout_margin="@dimen/_30sdp"
                 android:src="@drawable/no_image_available"/>
             <Button
                 android:id="@+id/btn_next"
@@ -93,5 +93,7 @@
                 android:layout_margin="@dimen/_10sdp"
                 android:text="@string/lbl_next"/>
         </LinearLayout>
+
     </android.support.v4.widget.NestedScrollView>
+
 </LinearLayout>

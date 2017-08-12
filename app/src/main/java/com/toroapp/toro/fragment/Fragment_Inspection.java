@@ -45,6 +45,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.google.android.gms.vision.text.Text;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
@@ -89,7 +90,8 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class  Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener,ImagePickListener{
+        InspectionDataListener,ImagePickListener
+{
     private static final String MODULE = Fragment_Inspection.class.getSimpleName();
     private static String TAG = "";
 
@@ -122,6 +124,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     private static final String AUTHORITY="com.toroapp.toro";
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
+    private TextView text_view_title;
     private Bundle mArgs;
     View rootView = null;
     private Snackbar snackbar;
@@ -131,11 +134,15 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     private ImageLoader imageLoader;
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG, "onCreate");
-
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        try {
+
+        TAG="onCreate";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             mActivity = (AppCompatActivity) getActivity();
             setRetainInstance(true);
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
@@ -155,34 +162,47 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             //get the permissions we have asked for before but are not granted..
             //we will store this in a global list to access later.
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
                 if (permissionsToRequest.size() > 0)
                     requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             }
 
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
     }
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.e(TAG, "onCreateView");
-        try {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        TAG="onCreateView";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             rootView = (View) inflater.inflate(R.layout.fragment_inspect1, container, false);
             initUI(rootView);
             setProperties();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
 
         return rootView;
     }
 
-    private void initUI(View rootView) {
-        Log.e(TAG, "initUI");
-        try {
+    private void initUI(View rootView)
+    {
+        TAG="initUI";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             tv_model_name = (TextView) rootView.findViewById(R.id.tv_lbl_title_model_name);
             tv_lbl_basic_check = (TextView) rootView.findViewById(R.id.tv_lbl_basic_check);
@@ -197,81 +217,137 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             iv_captured_image = (ImageView) rootView.findViewById(R.id.iv_captured_image);
 
             setupActionBar();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
     }
 
-    public void setupActionBar() {
-        mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
-        mToolbar.setTitle(getResources().getString(R.string.lbl_inspection));
-        mActivity.setSupportActionBar(mToolbar);
-        mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    public void setupActionBar()
+    {
+        TAG="setupActionBar";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
+            text_view_title = (TextView) mActivity.findViewById(R.id.text_view_title);
+            text_view_title.setText(getResources().getString(R.string.lbl_inspection));
+
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
-    private void setProperties() {
-        Log.e(TAG, "setProperties");
-        iv_captured_image.setVisibility(View.GONE);
-        tv_model_name.setTypeface(font.getHelveticaRegular());
-        tv_lbl_basic_check.setTypeface(font.getHelveticaRegular());
-        tv_lbl_quesno.setTypeface(font.getHelveticaRegular());
-        tv_lbl_question.setTypeface(font.getHelveticaRegular());
-        rdb_yes.setTypeface(font.getHelveticaRegular());
-        rdb_no.setTypeface(font.getHelveticaRegular());
-        et_remarks.setTypeface(font.getHelveticaRegular());
-        btn_capture_photo.setTypeface(font.getHelveticaRegular());
+    private void setProperties()
+    {
+        TAG="setProperties";
+        Log.d(MODULE,TAG);
 
-        radioGroup.setOnCheckedChangeListener(this);
-        btn_capture_photo.setOnClickListener(this);
-        btnNext.setOnClickListener(this);
-        if(mArgs!=null){
-            if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
-                mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
-                mInspectionName = getString(R.string.lbl_ques_1);
-                mInspectionName = mInspectionName.substring(3);
-                mUniqueKey = mInspectionName + mModelName;
-                Log.e(TAG,"Substring ins name :"+ mInspectionName);
-                tv_model_name.setText(mModelName);
+        try
+        {
+            iv_captured_image.setVisibility(View.GONE);
+            tv_model_name.setTypeface(font.getRobotoRegular());
+            tv_lbl_basic_check.setTypeface(font.getRobotoRegular());
+            tv_lbl_quesno.setTypeface(font.getRobotoRegular());
+            tv_lbl_question.setTypeface(font.getRobotoRegular());
+            rdb_yes.setTypeface(font.getRobotoRegular());
+            rdb_no.setTypeface(font.getRobotoRegular());
+
+            et_remarks.setTypeface(font.getRobotoRegular());
+            btn_capture_photo.setTypeface(font.getRobotoRegular());
+            btnNext.setTypeface(font.getRobotoRegular());
+
+            radioGroup.setOnCheckedChangeListener(this);
+            btn_capture_photo.setOnClickListener(this);
+            btnNext.setOnClickListener(this);
+
+            if(mArgs!=null){
+                if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
+                    mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
+                    mInspectionName = getString(R.string.lbl_ques_1);
+                    mInspectionName = mInspectionName.substring(3);
+                    mUniqueKey = mInspectionName + mModelName;
+                    Log.e(TAG,"Substring ins name :"+ mInspectionName);
+                    tv_model_name.setText(mModelName);
+                }
             }
         }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()) {
+    public void onClick(View view)
+    {
+        TAG="onClick";
+        Log.d(MODULE,TAG);
+
+        switch (view.getId())
+        {
             case R.id.btn_capture_photo:
-                ShowSelectPhotoOption1();
-                break;
+                 ShowSelectPhotoOption1();
+                 break;
             case R.id.btn_next:
-                submitData();
-                break;
+                 submitData();
+                 break;
         }
     }
 
-    private void submitData() {
-        Log.e(TAG,"submitData");
-        if(mModelName!=null){
-            if(mInspectionName!=null){
-                if(mTested!=null){
-                    InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData);
-                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
-                    gotoFragmentInspection2();
-                }else AppUtils.showDialog(mActivity,"Kindly choose yes or no");
-            }else AppUtils.showDialog(mActivity,"Inspection name is empty");
-        }else AppUtils.showDialog(mActivity,"Model name is empty");
+    private void submitData()
+    {
+        TAG="submitData";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            if(mModelName!=null)
+            {
+                if(mInspectionName!=null)
+                {
+                    if(mTested!=null)
+                    {
+                        InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData);
+                        mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
+                        gotoFragmentInspection2();
+                    }
+                    else AppUtils.showDialog(mActivity,"Kindly choose yes or no");
+                }
+                else AppUtils.showDialog(mActivity,"Inspection name is empty");
+            }
+            else AppUtils.showDialog(mActivity,"Model name is empty");
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
 
     @Override
-    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId) {
+    public void onCheckedChanged(RadioGroup radioGroup, @IdRes int checkedId)
+    {
+        TAG="onCheckedChanged";
+        Log.d(MODULE,TAG);
+
         RadioButton rdb = (RadioButton) rootView.findViewById(checkedId);
         mTested = rdb.getText().toString();
-        Log.e(TAG, "checked ::" + mTested);
+        Log.d(MODULE,TAG + " checked ::" + mTested);
     }
-    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
+
+    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted)
+    {
         ArrayList<String> result = new ArrayList<String>();
 
-        for (String perm : wanted) {
-            if (!hasPermission(perm)) {
+        for (String perm : wanted)
+        {
+            if (!hasPermission(perm))
+            {
                 result.add(perm);
             }
         }
@@ -279,20 +355,25 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         return result;
     }
 
-    private boolean hasPermission(String permission) {
-        if (canMakeSmores()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+    private boolean hasPermission(String permission)
+    {
+        if (canMakeSmores())
+        {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            {
                 return (mActivity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
             }
         }
         return true;
     }
 
-    private boolean canMakeSmores() {
+    private boolean canMakeSmores()
+    {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener)
+    {
         new AlertDialog.Builder(mActivity)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
@@ -302,7 +383,8 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     }
 
     /*vikram code*/
-    private void ShowSelectPhotoOption()    {
+    private void ShowSelectPhotoOption()
+    {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
                 .setItems(R.array.array_photo_option, new DialogInterface.OnClickListener() {
@@ -325,23 +407,36 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         builder.show();
 
     }
+
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
-    public void startCamera() {
-        try {
+    public void startCamera()
+    {
+        try
+        {
             dispatchTakePictureIntent();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
+
         }
     }
-    private void setImageToImageView(String path){
-        Log.e(TAG,"setImageToImageView");
+
+    private void setImageToImageView(String path)
+    {
+        TAG="setImageToImageView";
+        Log.d(MODULE,TAG);
+
         Uri imageUri = Uri.parse(path);
         File file = new File(imageUri.getPath());
-        try {
+        try
+        {
             InputStream mStreamPic = new FileInputStream(file);
             iv_captured_image.setImageBitmap(BitmapFactory.decodeStream(mStreamPic));
             if(mRequest==REQUEST_PICK_PHOTO) AppUtils.convertBitmapToBase64(path);
             else if (mRequest ==REQUEST_TAKE_PHOTO) AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
-        } catch (FileNotFoundException e) {
+        }
+        catch (FileNotFoundException e)
+        {
             return;
         }
     }
@@ -378,26 +473,32 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     }
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         //MainActivityPermissionsDispatcher.onRequestPermissionsResult(mActivity, requestCode, grantResults);
-        switch (requestCode) {
+        switch (requestCode)
+        {
 
             case ALL_PERMISSIONS_RESULT:
-                for (String perms : permissionsToRequest) {
-                    if (hasPermission(perms)) {
+                 for (String perms : permissionsToRequest)
+                 {
+                     if (hasPermission(perms))
+                     {
 
-                    } else {
+                     }
+                     else
+                     {
+                         permissionsRejected.add(perms);
+                     }
+                 }
 
-                        permissionsRejected.add(perms);
-                    }
-                }
-
-                if (permissionsRejected.size() > 0) {
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
+                 if (permissionsRejected.size() > 0)
+                 {
+                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+                     {
+                         if (shouldShowRequestPermissionRationale(permissionsRejected.get(0)))
+                         {
                             showMessageOKCancel("These permissions are mandatory for the application. Please allow access.",
                                     new DialogInterface.OnClickListener() {
                                         @Override
@@ -410,17 +511,17 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                                             }
                                         }
                                     });
-                            return;
-                        }
-                    }
-
-                }
+                             return;
+                         }
+                     }
+                 }
 
                 break;
         }
     }
 
-    private File createImageFile() throws IOException {
+    private File createImageFile() throws IOException
+    {
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
@@ -437,20 +538,25 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         return image;
     }
 
-    private void dispatchTakePictureIntent() throws IOException {
+    private void dispatchTakePictureIntent() throws IOException
+    {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(mActivity.getPackageManager()) != null) {
             // Create the File where the photo should go
             File photoFile = null;
-            try {
+            try
+            {
                 photoFile = createImageFile();
-            } catch (IOException ex) {
+            }
+            catch (IOException ex)
+            {
                 // Error occurred while creating the File
                 return;
             }
             // Continue only if the File was successfully created
-            if (photoFile != null) {
+            if (photoFile != null)
+            {
 
                 //Uri photoURI = Uri.fromFile(createImageFile());
                 Uri photoURI = FileProvider.getUriForFile(mActivity,
@@ -462,34 +568,50 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         }
     }
     @Override
-    public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList) {
-    Log.e(TAG,"onDataReceivedSuccess");
+    public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList)
+    {
+        TAG="onDataReceivedSuccesss";
+        Log.d(MODULE,TAG);
     }
 
     @Override
-    public void onDataReceivedErr(String strErr) {
-        Log.e(TAG,"onDataReceivedErr");
+    public void onDataReceivedErr(String strErr)
+    {
+        TAG="onDataReceivedErr";
+        Log.d(MODULE,TAG);
         AppUtils.showDialog(mActivity,strErr);
     }
-    private void gotoFragmentInspection2() {
-        Fragment fragment = new Fragment_Inspection2();
-        Bundle data = new Bundle();
-        data.putString(AppUtils.ARGS_MODEL,mModelName);
-        fragment.setArguments(data);
-        FragmentTransaction fragmentTransaction = mManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION2);
-        fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
-        fragmentTransaction.commit();
-    }
 
+    private void gotoFragmentInspection2()
+    {
+        TAG="gotoFragmentInspection2";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            Fragment fragment = new Fragment_Inspection2();
+            Bundle data = new Bundle();
+            data.putString(AppUtils.ARGS_MODEL,mModelName);
+            fragment.setArguments(data);
+            FragmentTransaction fragmentTransaction = mManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION2);
+            fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
+            fragmentTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
 
     /**
      *
      * Vikram's code
      */
 
-    public void ShowSelectPhotoOption1() {
+    public void ShowSelectPhotoOption1()
+    {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
                 .setItems(R.array.array_select_photo, new DialogInterface.OnClickListener() {
@@ -511,12 +633,13 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
 
     }
 
-
-    public void gotoFragmentImagePicker() {
+    public void gotoFragmentImagePicker()
+    {
         TAG = "gotoFragmentImagePicker";
         Log.d(MODULE, TAG);
 
-        try {
+        try
+        {
             mManager = mActivity.getSupportFragmentManager();
             Bundle Args = new Bundle();
             Args.putString("B_ACTION", Action.ACTION_PICK);
@@ -528,7 +651,9 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             ObjTransaction.add(android.R.id.content, fragment, AppUtils.SHARED_DIALOG_PICKER + "");
             ObjTransaction.addToBackStack(null);
             ObjTransaction.commit();
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
     }
@@ -579,15 +704,15 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onMultipleImagePicked(String[] Str_Path) {
+    public void onMultipleImagePicked(String[] Str_Path)
+    {
         TAG = "onMultipleImagePicked";
         Log.d(MODULE, TAG);
 
     }
 
-
-
-    private void dispatchTakePictureIntent1() {
+    private void dispatchTakePictureIntent1()
+    {
         TAG = "dispatchTakePictureIntent";
         Log.d(MODULE, TAG);
 
@@ -599,52 +724,96 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
         TAG = "onActivityResult";
         Log.d(MODULE, TAG + " requestCode ::: " + requestCode);
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 101 && resultCode == mActivity.RESULT_OK) {
-            //beginCrop(mImageCaptureUri);
-            String Str_Path = "file://" + Environment.getExternalStorageDirectory() + "/tmp.png";
-            clearImageCache(Str_Path);
-        } else if (requestCode == 10) {
+        if (requestCode == 101 && resultCode == mActivity.RESULT_OK)
+        {
+            beginCrop(mImageCaptureUri);
+        }
+        else if (requestCode == 10)
+        {
             handleCrop(resultCode, data);
         }
 
     }
 
-    private void beginCrop(Uri source) {
+    private void beginCrop(Uri source)
+    {
+        TAG = "beginCrop";
+        Log.d(MODULE, TAG);
+
         String Str_ImagePath = AppUtils.getProfilePicturePath(mActivity) + "/tmp.png";
         Uri destination = Uri.fromFile(new File(Str_ImagePath));
         Crop.of(source, destination).withMaxSize(320, 320).start(mActivity, this, 10);
     }
 
-    private void handleCrop(int resultCode, Intent result) {
-        if (resultCode == getActivity().RESULT_OK) {
-            try {
+    private void handleCrop(int resultCode, Intent result)
+    {
+        TAG = "handleCrop";
+        Log.d(MODULE, TAG);
+
+        if (resultCode == getActivity().RESULT_OK)
+        {
+            try
+            {
 
                 String Str_Path = "file://" + AppUtils.getProfilePicturePath(mActivity) + "/tmp.png";
                 clearImageCache(Str_Path);
+                imageLoader.displayImage(Str_Path, iv_captured_image, AppUtils.getOptions(), new ImageLoadingListener()
+                {
+                    @Override
+                    public void onLoadingStarted(String imageUri, View view)
+                    {
+                        Log.d(MODULE, TAG + " onLoadingStarted");
+                    }
 
-            } catch (Exception e) {
+                    @Override
+                    public void onLoadingFailed(String imageUri, View view, FailReason failReason)
+                    {
+                        Log.d(MODULE, TAG + " onLoadingFailed");
+                    }
+
+                    @Override
+                    public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
+                    {
+                        Log.d(MODULE, TAG + " onLoadingComplete");
+                        if(view.getVisibility()==View.GONE)view.setVisibility(View.VISIBLE);
+                        mImageData = AppUtils.encodeImage(loadedImage);
+                    }
+
+                    @Override
+                    public void onLoadingCancelled(String imageUri, View view)
+                    {
+                        Log.d(MODULE, TAG + " onLoadingCancelled");
+                    }
+                });
+            }
+            catch (Exception e)
+            {
                 e.printStackTrace();
             }
 
-        } else if (resultCode == Crop.RESULT_ERROR) {
-            Log.d(TAG, MODULE + ":::" + Crop.getError(result).getMessage());
+        }
+        else if (resultCode == Crop.RESULT_ERROR)
+        {
+            Log.d(MODULE, TAG + ":::" + Crop.getError(result).getMessage());
         }
     }
 
-    public void clearImageCache(String imageUri) {
+    public void clearImageCache(String imageUri)
+    {
         List<String> listImages = MemoryCacheUtils.findCacheKeysForImageUri(imageUri, imageLoader.getMemoryCache());
-        if (listImages != null) {
-            if (listImages.size() > 0) {
+        if (listImages != null)
+        {
+            if (listImages.size() > 0)
+            {
                 MemoryCacheUtils.removeFromCache(imageUri, imageLoader.getMemoryCache());
                 DiskCacheUtils.removeFromCache(imageUri, imageLoader.getDiskCache());
             }
         }
     }
-
-
 
 }

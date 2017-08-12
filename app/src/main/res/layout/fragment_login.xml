@@ -16,7 +16,8 @@
             <com.toroapp.toro.components.CustomTextInputLayout
                 android:id="@+id/til_username"
                 style="@style/text_input_layout_common">
-                <android.support.design.widget.TextInputEditText
+
+                <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/tie_username"
                     style="@style/text_input_edittext_common"
                     android:hint="@string/msg_enter_username"/>
@@ -24,27 +25,29 @@
             <com.toroapp.toro.components.CustomTextInputLayout
                 android:id="@+id/til_password"
                 style="@style/text_input_layout_common">
-                <android.support.design.widget.TextInputEditText
+
+                <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/tie_password"
                     style="@style/text_input_edittext_common"
+                    android:hint="@string/msg_enter_password"
                     android:imeOptions="actionDone"
-                    android:inputType="textPassword"
-                    android:hint="@string/msg_enter_password"/>
+                    android:inputType="textPassword" />
             </com.toroapp.toro.components.CustomTextInputLayout>
             <Button
                 android:id="@+id/btnLogin"
-                android:text="@string/lbl_login"
+                style="@style/btn_common"
                 android:layout_marginLeft="@dimen/_35sdp"
                 android:layout_marginRight="@dimen/_35sdp"
-                android:layout_marginTop="@dimen/_25sdp"
-                style="@style/btn_common" />
+                android:text="@string/lbl_login" />
+
             <TextView
                 android:id="@+id/tv_forgot_password"
-                style="@style/textview_label"
+                style="@style/match_wrap_style"
+                android:layout_marginTop="@dimen/_30sdp"
                 android:text="@string/msg_forget_password"
-                android:textSize="@dimen/_15sdp"
-                android:textAlignment="textEnd"
-                android:textColor="@color/colorPrimary"/>
+                android:gravity="center"
+                android:textSize="@dimen/_16sdp"
+                android:textColor="@color/color_white" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

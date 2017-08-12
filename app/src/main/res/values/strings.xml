@@ -43,6 +43,7 @@
     <string name="lbl_loading">Loading...</string>
     <string name="msg_receive_inspection_empty">Inspection data empty</string>
     <string name="lbl_select_model">Select model</string>
+    <string name="lbl_search_model">Search model</string>
     <string name="lbl_vehicle_id">Enter Vehicle Id</string>
     <string name="lbl_enter_model_name">Enter Model Name</string>
     <string name="lbl_retry">Retry</string>

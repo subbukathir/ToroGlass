@@ -29,6 +29,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
+import com.toroapp.toro.activities.MainActivity;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
@@ -41,7 +42,8 @@ import java.util.Arrays;
 
 public class Fragment_Manual extends Fragment implements View.OnClickListener
 {
-    private static final String TAG =Fragment_Manual.class.getSimpleName();
+    private static final String MODULE = MainActivity.class.getSimpleName();
+    private static String TAG = "";
 
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -60,11 +62,15 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     private Toolbar mToolbar;
     private Snackbar snackbar;
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG,"onCreate");
-
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        try{
+
+        TAG="onCreate";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             mActivity = (AppCompatActivity) getActivity();
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
             mEditor = mPreferences.edit();
@@ -85,8 +91,11 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     }
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.e(TAG,"onCreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        TAG="onCreateView";
+        Log.d(MODULE,TAG);
+
         View rootView=null;
         try {
             rootView = (View) inflater.inflate(R.layout.fragment_manual,container,false);
@@ -98,9 +107,14 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
 
         return rootView;
     }
-    private void initUI(View rootView){
-        Log.e(TAG,"initUI");
-        try {
+
+    private void initUI(View rootView)
+    {
+        TAG="initUI";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             autoCompleteTextView = (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.autoCompleteText);
 
@@ -111,18 +125,21 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     {
 
         mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
-        mToolbar.setTitle(getResources().getString(R.string.lbl_inspection));
+        mToolbar.setTitle(getResources().getString(R.string.app_name));
         mActivity.setSupportActionBar(mToolbar);
         mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
     private void setProperties()
     {
-        Log.e(TAG,"setProperties");
+        TAG="setProperties";
+        Log.d(MODULE,TAG);
+
         autoCompleteTextView.setTypeface(font.getHelveticaRegular());
 
         ArrayAdapter mAdapter = new ArrayAdapter(mActivity,android.R.layout.simple_spinner_dropdown_item,listModel);
         autoCompleteTextView.setAdapter(mAdapter);
         autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setTypeface(font.getRobotoRegular());
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

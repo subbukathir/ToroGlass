@@ -12,7 +12,7 @@
                 android:width="1dp"
                 android:color="@color/colorPrimary"/>
             <!-- The radius makes the corners rounded -->
-            <corners android:radius="5dp"></corners>
+            <corners android:radius="2dp"></corners>
         </shape>
     </item>
 
@@ -29,7 +29,7 @@
                 android:width="1dp"
                 android:color="@color/colorPrimary" />
 
-            <corners android:radius="5dp"></corners>
+            <corners android:radius="2dp"></corners>
         </shape>
     </item>
 </selector>
