@@ -83,8 +83,10 @@
                 android:text="@string/lbl_attach_or_capture"/>
             <ImageView
                 android:id="@+id/iv_captured_image"
-                android:layout_width="@dimen/_100sdp"
-                android:layout_height="@dimen/_100sdp" />
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="@dimen/space_layout_margin"
+                android:src="@drawable/no_image_available"/>
             <Button
                 android:id="@+id/btn_next"
                 style="@style/btn_common"

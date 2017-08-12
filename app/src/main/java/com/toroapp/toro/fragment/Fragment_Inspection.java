@@ -45,10 +45,17 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.assist.FailReason;
+import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
+import com.nostra13.universalimageloader.utils.DiskCacheUtils;
+import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
+import com.toroapp.toro.classes.Action;
+import com.toroapp.toro.listeners.ImagePickListener;
 import com.toroapp.toro.listeners.InspectionDataListener;
 import com.toroapp.toro.localstorage.database.AppDatabase;
 import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
@@ -82,8 +89,9 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class  Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener{
-    private static final String TAG = Fragment_Inspection.class.getSimpleName();
+        InspectionDataListener,ImagePickListener{
+    private static final String MODULE = Fragment_Inspection.class.getSimpleName();
+    private static String TAG = "";
 
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -120,6 +128,8 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     //local db
     private InspectionDbInitializer mInspectionDb;
 
+    private ImageLoader imageLoader;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.e(TAG, "onCreate");
@@ -135,6 +145,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             mManager = mActivity.getSupportFragmentManager();
             font = MyApplication.getInstance().getFontInstance();
             mArgs = getArguments();
+            imageLoader = ImageLoader.getInstance();
             mInspectionDb = new InspectionDbInitializer(this);
             //mInspectionDb.getInspectionData(AppDatabase.getAppDatabase(mActivity),AppUtils.MODE_DELETE_ALL);
             permissions.add(CAMERA);
@@ -229,7 +240,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.btn_capture_photo:
-                ShowSelectPhotoOption();
+                ShowSelectPhotoOption1();
                 break;
             case R.id.btn_next:
                 submitData();
@@ -334,7 +345,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             return;
         }
     }
-    @Override
+    /*@Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == mActivity.RESULT_OK) {
@@ -342,14 +353,14 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             // Show the thumbnail on ImageView
             setImageToImageView(mCurrentPhotoPath);
 
-            /*// ScanFile so it will be appeared on Gallery
+            /*ScanFile so it will be appeared on Gallery
             MediaScannerConnection.scanFile(mActivity,
                     new String[]{imageUri.getPath()}, null,
                     new MediaScannerConnection.OnScanCompletedListener() {
                         public void onScanCompleted(String path, Uri uri) {
                         }
                     });*/
-        }
+        /* }
         if(requestCode==REQUEST_PICK_PHOTO){
             mRequest = REQUEST_PICK_PHOTO;
             Uri selectedImage = data.getData();
@@ -360,11 +371,11 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             String picturePath = c.getString(columnIndex);
             c.close();
             setImageToImageView(picturePath);
-            /*Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
+            Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
             Log.w("path of image from gallery......******************.........", picturePath+"");
-            iv_captured_image.setImageBitmap(thumbnail);*/
+            iv_captured_image.setImageBitmap(thumbnail);
         }
-    }
+    }*/
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -446,7 +457,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                         BuildConfig.APPLICATION_ID + ".provider",
                         createImageFile());
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
+                mActivity.startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }
     }
@@ -471,4 +482,169 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
         fragmentTransaction.commit();
     }
+
+
+    /**
+     *
+     * Vikram's code
+     */
+
+    public void ShowSelectPhotoOption1() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle(R.string.lbl_select_photo)
+                .setItems(R.array.array_select_photo, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0:
+                                dispatchTakePictureIntent1();
+                                break;
+                            case 1:
+                                gotoFragmentImagePicker();
+                                break;
+                            default:
+                                break;
+                        }
+                        dialog.dismiss();
+                    }
+                });
+        builder.show();
+
+    }
+
+
+    public void gotoFragmentImagePicker() {
+        TAG = "gotoFragmentImagePicker";
+        Log.d(MODULE, TAG);
+
+        try {
+            mManager = mActivity.getSupportFragmentManager();
+            Bundle Args = new Bundle();
+            Args.putString("B_ACTION", Action.ACTION_PICK);
+            Fragment_ImagePicker fragment = new Fragment_ImagePicker();
+            fragment.setArguments(Args);
+            //fragment.setTargetFragment(fragment, AppUtils.SHARED_INT_DIALOG_PICKER);
+            fragment.SetImagePickListener(this);
+            FragmentTransaction ObjTransaction = mManager.beginTransaction();
+            ObjTransaction.add(android.R.id.content, fragment, AppUtils.SHARED_DIALOG_PICKER + "");
+            ObjTransaction.addToBackStack(null);
+            ObjTransaction.commit();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSingleImagePicked(String Str_Path)
+    {
+        TAG = "onSingleImagePicked";
+        Log.d(MODULE, TAG);
+        Log.d(MODULE, TAG + " Single Path : " + Str_Path);
+
+        try
+        {
+            Str_Path = "file://" + Str_Path;
+
+            imageLoader.displayImage(Str_Path, iv_captured_image, AppUtils.getOptions(), new ImageLoadingListener()
+            {
+                @Override
+                public void onLoadingStarted(String imageUri, View view)
+                {
+                    Log.d(MODULE, TAG + " onLoadingStarted");
+                }
+
+                @Override
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason)
+                {
+                    Log.d(MODULE, TAG + " onLoadingFailed");
+                }
+
+                @Override
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
+                {
+                    Log.d(MODULE, TAG + " onLoadingComplete");
+                    if(view.getVisibility()==View.GONE)view.setVisibility(View.VISIBLE);
+                    mImageData = AppUtils.encodeImage(loadedImage);
+                }
+
+                @Override
+                public void onLoadingCancelled(String imageUri, View view)
+                {
+                    Log.d(MODULE, TAG + " onLoadingCancelled");
+                }
+            });
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onMultipleImagePicked(String[] Str_Path) {
+        TAG = "onMultipleImagePicked";
+        Log.d(MODULE, TAG);
+
+    }
+
+
+
+    private void dispatchTakePictureIntent1() {
+        TAG = "dispatchTakePictureIntent";
+        Log.d(MODULE, TAG);
+
+        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp.jpg"));
+        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+        captureIntent.putExtra("return-data", true);
+        startActivityForResult(captureIntent, 101);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        TAG = "onActivityResult";
+        Log.d(MODULE, TAG + " requestCode ::: " + requestCode);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 101 && resultCode == mActivity.RESULT_OK) {
+            //beginCrop(mImageCaptureUri);
+            String Str_Path = "file://" + Environment.getExternalStorageDirectory() + "/tmp.png";
+            clearImageCache(Str_Path);
+        } else if (requestCode == 10) {
+            handleCrop(resultCode, data);
+        }
+
+    }
+
+    private void beginCrop(Uri source) {
+        String Str_ImagePath = AppUtils.getProfilePicturePath(mActivity) + "/tmp.png";
+        Uri destination = Uri.fromFile(new File(Str_ImagePath));
+        Crop.of(source, destination).withMaxSize(320, 320).start(mActivity, this, 10);
+    }
+
+    private void handleCrop(int resultCode, Intent result) {
+        if (resultCode == getActivity().RESULT_OK) {
+            try {
+
+                String Str_Path = "file://" + AppUtils.getProfilePicturePath(mActivity) + "/tmp.png";
+                clearImageCache(Str_Path);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        } else if (resultCode == Crop.RESULT_ERROR) {
+            Log.d(TAG, MODULE + ":::" + Crop.getError(result).getMessage());
+        }
+    }
+
+    public void clearImageCache(String imageUri) {
+        List<String> listImages = MemoryCacheUtils.findCacheKeysForImageUri(imageUri, imageLoader.getMemoryCache());
+        if (listImages != null) {
+            if (listImages.size() > 0) {
+                MemoryCacheUtils.removeFromCache(imageUri, imageLoader.getMemoryCache());
+                DiskCacheUtils.removeFromCache(imageUri, imageLoader.getDiskCache());
+            }
+        }
+    }
+
+
+
 }

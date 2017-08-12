@@ -19,6 +19,9 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.afollestad.materialdialogs.StackingBehavior;
 import com.google.gson.Gson;
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.assist.ImageScaleType;
+import com.nostra13.universalimageloader.core.display.RoundedBitmapDisplayer;
 import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.DatePickerDialogListener;
 
@@ -106,9 +109,13 @@ public class AppUtils extends Dialog {
     public static final int CAMERA_FACING_FRONT = Camera.CameraInfo.CAMERA_FACING_FRONT;
 
     public static File root = android.os.Environment.getExternalStorageDirectory();
-    public static String RootPath = "/Android/data/com.daemon.emco_android";
+    public static String RootPath = "/Android/data/com.toroapp.toro";
     // SD card image directory
     public static final String PHOTO_ALBUM = AppUtils.root.getAbsolutePath() + AppUtils.RootPath;
+
+
+     public static int SHARED_INT_DIALOG_PICKER = 1400;
+    public static String SHARED_DIALOG_PICKER = "Shared_Dialog_Picker";
 
 
     /**
@@ -338,5 +345,19 @@ public class AppUtils extends Dialog {
         }, newCalendar.get(Calendar.YEAR), newCalendar.get(Calendar.MONTH), newCalendar.get(Calendar.DAY_OF_MONTH)).show();
         return strDate;
     }
+
+    public static DisplayImageOptions getOptions() {
+        DisplayImageOptions options = new DisplayImageOptions.Builder()
+                .displayer(new RoundedBitmapDisplayer(0)).cacheInMemory(true)
+                .cacheOnDisk(true).imageScaleType(ImageScaleType.EXACTLY_STRETCHED)
+                .bitmapConfig(Bitmap.Config.RGB_565)
+                .showImageOnLoading(R.drawable.no_image_available)
+                .showImageForEmptyUri(R.drawable.no_image_available)
+                .showImageOnFail(R.drawable.no_image_available)
+                .resetViewBeforeLoading(true).considerExifParams(true).build();
+        return options;
+
+    }
+
 
 }
