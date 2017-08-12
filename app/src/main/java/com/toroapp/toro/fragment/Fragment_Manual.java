@@ -29,6 +29,7 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
+import com.toroapp.toro.activities.MainActivity;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
@@ -41,7 +42,8 @@ import java.util.Arrays;
 
 public class Fragment_Manual extends Fragment implements View.OnClickListener
 {
-    private static final String TAG =Fragment_Manual.class.getSimpleName();
+    private static final String MODULE = MainActivity.class.getSimpleName();
+    private static String TAG = "";
 
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -59,12 +61,17 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
     private Snackbar snackbar;
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG,"onCreate");
 
+    @Override
+    public void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
-        try{
+
+        TAG="onCreate";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             mActivity = (AppCompatActivity) getActivity();
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
             mEditor = mPreferences.edit();
@@ -83,46 +90,57 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
         }
 
     }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
-        Log.e(TAG,"onCreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    {
+        TAG="onCreateView";
+        Log.d(MODULE,TAG);
+
         View rootView=null;
-        try {
+
+        try
+        {
             rootView = (View) inflater.inflate(R.layout.fragment_manual,container,false);
             initUI(rootView);
             setProperties();
-        }catch (Exception ex)  {
+        }
+        catch (Exception ex)
+        {
             ex.printStackTrace();
         }
 
         return rootView;
     }
-    private void initUI(View rootView){
-        Log.e(TAG,"initUI");
-        try {
+
+    private void initUI(View rootView)
+    {
+        TAG="initUI";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             autoCompleteTextView = (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.autoCompleteText);
-
-            setupActionBar();
-        }catch (Exception ex) {  ex.printStackTrace();  }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
     }
-    public void setupActionBar()
-    {
 
-        mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
-        mToolbar.setTitle(getResources().getString(R.string.app_name));
-        mActivity.setSupportActionBar(mToolbar);
-        mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-    }
     private void setProperties()
     {
-        Log.e(TAG,"setProperties");
+        TAG="setProperties";
+        Log.d(MODULE,TAG);
+
         autoCompleteTextView.setTypeface(font.getHelveticaRegular());
 
         ArrayAdapter mAdapter = new ArrayAdapter(mActivity,android.R.layout.simple_spinner_dropdown_item,listModel);
         autoCompleteTextView.setAdapter(mAdapter);
         autoCompleteTextView.setThreshold(1);
+        autoCompleteTextView.setTypeface(font.getRobotoRegular());
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -140,10 +158,10 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
                 tv_model_name = (TextView) view1.findViewById(R.id.tv_selected_model);
                 btnBack = (Button) view1.findViewById(R.id.btnBack);
                 btnOkay = (Button) view1.findViewById(R.id.btnOkay);
-                tv_lbl_selected_model.setTypeface(font.getHelveticaRegular());
-                tv_model_name.setTypeface(font.getHelveticaRegular());
-                btnBack.setTypeface(font.getHelveticaRegular());
-                btnBack.setTypeface(font.getHelveticaRegular());
+                tv_lbl_selected_model.setTypeface(font.getRobotoRegular());
+                tv_model_name.setTypeface(font.getRobotoRegular());
+                btnBack.setTypeface(font.getRobotoRegular());
+                btnBack.setTypeface(font.getRobotoRegular());
                 tv_model_name.setText(mModelName);
                 btnBack.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -158,29 +176,41 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
                         dialog.dismiss();
                     }
                 });
-                Log.e(TAG,"onItemClick "+ mModelName);
+                Log.d(MODULE,TAG + "onItemClick "+ mModelName);
                 dialog.show();
             }
         });
-        Log.e(TAG,"text " + autoCompleteTextView.getText().toString());
     }
 
-    private void gotoFragmentInspection() {
-        Fragment fragment = new Fragment_Inspection();
-        Bundle data = new Bundle();
-        data.putString(AppUtils.ARGS_MODEL,mModelName);
-        fragment.setArguments(data);
-        FragmentTransaction fragmentTransaction = mManager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION);
-        fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION);
-        fragmentTransaction.commit();
+    private void gotoFragmentInspection()
+    {
+        TAG="setProperties";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            Fragment fragment = new Fragment_Inspection();
+            Bundle data = new Bundle();
+            data.putString(AppUtils.ARGS_MODEL,mModelName);
+            fragment.setArguments(data);
+            FragmentTransaction fragmentTransaction = mManager.beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION);
+            fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION);
+            fragmentTransaction.commit();
+        }
+        catch (Exception ex)
+        {
+
+        }
+
     }
 
     @Override
-    public void onClick(View view) {
-        switch (view.getId()){
-
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
 
         }
     }

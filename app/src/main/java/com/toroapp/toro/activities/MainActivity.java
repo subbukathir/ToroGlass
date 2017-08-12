@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigationItem;
+import com.google.android.gms.vision.text.Text;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.fragment.Fragment_Barcode;
@@ -34,11 +35,11 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
-    private static final String TAG = MainActivity.class.getSimpleName();
+public class MainActivity extends AppCompatActivity
+{
+    private static final String MODULE = MainActivity.class.getSimpleName();
+    private static String TAG = "";
 
-    private Handler mHandler;
-    private String jsonResult;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
@@ -51,69 +52,41 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Drawable drawableLogo;
     private static int tabIndex=0;
-    private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     private AHBottomNavigation bottomNavigation;
     private AHBottomNavigationItem ahbChooseByModel,ahbChooseByBarcode;
+    private TextView text_view_title;
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
     private static String mNetworkInfo =null;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState)
+    {
         super.onCreate(savedInstanceState);
+
+        TAG="onCreate";
+        Log.d(MODULE,TAG);
+
         setContentView(R.layout.activity_main);
+
         mActivity = this;
         mPreferences = this.getSharedPreferences(AppUtils.SHARED_PREFS, MODE_PRIVATE);
         mEditor = mPreferences.edit();
-        mHandler = new Handler();
-        //this.registerReceiver(receiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-
         mManager = getSupportFragmentManager();
         frame_container = (FrameLayout) findViewById(R.id.frame_container);
         drawableLogo = getResources().getDrawable(R.drawable.ic_logo);
         activityTitles = getResources().getStringArray(R.array.array_title_bottom);
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
+
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        setupActionbar();
+        loadFragment();
         setBottomNavigation();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        setupActionbar();
-        loadFragment();
-        this.registerReceiver(receiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        try {
-        Log.e(TAG,"onDestroy");
-            boolean registered = isReceiverRegistered(receiver);
-            if (receiver!=null) this.unregisterReceiver(receiver);
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        try {
-            Log.e(TAG,"onDestroy");
-            boolean registered = isReceiverRegistered(receiver);
-            if (registered) this.unregisterReceiver(receiver);
-        }catch (Exception ex){
-            ex.printStackTrace();
-        }
-    }
     public void setBottomNavigation()
     {
         Log.e(TAG,"setBottomNavigation");
@@ -173,84 +146,51 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    public void loadFragment(){
-        Log.e(TAG,"loadFragment");
-        setupActionbar();
-        Runnable mPendingRunnable = new Runnable()
+
+    public void loadFragment()
+    {
+        TAG="loadFragment";
+        Log.d(MODULE,TAG);
+
+        try
         {
-            @Override
-            public void run()
-            {
-                // update the main content by replacing fragments
-                for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
-                    mManager.popBackStack();
-                }
-                Fragment fragment = getFragment();
-                FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
-                fragmentTransaction.replace(R.id.frame_container, fragment);
-                fragmentTransaction.commit();
-            }
-        };
-
-        if (mPendingRunnable != null)
+            Fragment fragment = getFragment();
+            FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+            fragmentTransaction.replace(R.id.frame_container, fragment);
+            fragmentTransaction.commit();
+        }
+        catch (Exception ex)
         {
-            mHandler.post(mPendingRunnable);
-        }
-    }
-    public boolean isReceiverRegistered(BroadcastReceiver receiver) {
-        boolean registered = receivers.contains(receiver);
-        Log.i(getClass().getSimpleName(), "is receiver " + receiver + " registered? " + registered);
-        return registered;
-    }
-
-    private void setupActionbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("EMCO");
-        setSupportActionBar(toolbar);
-        TextView titleTextView = null;
-        try {
-            Field f = toolbar.getClass().getDeclaredField("mTitleTextView");
-            f.setAccessible(true);
-            titleTextView = (TextView) f.get(toolbar);
-            titleTextView.setTypeface(font.getHelveticaRegular());
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if (!ConnectivityStatus.isConnected(MainActivity.this)) {
-                Log.e(TAG, "not connected");
-                mEditor.putString(AppUtils.IS_NETWORK_AVAILABLE, AppUtils.NETWORK_NOT_AVAILABLE);
-                mEditor.commit();
-                mNetworkInfo = AppUtils.NETWORK_NOT_AVAILABLE;
-            } else {
-                Log.e(TAG, "connected");
-                mEditor.putString(AppUtils.IS_NETWORK_AVAILABLE, AppUtils.NETWORK_AVAILABLE);
-                mEditor.commit();
-                mNetworkInfo = AppUtils.NETWORK_AVAILABLE;
-            }
-        }
-    };
-
-    @Override
-    public void onBackPressed() {
-        try {
-            super.onBackPressed();
-            int index = this.getFragmentManager().getBackStackEntryCount();
-            Log.e(TAG, "onBackPressed count :::" + index);
-        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-    public void clearPreferences()    {
-        Log.d(TAG,"clearPreferences");
 
-        try  {
+    private void setupActionbar()
+    {
+        TAG="onStop";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            text_view_title = (TextView) findViewById(R.id.text_view_title);
+            text_view_title.setTypeface(font.getRobotoRegular());
+            text_view_title.setText(getString(R.string.app_name));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void clearPreferences()
+    {
+        TAG="onStop";
+        Log.d(MODULE,TAG);
+
+        try
+        {
             /*mEditor = mPreferences.edit();
             mEditor.putString(AppUtils.SHARED_LOGIN, "");
             mEditor.commit();*/
@@ -260,16 +200,25 @@ public class MainActivity extends AppCompatActivity {
             ex.printStackTrace();
         }
     }
+
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        TAG="onCreateOptionsMenu";
+        Log.d(MODULE,TAG);
+
         getMenuInflater().inflate(R.menu.menu_main, menu);
         menu.findItem(R.id.action_settings).setVisible(false);
         menu.findItem(R.id.action_logo).setVisible(true);
         menu.findItem(R.id.action_logo).setIcon(drawableLogo);
         return true;
     }
-    private Fragment getFragment(){
-        Log.e(TAG,"getFragment");
+
+    private Fragment getFragment()
+    {
+        TAG="getFragment";
+        Log.d(MODULE,TAG);
+
         switch (tabIndex)
         {
             case 0:
@@ -283,10 +232,5 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.e(TAG,"onActivityResult");
-    }
+
 }
