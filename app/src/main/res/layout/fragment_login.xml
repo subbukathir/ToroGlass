@@ -36,11 +36,13 @@
                 android:text="@string/lbl_login"
                 android:layout_marginLeft="@dimen/_35sdp"
                 android:layout_marginRight="@dimen/_35sdp"
+                android:layout_marginTop="@dimen/_25sdp"
                 style="@style/btn_common" />
             <TextView
                 android:id="@+id/tv_forgot_password"
                 style="@style/textview_label"
                 android:text="@string/msg_forget_password"
+                android:textSize="@dimen/_15sdp"
                 android:textAlignment="textEnd"
                 android:textColor="@color/colorPrimary"/>
         </LinearLayout>

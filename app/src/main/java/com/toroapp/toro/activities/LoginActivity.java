@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         this.registerReceiver(receiver,new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
-        setupActionbar();
+        //setupActionbar();
     }
 
     @Override
@@ -147,7 +147,7 @@ public class LoginActivity extends AppCompatActivity {
     public void loadFragment()
     {
         Log.d(TAG,"loadFragment");
-        setupActionbar();
+        //setupActionbar();
 
         Runnable mPendingRunnable = new Runnable()
         {

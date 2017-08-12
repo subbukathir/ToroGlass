@@ -111,7 +111,7 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     {
 
         mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
-        mToolbar.setTitle(getResources().getString(R.string.app_name));
+        mToolbar.setTitle(getResources().getString(R.string.lbl_inspection));
         mActivity.setSupportActionBar(mToolbar);
         mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }

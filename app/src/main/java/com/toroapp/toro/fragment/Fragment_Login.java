@@ -90,7 +90,7 @@ public class Fragment_Login extends Fragment implements View.OnClickListener{
 
         rootView = inflater.inflate(R.layout.fragment_login, container, false);
         initView();
-        setUpActionBar();
+        //setUpActionBar();
         setProperties();
         return rootView;
     }

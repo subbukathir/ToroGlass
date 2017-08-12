@@ -45,8 +45,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.soundcloud.android.crop.BuildConfig;
-import com.soundcloud.android.crop.Crop;
+import com.toroapp.toro.BuildConfig;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.InspectionDataListener;
@@ -102,8 +101,6 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     private Uri mImageCaptureUri;
     private String mStringJson = null;
 
-    Bitmap myBitmap;
-    Uri picUri;
     private String mUniqueKey=null, mModelName=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
     private String mCurrentPhotoPath;
     public static int mRequest = 0;
@@ -303,7 +300,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                             case 1:
                                 Log.e(TAG,"option b");
                                 Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, 2);
+                                startActivityForResult(intent, AppUtils.REQUEST_PICK_PHOTO);
                                 break;
                             default:
                                 break;
@@ -371,20 +368,15 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         //MainActivityPermissionsDispatcher.onRequestPermissionsResult(mActivity, requestCode, grantResults);
         switch (requestCode) {
-
             case ALL_PERMISSIONS_RESULT:
                 for (String perms : permissionsToRequest) {
                     if (hasPermission(perms)) {
-
                     } else {
-
                         permissionsRejected.add(perms);
                     }
                 }
 
                 if (permissionsRejected.size() > 0) {
-
-
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                         if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
                             showMessageOKCancel("These permissions are mandatory for the application. Please allow access.",
@@ -442,10 +434,10 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             if (photoFile != null) {
 
                 //Uri photoURI = Uri.fromFile(createImageFile());
-                Uri photoURI = FileProvider.getUriForFile(mActivity,
+                mImageCaptureUri = FileProvider.getUriForFile(mActivity,
                         BuildConfig.APPLICATION_ID + ".provider",
                         createImageFile());
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
                 startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO);
             }
         }

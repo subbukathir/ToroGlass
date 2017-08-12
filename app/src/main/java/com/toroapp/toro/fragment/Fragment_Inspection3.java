@@ -37,7 +37,6 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
-import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.InspectionDataListener;
@@ -352,59 +351,6 @@ public class Fragment_Inspection3 extends Fragment implements View.OnClickListen
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         startActivityForResult(intent, 101);
     }
-    private void beginCrop(Uri source)
-    {
-        //String Str_ImagePath ="file://" + AppUtils.getProfilePicturePath(mActivity) + "/" + mUser.getMobile_Number() + ".png";
-        String Str_ImagePath = AppUtils.getProfilePicturePath(mActivity) + "/" + "ques1" + ".png";
-        Uri destination = Uri.fromFile(new File(Str_ImagePath));
-        Crop.of(source, destination).withMaxSize(640,420).start(mActivity, this, 10);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        Log.d(TAG,"onActivityResult" + " requestCode ::: " + requestCode);
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode ==mActivity.RESULT_OK){
-
-        if (requestCode == 101 && resultCode==mActivity.RESULT_OK)
-        {
-            beginCrop(mImageCaptureUri);
-        }
-        else if (requestCode == 10)
-        {
-            handleCrop(resultCode, data);
-        }
-        else if(requestCode==2){
-            Uri selectedImage = data.getData();
-            String[] filePath = { MediaStore.Images.Media.DATA };
-            Cursor c = mActivity.getContentResolver().query(selectedImage,filePath, null, null, null);
-            c.moveToFirst();
-            int columnIndex = c.getColumnIndex(filePath[0]);
-            String picturePath = c.getString(columnIndex);
-            c.close();
-            Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
-            Log.w("path of image from gallery......******************.........", picturePath+"");
-            iv_captured_image.setImageBitmap(thumbnail);
-        }
-        }
-    }
-    private void handleCrop(int resultCode, Intent result)    {
-        if (resultCode == getActivity().RESULT_OK)        {
-            try            {
-                iv_captured_image.setImageDrawable(null);
-
-            }
-            catch (Exception e)            {
-                e.printStackTrace();
-            }
-
-        }
-        else if (resultCode == Crop.RESULT_ERROR)        {
-            Log.d(TAG,"result error " + ":::" + Crop.getError(result).getMessage());
-        }
-    }
-
-
     @Override
     public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList) {
     Log.e(TAG,"onDataReceivedSuccess");
