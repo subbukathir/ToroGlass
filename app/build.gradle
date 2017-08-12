@@ -54,6 +54,8 @@ dependencies {
     //bottom navigation
     compile 'com.aurelhubert:ahbottomnavigation:2.0.2'
     compile 'com.commonsware.cwac:provider:0.4.3'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.5'
+    compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.github.hotchemi:permissionsdispatcher:' + rootProject.permissionDispatcher;
     apt 'com.github.hotchemi:permissionsdispatcher-processor:' + rootProject.permissionDispatcher;
 }

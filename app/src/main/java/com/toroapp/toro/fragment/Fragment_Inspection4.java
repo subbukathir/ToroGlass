@@ -101,7 +101,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     private FragmentManager mManager;
     private Handler mHandler;
 
-    private TextView tv_model_name, tv_lbl_basic_check, tv_lbl_quesno, tv_lbl_question;
+    private TextView tv_model_name,tv_lbl_title_vehicle_id, tv_lbl_basic_check, tv_lbl_quesno, tv_lbl_question;
     private RadioGroup radioGroup;
     private RadioButton rdb_yes, rdb_no;
     private EditText et_remarks;
@@ -112,7 +112,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
 
     Bitmap myBitmap;
     Uri picUri;
-    private String mUniqueKey=null, mModelName=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
+    private String mUniqueKey=null, mModelName=null, mVehicleId=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
     private String mCurrentPhotoPath;
     public static int mRequest = 0;
     private ArrayList<String> permissionsToRequest;
@@ -185,6 +185,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         try {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             tv_model_name = (TextView) rootView.findViewById(R.id.tv_lbl_title_model_name);
+            tv_lbl_title_vehicle_id = (TextView) rootView.findViewById(R.id.tv_lbl_title_vehicle_id);
             tv_lbl_basic_check = (TextView) rootView.findViewById(R.id.tv_lbl_basic_check);
             tv_lbl_quesno = (TextView) rootView.findViewById(R.id.tv_lbl_quesno);
             tv_lbl_question = (TextView) rootView.findViewById(R.id.tv_lbl_question);
@@ -213,6 +214,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         Log.e(TAG, "setProperties");
         iv_captured_image.setVisibility(View.GONE);
         tv_model_name.setTypeface(font.getHelveticaRegular());
+        tv_lbl_title_vehicle_id.setTypeface(font.getHelveticaRegular());
         tv_lbl_basic_check.setTypeface(font.getHelveticaRegular());
         tv_lbl_quesno.setTypeface(font.getHelveticaRegular());
         tv_lbl_question.setTypeface(font.getHelveticaRegular());
@@ -227,11 +229,13 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         if(mArgs!=null){
             if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
                 mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
+                mVehicleId = mArgs.getString(AppUtils.ARGS_VEHICLEID);
                 mInspectionName = getString(R.string.lbl_ques_1);
                 mInspectionName = mInspectionName.substring(3);
-                mUniqueKey = mInspectionName + mModelName;
-                Log.e(TAG,"Substring ins name :"+ mInspectionName);
+                mUniqueKey = mInspectionName + mModelName+mVehicleId;
+                Log.e(TAG,"Substring ins name :"+ mInspectionName + ": mVehicleId :"+mVehicleId);
                 tv_model_name.setText(mModelName);
+                tv_lbl_title_vehicle_id.setText(mVehicleId);
             }
         }
     }
@@ -253,12 +257,12 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         if(mModelName!=null){
             if(mInspectionName!=null){
                 if(mTested!=null){
-                    InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData);
+                    InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData,mVehicleId);
                     mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
                     gotoFragmentInspection2();
-                }else AppUtils.showDialog(mActivity,"Kindly choose yes or no");
-            }else AppUtils.showDialog(mActivity,"Inspection name is empty");
-        }else AppUtils.showDialog(mActivity,"Model name is empty");
+                }else AppUtils.showDialog(mActivity,getString(R.string.msg_choose_yes_or_no));
+            }else AppUtils.showDialog(mActivity,getString(R.string.msg_inspection_name_empty));
+        }else AppUtils.showDialog(mActivity,getString(R.string.msg_model_name_empty));
     }
 
     @Override
@@ -301,7 +305,6 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                 .show();
     }
 
-    /*vikram code*/
     private void ShowSelectPhotoOption()    {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
@@ -343,37 +346,6 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             else if (mRequest ==REQUEST_TAKE_PHOTO) AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
         } catch (FileNotFoundException e) {
             return;
-        }
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == mActivity.RESULT_OK) {
-            mRequest = REQUEST_TAKE_PHOTO;
-            // Show the thumbnail on ImageView
-            setImageToImageView(mCurrentPhotoPath);
-
-            /*// ScanFile so it will be appeared on Gallery
-            MediaScannerConnection.scanFile(mActivity,
-                    new String[]{imageUri.getPath()}, null,
-                    new MediaScannerConnection.OnScanCompletedListener() {
-                        public void onScanCompleted(String path, Uri uri) {
-                        }
-                    });*/
-        }
-        if(requestCode==REQUEST_PICK_PHOTO){
-            mRequest = REQUEST_PICK_PHOTO;
-            Uri selectedImage = data.getData();
-            String[] filePath = { MediaStore.Images.Media.DATA };
-            Cursor c = mActivity.getContentResolver().query(selectedImage,filePath, null, null, null);
-            c.moveToFirst();
-            int columnIndex = c.getColumnIndex(filePath[0]);
-            String picturePath = c.getString(columnIndex);
-            c.close();
-            setImageToImageView(picturePath);
-            /*Bitmap thumbnail = (BitmapFactory.decodeFile(picturePath));
-            Log.w("path of image from gallery......******************.........", picturePath+"");
-            iv_captured_image.setImageBitmap(thumbnail);*/
         }
     }
     @TargetApi(Build.VERSION_CODES.M)
@@ -482,13 +454,10 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
         fragmentTransaction.commit();
     }
-
-
     /**
      *
      * Vikram's code
      */
-
     public void ShowSelectPhotoOption1() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
@@ -496,7 +465,8 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                dispatchTakePictureIntent1();
+                                //dispatchTakePictureIntent1();
+                                gotoFragmentImagePicker();
                                 break;
                             case 1:
                                 gotoFragmentImagePicker();
@@ -510,8 +480,6 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         builder.show();
 
     }
-
-
     public void gotoFragmentImagePicker() {
         TAG = "gotoFragmentImagePicker";
         Log.d(MODULE, TAG);
@@ -532,7 +500,6 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             ex.printStackTrace();
         }
     }
-
     @Override
     public void onSingleImagePicked(String Str_Path)
     {
@@ -567,8 +534,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                 }
 
                 @Override
-                public void onLoadingCancelled(String imageUri, View view)
-                {
+                public void onLoadingCancelled(String imageUri, View view)                {
                     Log.d(MODULE, TAG + " onLoadingCancelled");
                 }
             });
@@ -577,25 +543,28 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             ex.printStackTrace();
         }
     }
-
     @Override
     public void onMultipleImagePicked(String[] Str_Path) {
         TAG = "onMultipleImagePicked";
         Log.d(MODULE, TAG);
 
     }
-
-
-
     private void dispatchTakePictureIntent1() {
         TAG = "dispatchTakePictureIntent";
         Log.d(MODULE, TAG);
-
-        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp.jpg"));
-        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-        captureIntent.putExtra("return-data", true);
-        startActivityForResult(captureIntent, 101);
+        try {
+            Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        /*mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp.jpg"));*/
+            mImageCaptureUri = FileProvider.getUriForFile(mActivity,
+                    com.toroapp.toro.BuildConfig.APPLICATION_ID + ".provider",
+                    createImageFile());
+            //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+            captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+            captureIntent.putExtra("return-data", true);
+            startActivityForResult(captureIntent, 101);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override

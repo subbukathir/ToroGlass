@@ -37,4 +37,8 @@
     <color name="color_white_eight_percentage_transparent">#80ffffff</color>
     <color name="color_white_ninety_percentage_transparent">#90ffffff</color>
     <color name="calendarBackground">#efeef0</color>
+
+    <color name="color_black">#111111</color>
+    <color name="color_white">#ffffff</color>
+
 </resources>
