@@ -162,8 +162,6 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         switch (view.getId()){
             case R.id.btnLogin:
                 submitFormData();
-                /*iterator = tutorials.entrySet().iterator();
-                showTutorial(iterator);*/
                 break;
             case R.id.tv_forgot_password:
                 fragmentTransition(new Fragment_ForgotPassword());
@@ -171,14 +169,15 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         }
     }
     private void setProperties(){
-        tie_username.setTypeface(font.getHelveticaRegular());
-        tie_password.setTypeface(font.getHelveticaRegular());
-        btnLogin.setTypeface(font.getHelveticaRegular());
+        tie_username.setTypeface(font.getRobotoRegular());
+        tie_password.setTypeface(font.getRobotoRegular());
+        btnLogin.setTypeface(font.getRobotoRegular());
 
         tie_username.addTextChangedListener(new MyTextWatcher(tie_username));
         tie_password.addTextChangedListener(new MyTextWatcher(tie_password));
         btnLogin.setOnClickListener(this);
         tv_forgot_password.setOnClickListener(this);
+
         tutors = new TutorsBuilder()
                 .textColorRes(android.R.color.white)
                 .shadowColorRes(R.color.shadow)
@@ -238,7 +237,7 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         else */
         mUsername = tie_username.getText().toString().trim();
         if(mUsername.isEmpty()){
-            til_uname.setError(getString(R.string.msg_email_empty));
+            til_uname.setError(getString(R.string.msg_enter_your_username));
             return false;
         }
         else {

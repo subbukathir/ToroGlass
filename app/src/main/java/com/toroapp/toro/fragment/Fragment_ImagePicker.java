@@ -241,7 +241,7 @@ public class Fragment_ImagePicker extends DialogFragment {
         TAG = "setManager";
         Log.d(MODULE, TAG);
         try {
-            mLayoutManager = new GridLayoutManager(mActivity, 2);
+            mLayoutManager = new GridLayoutManager(mActivity, 4);
             recyclerView.setLayoutManager(mLayoutManager);
         } catch (Exception ex) {
             ex.printStackTrace();

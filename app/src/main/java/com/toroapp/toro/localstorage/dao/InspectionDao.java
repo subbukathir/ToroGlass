@@ -33,11 +33,14 @@ public interface InspectionDao {
     @Query("SELECT * FROM InspectionEntity where modelName LIKE  :modelName")
     List<InspectionEntity> getAllByModelName(String modelName);
 
-    @Query("SELECT * FROM InspectionEntity where vehicleId LIKE  :vehicleId")
-    List<InspectionEntity> getAllByVehicleId(String vehicleId);
+    @Query("SELECT * FROM InspectionEntity where modelName LIKE :modelName AND vehicleId LIKE  :vehicleId")
+    List<InspectionEntity> getAllByVehicleId(String modelName,String vehicleId);
 
     @Query("SELECT DISTINCT vehicleId FROM InspectionEntity WHERE modelName LIKE  :modelName")
     List<String> getDistictVehicles(String modelName);
+
+    @Query("SELECT DISTINCT modelName FROM InspectionEntity")
+    List<String> getDistictModelName();
 
     @Insert
     void insertAll(List<InspectionEntity> inspectionEntities);

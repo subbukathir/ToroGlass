@@ -75,19 +75,8 @@ public class MainActivity extends AppCompatActivity {
         activityTitles = getResources().getStringArray(R.array.array_title_bottom);
         bottomNavigation = (AHBottomNavigation) findViewById(R.id.bottom_navigation);
         setBottomNavigation();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
         setupActionbar();
         loadFragment();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
     }
 
     public void setBottomNavigation()

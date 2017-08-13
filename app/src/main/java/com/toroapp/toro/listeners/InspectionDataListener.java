@@ -10,6 +10,6 @@ import java.util.List;
 
 public interface InspectionDataListener {
     void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList);
-    void onVehicleListSuccess(List<String> vehicleList);
+    void onVehicleListSuccess(List<String> vehicleList,int mode);
     void onDataReceivedErr(String strErr);
 }

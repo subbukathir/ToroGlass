@@ -22,11 +22,9 @@
 
         <ImageView
             android:id="@+id/imgQueueMultiSelected"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
+            android:layout_width="@dimen/_40sdp"
+            android:layout_height="@dimen/_40sdp"
             android:layout_gravity="right"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
             android:background="@color/color_green"
             android:contentDescription="@string/app_name"
             android:gravity="center"

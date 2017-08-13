@@ -2,6 +2,7 @@ package com.toroapp.toro.localstorage.dbhelper;
 
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.util.CircularArray;
 import android.util.Log;
 
 
@@ -28,6 +29,7 @@ public class InspectionDbInitializer {
     private static String mVehicleId;
     private static List<InspectionEntity> mInspectionEntityList = new ArrayList<>();
     private static List<String> mVehicleList = new ArrayList<>();
+    private static List<String> mModelList = new ArrayList<>();
     private static InspectionEntity mInspectionEntity;
     private static InspectionDataListener mCallback;
 
@@ -49,7 +51,7 @@ public class InspectionDbInitializer {
         mTask.execute();
     }
 
-    public static void getInspectionData(@NonNull final AppDatabase db, int mode) {
+    public static void getAllModelNames(@NonNull final AppDatabase db, int mode) {
         mTask = new PopulateDbAsync(db);
         mMode = mode;
         mTask.execute();
@@ -60,9 +62,10 @@ public class InspectionDbInitializer {
         mModelName = modelName;
         mTask.execute();
     }
-    public static void getAllDataByVehicleId(@NonNull final AppDatabase db, String vehicleId,int mode) {
+    public static void getAllDataByVehicleId(@NonNull final AppDatabase db, String modelName,String vehicleId,int mode) {
         mTask = new PopulateDbAsync(db);
         mMode = mode;
+        mModelName = modelName;
         mVehicleId = vehicleId;
         mTask.execute();
     }
@@ -88,11 +91,11 @@ public class InspectionDbInitializer {
             ex.printStackTrace();
         }
     }
-    private static void getAllByVehicleId(final AppDatabase db,String vehicleId) {
+    private static void getAllByVehicleId(final AppDatabase db,String modelName,String vehicleId) {
         Log.e(TAG, "getAllByModelName");
         try {
             mCount = db.inspectionDao().countByVehicleId(vehicleId);
-            if(mCount>0) mInspectionEntityList = db.inspectionDao().getAllByVehicleId(vehicleId);
+            if(mCount>0) mInspectionEntityList = db.inspectionDao().getAllByVehicleId(modelName,vehicleId);
             else Log.e(TAG,"No data found");
         }catch (Exception ex){
             ex.printStackTrace();
@@ -103,6 +106,17 @@ public class InspectionDbInitializer {
         try {
             mCount= db.inspectionDao().count();
             if(mCount>0) db.inspectionDao().deleteAll();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    private static void getAllModelNameData(final AppDatabase db){
+        Log.e(TAG,"getAllModelNameData");
+        try {
+            mCount= db.inspectionDao().count();
+            if(mCount>0) mModelList = db.inspectionDao().getDistictModelName();
+            else Log.e(TAG,"No data found");
         }catch (Exception ex){
             ex.printStackTrace();
         }
@@ -129,9 +143,11 @@ public class InspectionDbInitializer {
                 case AppUtils.MODE_GETALL_USING_MODEL:
                     getAllByModelName(mDb,mModelName);
                     break;
-
+                case AppUtils.MODE_GETALL_MODEL:
+                    getAllModelNameData(mDb);
+                    break;
                 case AppUtils.MODE_GETALL_USING_VEHICLE:
-                    getAllByVehicleId(mDb,mVehicleId);
+                    getAllByVehicleId(mDb,mModelName,mVehicleId);
                     break;
             }
             return null;
@@ -146,11 +162,15 @@ public class InspectionDbInitializer {
                 case AppUtils.MODE_GET:
                     break;
                 case AppUtils.MODE_GETALL_USING_MODEL:
-                    if(mCount>0) mCallback.onVehicleListSuccess(mVehicleList);
+                    if(mCount>0) mCallback.onVehicleListSuccess(mVehicleList,AppUtils.MODE_GETALL_USING_MODEL);
                     else mCallback.onDataReceivedErr("No data found");
                     break;
                 case AppUtils.MODE_GETALL_USING_VEHICLE:
                     if(mCount>0) mCallback.onDataReceivedSuccess(mInspectionEntityList);
+                    else mCallback.onDataReceivedErr("No data found");
+                    break;
+                case AppUtils.MODE_GETALL_MODEL:
+                    if(mCount>0) mCallback.onVehicleListSuccess(mModelList,AppUtils.MODE_GETALL_MODEL);
                     else mCallback.onDataReceivedErr("No data found");
                     break;
             }

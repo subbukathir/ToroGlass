@@ -1,27 +1,21 @@
 package com.toroapp.toro.fragment;
 
 import android.Manifest;
+import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -46,12 +40,14 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.google.android.gms.vision.text.Text;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
+import com.popalay.tutors.TutorialListener;
+import com.popalay.tutors.Tutors;
+import com.popalay.tutors.TutorsBuilder;
 import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
@@ -73,11 +69,12 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -91,7 +88,7 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener, ImagePickListener {
+        InspectionDataListener, ImagePickListener,TutorialListener {
     private static final String MODULE = Fragment_Inspection.class.getSimpleName();
     private static String TAG = "";
 
@@ -133,6 +130,12 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     private InspectionDbInitializer mInspectionDb;
 
     private ImageLoader imageLoader;
+
+    //showcase
+    private ImageView iv_info;
+    private Map<String, View> tutorials;
+    private Iterator<Map.Entry<String, View>> iterator;
+    private Tutors tutors;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -180,6 +183,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         try {
             rootView = (View) inflater.inflate(R.layout.fragment_inspect1, container, false);
             initUI(rootView);
+            initTutorials();
             setProperties();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -197,7 +201,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             mBottomNavigation = (AHBottomNavigation) mActivity.findViewById(R.id.bottom_navigation);
             mBottomNavigation.setVisibility(View.GONE);
             tv_model_name = (TextView) rootView.findViewById(R.id.tv_lbl_title_model_name);
-            tv_lbl_title_vehicle_id = (TextView) rootView.findViewById(R.id.tv_lbl_title_vehicle_id);
+            tv_lbl_title_vehicle_id = (TextView) rootView.findViewById(R.id.tv_title_vehicle_id);
             tv_lbl_basic_check = (TextView) rootView.findViewById(R.id.tv_lbl_basic_check);
             tv_lbl_quesno = (TextView) rootView.findViewById(R.id.tv_lbl_quesno);
             tv_lbl_question = (TextView) rootView.findViewById(R.id.tv_lbl_question);
@@ -208,7 +212,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             btn_capture_photo = (Button) rootView.findViewById(R.id.btn_capture_photo);
             btnNext = (Button) rootView.findViewById(R.id.btn_next);
             iv_captured_image = (ImageView) rootView.findViewById(R.id.iv_captured_image);
-
+            iv_info = (ImageView) rootView.findViewById(R.id.iv_info);
             setupActionBar();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -246,7 +250,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             btn_capture_photo.setTypeface(font.getRobotoRegular());
             btnNext.setTypeface(font.getRobotoRegular());
 
-            tv_lbl_title_vehicle_id.setTypeface(font.getHelveticaRegular());
+            tv_lbl_title_vehicle_id.setTypeface(font.getRobotoRegular());
 
             radioGroup.setOnCheckedChangeListener(this);
             btn_capture_photo.setOnClickListener(this);
@@ -264,6 +268,32 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 }
             }
 
+            //show case
+            iv_info.setOnClickListener(this);
+            tutors = new TutorsBuilder()
+                    .textColorRes(android.R.color.white)
+                    .shadowColorRes(R.color.colorBlue)
+                    .textSizeRes(R.dimen.textNormal)
+                    .completeIconRes(R.drawable.ic_cross_24_white)
+                    .spacingRes(R.dimen.spacingNormal)
+                    .lineWidthRes(R.dimen.lineWidth)
+                    .cancelable(false)
+                    .build();
+
+            tutors.setListener(this);
+
+            ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+            animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    Fragment_Inspection.this.iv_info.setAlpha((Float) animation.getAnimatedValue());
+                }
+            });
+
+            animator.setDuration(500);
+            animator.setRepeatMode(ValueAnimator.REVERSE);
+            animator.setRepeatCount(-1);
+            animator.start();
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -278,6 +308,10 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 break;
             case R.id.btn_next:
                 submitData();
+                break;
+            case R.id.iv_info:
+                iterator = tutorials.entrySet().iterator();
+                showTutorial(iterator);
                 break;
         }
     }
@@ -337,51 +371,11 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 .show();
     }
 
-    /*vikram code*/
-    private void ShowSelectPhotoOption() {
-        final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.lbl_select_photo)
-                .setItems(R.array.array_photo_option, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which) {
-                            case 0:
-                                startCamera();
-                                break;
-                            case 1:
-                                Log.e(TAG, "option b");
-                                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(intent, 2);
-                                break;
-                            default:
-                                break;
-                        }
-                        dialog.dismiss();
-                    }
-                });
-        builder.show();
-
-    }
-
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void startCamera() {
         try {
             dispatchTakePictureIntent();
         } catch (IOException e) {
-        }
-    }
-
-    private void setImageToImageView(String path) {
-        Log.e(TAG, "setImageToImageView");
-        Uri imageUri = Uri.parse(path);
-        File file = new File(imageUri.getPath());
-        try {
-            InputStream mStreamPic = new FileInputStream(file);
-            iv_captured_image.setImageBitmap(BitmapFactory.decodeStream(mStreamPic));
-            if (mRequest == REQUEST_PICK_PHOTO) AppUtils.convertBitmapToBase64(path);
-            else if (mRequest == REQUEST_TAKE_PHOTO)
-                AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
-        } catch (FileNotFoundException e) {
-            return;
         }
     }
 
@@ -483,12 +477,12 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onVehicleListSuccess(List<String> vehicleList) {
+    public void onVehicleListSuccess(List<String> vehicleList,int mode) {
 
     }
 
     private void gotoFragmentInspection2() {
-        Fragment fragment = new Fragment_Inspection4();
+        Fragment fragment = new Fragment_Inspection2();
         Bundle data = new Bundle();
         data.putString(AppUtils.ARGS_MODEL, mModelName);
         data.putString(AppUtils.ARGS_VEHICLEID, mVehicleId);
@@ -512,8 +506,8 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0:
-                                //dispatchTakePictureIntent1();
-                                gotoFragmentImagePicker();
+                                dispatchTakePictureIntent1();
+                                //gotoFragmentImagePicker();
                                 break;
                             case 1:
                                 gotoFragmentImagePicker();
@@ -598,12 +592,18 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     private void dispatchTakePictureIntent1() {
         TAG = "dispatchTakePictureIntent";
         Log.d(MODULE, TAG);
-
-        Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp.jpg"));
-        captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-        captureIntent.putExtra("return-data", true);
-        startActivityForResult(captureIntent, 101);
+        try {
+            Intent captureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            //mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), "tmp.jpg"));
+            mImageCaptureUri = FileProvider.getUriForFile(mActivity,
+                    com.toroapp.toro.BuildConfig.APPLICATION_ID + ".provider",
+                    createImageFile());
+            captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+            captureIntent.putExtra("return-data", true);
+            startActivityForResult(captureIntent, 101);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     @Override
@@ -625,7 +625,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
         String Str_ImagePath = AppUtils.getProfilePicturePath(mActivity) + "/tmp.png";
         Uri destination = Uri.fromFile(new File(Str_ImagePath));
-        Crop.of(source, destination).withMaxSize(320, 320).start(mActivity, this, 10);
+        Crop.of(source, destination).withMaxSize(600, 520).start(mActivity, this, 10);
     }
 
     private void handleCrop(int resultCode, Intent result) {
@@ -678,6 +678,39 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             }
         }
     }
+    /**
+     * show case code
+     */
+    private void initTutorials() {
+        tutorials = new LinkedHashMap<>();
+        tutorials.put("It's a choosable option for Rops installed or not?", radioGroup);
+        tutorials.put("It's a editable box to type remarks about the option you chooses", et_remarks);
+        tutorials.put("It's a button, if you press the button it will ask mode of picture taken based on option photo is taken ", btn_capture_photo);
+        tutorials.put("It's a button if you press take you to next question current data will store in local database", btnNext);
+    }
 
+    @Override
+    public void onNext() {
+        showTutorial(iterator);
+    }
+
+    @Override
+    public void onComplete() {
+        tutors.close();
+    }
+
+    @Override
+    public void onCompleteAll() {
+        tutors.close();
+    }
+    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
+        if (iterator == null) {
+            return;
+        }
+        if (iterator.hasNext()) {
+            Map.Entry<String, View> next = iterator.next();
+            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
+        }
+    }
 
 }

@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
+import com.toroapp.toro.listeners.ClickListener;
 import com.toroapp.toro.localstorage.entity.InspectionEntity;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
@@ -30,6 +31,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
     private final int VIEW_PROG = 0;
     private List<InspectionEntity> inspectionEntityList = new ArrayList<>();
     private AppCompatActivity mActivity;
+    private ClickListener mCallback;
     private Font font;
     private int mSelectedPosition;
     private DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
@@ -44,6 +46,9 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
         font = MyApplication.getInstance().getFontInstance();
     }
 
+    public void setListener(ClickListener listener){
+        mCallback = listener;
+    }
 
     public void delete(int position) {
         inspectionEntityList.remove(position);
@@ -73,7 +78,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
             //mHolder.itemView.startAnimation(animation);
             //lastPosition = position; Jun 29, 2017 12:00:00 AM
             if (mHolder instanceof InspectionListHolder) {
-                InspectionListHolder holder = (InspectionListHolder) mHolder;
+                final InspectionListHolder holder = (InspectionListHolder) mHolder;
                 InspectionEntity item = inspectionEntityList.get(position);
                 holder.tv_inspection_name.setText(item.getInspectionName());
                 if(item.getTestedValue().equals("Yes")) holder.iv_tested.setImageResource(R.drawable.ic_tick_green);
@@ -82,6 +87,12 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
                 else holder.iv_capturedImage.setImageResource(R.drawable.ic_logo);
                 if(item.getRemarks()!=null) holder.tv_remarks.setText(item.getRemarks());
                 else holder.tv_remarks.setText(R.string.msg_no_remarks_found);
+                holder.iv_capturedImage.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mCallback.onClick(holder.iv_capturedImage,position);
+                    }
+                });
             } else if (mHolder instanceof LoadingMessageHolder) {
                 LoadingMessageHolder holder = (LoadingMessageHolder) mHolder;
                 holder.layout_loading_message.setVisibility(View.VISIBLE);

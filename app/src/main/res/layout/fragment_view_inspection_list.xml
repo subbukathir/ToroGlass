@@ -38,4 +38,11 @@
 
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
+    <ImageView
+        android:id="@+id/iv_info"
+        style="@style/wrap_content_style"
+        android:layout_gravity="bottom|end|right"
+        android:padding="@dimen/_10sdp"
+        android:layout_margin="@dimen/_10sdp"
+        android:src="@drawable/ic_info"/>
 </LinearLayout>

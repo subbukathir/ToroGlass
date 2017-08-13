@@ -37,7 +37,7 @@ import com.toroapp.toro.utils.Font;
 
 public class Fragment_Barcode extends Fragment
 {
-    private static final String MODULE = Fragment_Inspection.class.getSimpleName();
+    private static final String MODULE = Fragment_Barcode.class.getSimpleName();
     private static String TAG = "";
 
     private static final int RC_BARCODE_CAPTURE = 9001;
@@ -162,17 +162,17 @@ public class Fragment_Barcode extends Fragment
 
             if (view.getId() == R.id.btnReadBarcode)
             {
-                /*int requestId = AppUtils.getIdForRequestedCamera(AppUtils.CAMERA_FACING_BACK);
+                int requestId = AppUtils.getIdForRequestedCamera(AppUtils.CAMERA_FACING_BACK);
                 if(requestId == -1) AppUtils.showDialog(mActivity,"Camera not available");
                 else
                 {
                     Intent intent = new Intent(mActivity, BarcodeCaptureActivity.class);
-                    intent.putExtra(BarcodeCaptureActivity.AutoFocus, cb_autoFocus.isChecked());
+                    intent.putExtra(BarcodeCaptureActivity.AutoFocus, true);
 
                     startActivityForResult(intent, RC_BARCODE_CAPTURE);
-                }*/
-                IntentIntegrator scanIntegrator = new IntentIntegrator(mActivity);
-                scanIntegrator.initiateScan();
+                }
+                /*IntentIntegrator scanIntegrator = new IntentIntegrator(mActivity);
+                scanIntegrator.initiateScan();*/
 
             }
         }
@@ -213,16 +213,34 @@ public class Fragment_Barcode extends Fragment
         TAG="onActivityResult";
         Log.d(MODULE,TAG);
 
-        IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        /*IntentResult scanningResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (scanningResult != null) {
             String scanContent = scanningResult.getContents();
             String scanFormat = scanningResult.getFormatName();
             tv_scan_format.setText(" FORMAT: " + scanFormat);
             tv_scan_content.setText(" CONTENT: " + scanContent);
+        }*/
+        if (requestCode == RC_BARCODE_CAPTURE ){
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    Barcode barcode = data.getParcelableExtra(BarcodeCaptureActivity.BarcodeObject);
+                    //textView_barcode_result.setText(getString(R.string.lbl_success) +" : "+barcode.displayValue);
+                    gotoFragmentInspection(barcode.displayValue);
+                    Log.d(TAG, "Barcode read: " + barcode.displayValue);
+                } else {
+                    //textView_barcode_result.setText(R.string.lbl_failure);
+                    Log.d(TAG, getString(R.string.msg_no_barcode_captured));
+                    AppUtils.showDialog(mActivity,getString(R.string.msg_no_barcode_captured));
+                }
+            } else {
+                Log.e(TAG,"barcode error");
+                AppUtils.showDialog(mActivity,getString(R.string.lbl_barcode_error) + CommonStatusCodes.getStatusCodeString(resultCode));
+                //textView_barcode_result.setText(getString(R.string.lbl_barcode_error)+" : "+CommonStatusCodes.getStatusCodeString(resultCode));
+            }
         }
         else{
             Toast toast = Toast.makeText(mActivity,
-                    "No scan data received!", Toast.LENGTH_SHORT);
+                    R.string.msg_no_scan_data_received, Toast.LENGTH_SHORT);
             toast.show();
         }
 
@@ -235,14 +253,14 @@ public class Fragment_Barcode extends Fragment
 
         try
         {
-            Fragment fragment = new Fragment_Inspection();
+            Fragment fragment = new Fragment_Manual();
             Bundle data = new Bundle();
             data.putString(AppUtils.ARGS_MODEL,mModelName);
             fragment.setArguments(data);
             FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-            fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION);
-            fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION);
+            fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_MANUAL);
+            fragmentTransaction.addToBackStack(AppUtils.TAG_MANUAL);
             fragmentTransaction.commit();
         }
         catch (Exception ex)

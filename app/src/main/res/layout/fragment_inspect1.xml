@@ -17,12 +17,25 @@
                 android:text="@string/app_name"
                 android:textSize="@dimen/_15sdp"
                 android:textStyle="bold" />
-            <TextView
-                android:id="@+id/tv_lbl_title_vehicle_id"
-                style="@style/textview_label"
-                android:text="@string/app_name"
-                android:textSize="@dimen/_13sdp"
-                android:textStyle="bold" />
+            <LinearLayout
+                style="@style/match_wrap_style"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/tv_lbl_vehicle_id"
+                    style="@style/textview_label"
+                    android:text="@string/lbl_vehicle_id"
+                    android:textSize="@dimen/_13sdp"
+                    android:layout_weight="1"
+                    android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tv_title_vehicle_id"
+                    android:layout_weight=".7"
+                    style="@style/textview_label"
+                    android:text="@string/app_name"
+                    android:textSize="@dimen/_13sdp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
             <LinearLayout
                 style="@style/match_wrap_style"
                 android:weightSum="2"
@@ -98,6 +111,13 @@
                 style="@style/btn_common"
                 android:layout_margin="@dimen/_10sdp"
                 android:text="@string/lbl_next"/>
+            <ImageView
+                android:id="@+id/iv_info"
+                style="@style/wrap_content_style"
+                android:layout_gravity="bottom|end|right"
+                android:padding="@dimen/_10sdp"
+                android:layout_margin="@dimen/_10sdp"
+                android:src="@drawable/ic_info"/>
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

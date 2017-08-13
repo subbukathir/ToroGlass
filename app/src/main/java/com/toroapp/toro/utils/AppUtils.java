@@ -89,6 +89,7 @@ public class AppUtils extends Dialog {
     public static final int MODE_DELETE_ALL = 2005;
     public static final int MODE_GETALL_USING_MODEL = 2006;
     public static final int MODE_GETALL_USING_VEHICLE = 2007;
+    public static final int MODE_GETALL_MODEL = 2008;
 
     public static final int REQUEST_TAKE_PHOTO = 1;
     public static final int REQUEST_PICK_PHOTO = 2;

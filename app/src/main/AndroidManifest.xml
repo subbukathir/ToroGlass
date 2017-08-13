@@ -57,7 +57,7 @@
             android:value="barcode" />
         <activity android:name=".activities.SplashScreen"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -66,15 +66,15 @@
         </activity>
         <activity android:name=".activities.LoginActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait"/>
+            android:screenOrientation="fullSensor"/>
         <activity android:name=".activities.MainActivity"
             android:configChanges="orientation|keyboard|screenSize"
-            android:screenOrientation="sensorPortrait">
+            android:screenOrientation="fullSensor">
 
         </activity>
         <activity android:name=".activities.BarcodeCaptureActivity"
             android:configChanges="orientation"
-            android:screenOrientation="sensorPortrait"/>
+            android:screenOrientation="fullSensor"/>
 
         <activity
             android:name="com.soundcloud.android.crop.CropImageActivity"

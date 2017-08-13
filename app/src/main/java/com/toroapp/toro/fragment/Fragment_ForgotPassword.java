@@ -97,7 +97,7 @@ public class Fragment_ForgotPassword extends Fragment {
             tie_username = (TextInputEditText) rootView.findViewById(R.id.tie_username);
 
             btn_send_email = (Button) rootView.findViewById(R.id.btn_send_email);
-            setupActionBar();
+            //setupActionBar();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -119,9 +119,9 @@ public class Fragment_ForgotPassword extends Fragment {
     private void setProperties() {
         Log.e(TAG, "setProperties");
 
-        til_username.setTypeface(font.getHelveticaRegular());
-        tie_username.setTypeface(font.getHelveticaRegular());
-        btn_send_email.setTypeface(font.getHelveticaBold());
+        til_username.setTypeface(font.getRobotoRegular());
+        tie_username.setTypeface(font.getRobotoRegular());
+        btn_send_email.setTypeface(font.getRobotoRegular());
 
         btn_send_email.setOnClickListener(_OnClickListener);
         tie_username.addTextChangedListener(new MyTextWatcher(tie_username));

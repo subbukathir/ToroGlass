@@ -102,16 +102,18 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
     }
     private void setProperties()    {
         Log.e(TAG,"setProperties");
-        btnContinue.setTypeface(font.getHelveticaRegular());
-        btnSelectNewModel.setTypeface(font.getHelveticaRegular());
+        btnContinue.setTypeface(font.getRobotoRegular());
+        btnSelectNewModel.setTypeface(font.getRobotoRegular());
         btnContinue.setOnClickListener(this);
         btnSelectNewModel.setOnClickListener(this);
     }
 
     private void gotoFragment(Fragment fragment,String tag) {
         Bundle data = new Bundle();
-        data.putString(AppUtils.ARGS_MODEL,mModelName);
-        fragment.setArguments(data);
+        if(tag.equalsIgnoreCase(AppUtils.TAG_MANUAL)){
+            data.putString(AppUtils.ARGS_MODEL,mModelName);
+            fragment.setArguments(data);
+        }
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
         fragmentTransaction.replace(R.id.frame_container, fragment);
@@ -128,7 +130,7 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
                 gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
                 break;
             case R.id.btn_select_new_model:
-                gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
+                gotoFragment(new Fragment_Manual(),AppUtils.TAG_FRAGMENT_INSPECTION);
                 break;
         }
     }
