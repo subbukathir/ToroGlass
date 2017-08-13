@@ -2,31 +2,35 @@ package com.toroapp.toro.fragment;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.media.Image;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
+import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.activities.MainActivity;
@@ -54,13 +58,17 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     private Handler mHandler;
 
     private AppCompatAutoCompleteTextView autoCompleteTextView;
-    private String mStringJson=null,mModelName=null;
+    private TextInputLayout til_vehicleId;
+    private TextInputEditText tie_vehicleId;
+    private Button btnInspect;
+    private String mStringJson=null,mModelName=null,mVehicleId=null;
     private String[] strArrayModels;
     private ArrayList<String> listModel;
-
+    private Bundle mArgs;
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
     private Snackbar snackbar;
+    private AHBottomNavigation mBottomNavigation;
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
@@ -78,7 +86,7 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
             mStringJson = mPreferences.getString(AppUtils.SHARED_LOGIN,null);
             mManager = mActivity.getSupportFragmentManager();
             font= MyApplication.getInstance().getFontInstance();
-            //mArgs = getArguments().getString(ARGS_BUNDLE_MESSAGE);
+            mArgs = getArguments();
             strArrayModels = getResources().getStringArray(R.array.array_model);
             listModel = new ArrayList<>(Arrays.asList(strArrayModels));
 
@@ -116,14 +124,16 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
         try
         {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
+            mBottomNavigation = (AHBottomNavigation) mActivity.findViewById(R.id.bottom_navigation);
+            mBottomNavigation.setVisibility(View.VISIBLE);
             autoCompleteTextView = (AppCompatAutoCompleteTextView) rootView.findViewById(R.id.autoCompleteText);
-
+            til_vehicleId = (TextInputLayout) rootView.findViewById(R.id.til_vehicle_id);
+            tie_vehicleId = (TextInputEditText) rootView.findViewById(R.id.tie_vehicle_id);
+            btnInspect = (Button) rootView.findViewById(R.id.btnInspect);
             setupActionBar();
         }catch (Exception ex) {  ex.printStackTrace();  }
     }
-    public void setupActionBar()
-    {
-
+    public void setupActionBar()    {
         mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
         mToolbar.setTitle(getResources().getString(R.string.app_name));
         mActivity.setSupportActionBar(mToolbar);
@@ -135,7 +145,19 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
         Log.d(MODULE,TAG);
 
         autoCompleteTextView.setTypeface(font.getHelveticaRegular());
+        tie_vehicleId.addTextChangedListener(new Fragment_Manual.MyTextWatcher(tie_vehicleId));
+        if(mArgs!=null && mArgs.containsKey(AppUtils.ARGS_MODEL)){
+            mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
+            autoCompleteTextView.setText(mModelName);
+            autoCompleteTextView.setEnabled(false);
+            autoCompleteTextView.setClickable(false);
 
+        }else {
+            autoCompleteTextView.setHint(getString(R.string.lbl_select_model));
+            autoCompleteTextView.setEnabled(true);
+            autoCompleteTextView.setClickable(true);
+        }
+        btnInspect.setOnClickListener(this);
         ArrayAdapter mAdapter = new ArrayAdapter(mActivity,android.R.layout.simple_spinner_dropdown_item,listModel);
         autoCompleteTextView.setAdapter(mAdapter);
         autoCompleteTextView.setThreshold(1);
@@ -171,7 +193,7 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
                 btnOkay.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        gotoFragmentInspection();
+                        //gotoFragmentInspection();
                         dialog.dismiss();
                     }
                 });
@@ -180,12 +202,15 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
             }
         });
         Log.e(TAG,"text " + autoCompleteTextView.getText().toString());
+
+
     }
 
     private void gotoFragmentInspection() {
         Fragment fragment = new Fragment_Inspection();
         Bundle data = new Bundle();
         data.putString(AppUtils.ARGS_MODEL,mModelName);
+        data.putString(AppUtils.ARGS_VEHICLEID,mVehicleId);
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -197,9 +222,58 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         switch (view.getId()){
-
-
+            case R.id.btnInspect:
+                submitForm();
+                break;
         }
     }
 
+    private void submitForm() {
+        hideKeyboard();
+        if (!validateVehicleId()) return;
+        if(!mModelName.isEmpty()){
+            gotoFragmentInspection();
+        }else AppUtils.showDialog(mActivity,getString(R.string.msg_select_model_name));
+    }
+
+    private boolean validateVehicleId()    {
+        mVehicleId = tie_vehicleId.getText().toString().trim();
+        if (mVehicleId.isEmpty()) {
+            til_vehicleId.setError(getString(R.string.msg_vehicleId_empty));
+            requestFocus(tie_vehicleId);
+            return false;
+        } else {
+            til_vehicleId.setErrorEnabled(false);
+        }
+
+        return true;
+    }
+    private void requestFocus(View view)    {
+        if (view.requestFocus())
+        {
+            mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
+    }
+    public void hideKeyboard()    {
+        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(tie_vehicleId.getWindowToken(), 0);
+    }
+    private class MyTextWatcher implements TextWatcher    {
+
+        private View view;
+
+        private MyTextWatcher(View view) {
+            this.view = view;
+        }
+
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {        }
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)     {       }
+        public void afterTextChanged(Editable editable)        {
+            switch (view.getId()){
+                case R.id.tie_vehicle_id:
+                    validateVehicleId();
+                    break;
+            }
+        }
+    }
 }

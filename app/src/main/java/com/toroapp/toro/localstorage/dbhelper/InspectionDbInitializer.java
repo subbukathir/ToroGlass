@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 
+import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.InspectionDataListener;
 import com.toroapp.toro.localstorage.database.AppDatabase;
 import com.toroapp.toro.localstorage.entity.InspectionEntity;
@@ -24,7 +25,9 @@ public class InspectionDbInitializer {
     private static int mMode;
     private static int mCount=0;
     private static String mModelName;
+    private static String mVehicleId;
     private static List<InspectionEntity> mInspectionEntityList = new ArrayList<>();
+    private static List<String> mVehicleList = new ArrayList<>();
     private static InspectionEntity mInspectionEntity;
     private static InspectionDataListener mCallback;
 
@@ -57,7 +60,12 @@ public class InspectionDbInitializer {
         mModelName = modelName;
         mTask.execute();
     }
-
+    public static void getAllDataByVehicleId(@NonNull final AppDatabase db, String vehicleId,int mode) {
+        mTask = new PopulateDbAsync(db);
+        mMode = mode;
+        mVehicleId = vehicleId;
+        mTask.execute();
+    }
 
     private static void insertAll(final AppDatabase db, List<InspectionEntity> inspectionEntities) {
         Log.e(TAG, "insertAll");
@@ -74,13 +82,22 @@ public class InspectionDbInitializer {
         Log.e(TAG, "getAllByModelName");
         try {
             mCount = db.inspectionDao().countByModelName(modelName);
-            if(mCount>0) mInspectionEntityList = db.inspectionDao().getAllByModelName(modelName);
+            if(mCount>0) mVehicleList = db.inspectionDao().getDistictVehicles(modelName);
             else Log.e(TAG,"No data found");
         }catch (Exception ex){
             ex.printStackTrace();
         }
     }
-
+    private static void getAllByVehicleId(final AppDatabase db,String vehicleId) {
+        Log.e(TAG, "getAllByModelName");
+        try {
+            mCount = db.inspectionDao().countByVehicleId(vehicleId);
+            if(mCount>0) mInspectionEntityList = db.inspectionDao().getAllByVehicleId(vehicleId);
+            else Log.e(TAG,"No data found");
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
     private static void deleteAll(final AppDatabase db){
         Log.e(TAG,"deleteAll");
         try {
@@ -112,6 +129,10 @@ public class InspectionDbInitializer {
                 case AppUtils.MODE_GETALL_USING_MODEL:
                     getAllByModelName(mDb,mModelName);
                     break;
+
+                case AppUtils.MODE_GETALL_USING_VEHICLE:
+                    getAllByVehicleId(mDb,mVehicleId);
+                    break;
             }
             return null;
         }
@@ -125,6 +146,10 @@ public class InspectionDbInitializer {
                 case AppUtils.MODE_GET:
                     break;
                 case AppUtils.MODE_GETALL_USING_MODEL:
+                    if(mCount>0) mCallback.onVehicleListSuccess(mVehicleList);
+                    else mCallback.onDataReceivedErr("No data found");
+                    break;
+                case AppUtils.MODE_GETALL_USING_VEHICLE:
                     if(mCount>0) mCallback.onDataReceivedSuccess(mInspectionEntityList);
                     else mCallback.onDataReceivedErr("No data found");
                     break;

@@ -72,6 +72,7 @@ public class AppUtils extends Dialog {
 
     //Ags variables
     public static final String ARGS_MODEL = "arg_model";
+    public static final String ARGS_VEHICLEID = "arg_vehicle_id";
 
     public static final String IS_NETWORK_AVAILABLE = "is_network_available";
     public static final String NETWORK_AVAILABLE = "network_available";
@@ -87,6 +88,7 @@ public class AppUtils extends Dialog {
     public static final int MODE_DELETE = 2004;
     public static final int MODE_DELETE_ALL = 2005;
     public static final int MODE_GETALL_USING_MODEL = 2006;
+    public static final int MODE_GETALL_USING_VEHICLE = 2007;
 
     public static final int REQUEST_TAKE_PHOTO = 1;
     public static final int REQUEST_PICK_PHOTO = 2;
@@ -152,6 +154,11 @@ public class AppUtils extends Dialog {
 
         MaterialDialog dialog = builder.build();
         dialog.show();
+    }
+    public static Bitmap decodeBase64toImage(String data){
+        byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
+        Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
+        return decodedByte;
     }
     public static String encodeImage(Bitmap bm)
     {

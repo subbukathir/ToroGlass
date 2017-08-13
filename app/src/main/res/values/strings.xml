@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Toro</string>
     <string name="lbl_inspection">Inspection</string>
+    <string name="lbl_start_inspection">Start Inspection</string>
     <string name="lbl_okay">Okay</string>
     <string name="action_logo">Logo</string>
     <string name="lbl_welcome">Welcome</string>
@@ -44,8 +45,10 @@
     <string name="msg_receive_inspection_empty">Inspection data empty</string>
     <string name="lbl_select_model">Select model</string>
     <string name="lbl_search_model">Search model</string>
+    <string name="lbl_select_vehicle_id">Select Vehicle Id</string>
     <string name="lbl_vehicle_id">Enter Vehicle Id</string>
     <string name="lbl_enter_model_name">Enter Model Name</string>
+    <string name="msg_vehicleId_empty">Please enter vehicle id</string>
     <string name="lbl_retry">Retry</string>
     <string name="lbl_yes">Yes</string>
     <string name="lbl_no">No</string>
@@ -108,6 +111,7 @@
     <string name="lbl_failure">Failure</string>
     <string name="lbl_barcode_error">Barcode error</string>
     <string name="lbl_read_barcode">Read Barcode</string>
+    <string name="lbl_report">Report</string>
     <string name="lbl_auto_focus">Auto Focus</string>
     <string name="permission_camera_rationale">Access to the camera is needed for detection</string>
     <string name="no_camera_permission">This application cannot run because it does not have the camera permission.  The application will now exit.</string>
@@ -115,4 +119,10 @@
     <string name="msg_click_button_to_read_barcode">Click button Read Barcode to scan the barcode</string>
     <string name="lbl_selected_model_is">Selected model is</string>
     <string name="lbl_back">Back</string>
+    <string name="msg_select_model_name">Kindly select model</string>
+    <string name="msg_choose_yes_or_no">Kindly choose yes or no</string>
+    <string name="msg_inspection_name_empty">Inspection name is empty</string>
+    <string name="msg_model_name_empty">Model name is empty</string>
+    <string name="msg_no_data_found">No data found</string>
+    <string name="msg_no_remarks_found">No remarks found</string>
 </resources>

@@ -103,7 +103,7 @@ public class LoginActivity extends AppCompatActivity
     public void loadFragment()
     {
         Log.d(TAG,"loadFragment");
-        setupActionbar();
+        //setupActionbar();
 
         try
         {

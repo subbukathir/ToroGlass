@@ -187,7 +187,7 @@ public class Fragment_ImagePicker extends DialogFragment {
         Log.d(MODULE, TAG);
 
         try {
-            toolbar = (Toolbar) rootView.findViewById(R.id.toolbar);
+            toolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
             toolbar.setTitle(R.string.lbl_select_image);
             toolbar.setNavigationIcon(drawableBack);
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {

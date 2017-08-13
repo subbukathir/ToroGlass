@@ -32,13 +32,17 @@ public class InspectionEntity {
     @ColumnInfo(name = "imageData")
     private String imageData;
 
-    public InspectionEntity(String uniqueKey,String inspectionName, String modelName, String testedValue, String remarks, String imageData) {
+    @ColumnInfo(name = "vehicleId")
+    private String vehicleId;
+
+    public InspectionEntity(String uniqueKey, String inspectionName, String modelName, String testedValue, String remarks, String imageData, String vehicleId) {
         this.uniqueKey = uniqueKey;
         this.inspectionName = inspectionName;
         this.modelName = modelName;
         this.testedValue = testedValue;
         this.remarks = remarks;
         this.imageData = imageData;
+        this.vehicleId = vehicleId;
     }
 
     public String getInspectionName() {
@@ -88,5 +92,13 @@ public class InspectionEntity {
 
     public void setUniqueKey(String uniqueKey) {
         this.uniqueKey = uniqueKey;
+    }
+
+    public String getVehicleId() {
+        return vehicleId;
+    }
+
+    public void setVehicleId(String vehicleId) {
+        this.vehicleId = vehicleId;
     }
 }

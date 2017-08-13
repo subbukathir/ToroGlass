@@ -1,3 +1,4 @@
+/*
 package com.toroapp.toro.fragment;
 
 import android.annotation.TargetApi;
@@ -55,9 +56,11 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
+*/
 /**
  * Created by subbu on 25/11/16.
- */
+ *//*
+
 
 public class Fragment_Inspection3 extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
         InspectionDataListener{
@@ -309,7 +312,9 @@ public class Fragment_Inspection3 extends Fragment implements View.OnClickListen
                 .show();
     }
 
-    /*vikram code*/
+    */
+/*vikram code*//*
+
     private void ShowSelectPhotoOption()    {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
@@ -373,3 +378,4 @@ public class Fragment_Inspection3 extends Fragment implements View.OnClickListen
         fragmentTransaction.commit();
     }
 }
+*/

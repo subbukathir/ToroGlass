@@ -45,6 +45,7 @@
             style="@style/textview_label"
             android:layout_width="wrap_content"
             android:text="@string/lbl_auto_focus"
+            android:visibility="gone"
             android:textSize="@dimen/_14sdp" />
 
         <TextView
@@ -52,6 +53,7 @@
             style="@style/textview_label"
             android:layout_width="wrap_content"
             android:text="@string/lbl_auto_focus"
+            android:visibility="gone"
             android:textSize="@dimen/_14sdp" />
 
     </LinearLayout>

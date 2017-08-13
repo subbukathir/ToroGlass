@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.localstorage.entity.InspectionEntity;
+import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
 import java.text.DateFormat;
@@ -77,7 +78,10 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
                 holder.tv_inspection_name.setText(item.getInspectionName());
                 if(item.getTestedValue().equals("Yes")) holder.iv_tested.setImageResource(R.drawable.ic_tick_green);
                 else holder.iv_tested.setImageResource(R.drawable.ic_cross_red);
-                holder.iv_capturedImage.setImageResource(R.drawable.ic_logo);
+                if(item.getImageData()!=null) holder.iv_capturedImage.setImageBitmap(AppUtils.decodeBase64toImage(item.getImageData()));
+                else holder.iv_capturedImage.setImageResource(R.drawable.ic_logo);
+                if(item.getRemarks()!=null) holder.tv_remarks.setText(item.getRemarks());
+                else holder.tv_remarks.setText(R.string.msg_no_remarks_found);
             } else if (mHolder instanceof LoadingMessageHolder) {
                 LoadingMessageHolder holder = (LoadingMessageHolder) mHolder;
                 holder.layout_loading_message.setVisibility(View.VISIBLE);
@@ -106,7 +110,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public class InspectionListHolder extends RecyclerView.ViewHolder {
-        TextView tv_inspection_name;
+        TextView tv_inspection_name,tv_remarks;
         ImageView iv_tested,iv_capturedImage;
         View itemView;
 
@@ -115,6 +119,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
             try {
                 this.itemView = itemView;
                 tv_inspection_name = (TextView) itemView.findViewById(R.id.tv_inspection_name);
+                tv_remarks = (TextView) itemView.findViewById(R.id.tv_remarks);
                 iv_tested = (ImageView) itemView.findViewById(R.id.iv_tested_value);
                 iv_capturedImage = (ImageView) itemView.findViewById(R.id.iv_captured_image);
 

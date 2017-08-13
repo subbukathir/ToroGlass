@@ -2,37 +2,54 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/match_parent_style">
-<android.support.v4.widget.NestedScrollView
-    style="@style/match_parent_style"
-    android:fitsSystemWindows="true"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+    <android.support.v4.widget.NestedScrollView
+        style="@style/match_parent_style"
+        android:fitsSystemWindows="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="@dimen/_10sdp"
-            android:layout_marginLeft="@dimen/_10sdp"
+            android:layout_gravity="center"
             android:orientation="vertical">
-            <TextView
-                android:id="@+id/tv_lbl_choose_model"
-                style="@style/textview_label"
-                android:text="@string/lbl_select_model"
-                android:textSize="@dimen/_16sdp"/>
-            <android.support.v7.widget.AppCompatAutoCompleteTextView
-                android:id="@+id/autoCompleteText"
-                style="@style/text_input_edittext_common"
-                android:hint="@string/lbl_enter_model_name"/>
+            <LinearLayout
+                style="@style/match_wrap_style"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_20sdp"
+                android:orientation="vertical">
+                <TextView
+                    android:id="@+id/tv_lbl_choose_model"
+                    style="@style/textview_label"
+                    android:textSize="@dimen/_14sdp"
+                    android:text="@string/lbl_select_model"
+                    android:layout_marginLeft="@dimen/_20sdp"/>
 
-        <com.toroapp.toro.components.CustomTextInputLayout
-            android:id="@+id/til_vehicle_id"
-            style="@style/text_input_layout_common">
-            <android.support.design.widget.TextInputEditText
-                android:id="@+id/tie_vehicle_id"
-                style="@style/text_input_edittext_common"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                android:hint="@string/lbl_vehicle_id"/>
-        </com.toroapp.toro.components.CustomTextInputLayout>
-    </LinearLayout>
-</android.support.v4.widget.NestedScrollView>
+                <android.support.v7.widget.AppCompatAutoCompleteTextView
+                    android:id="@+id/autoCompleteText"
+                    style="@style/text_input_edittext_common"
+                    android:hint="@string/lbl_enter_model_name" />
+            </LinearLayout>
+
+
+
+            <com.toroapp.toro.components.CustomTextInputLayout
+                android:id="@+id/til_vehicle_id"
+                style="@style/text_input_layout_common">
+
+                <android.support.design.widget.TextInputEditText
+                    android:id="@+id/tie_vehicle_id"
+                    style="@style/text_input_edittext_common"
+                    android:hint="@string/lbl_vehicle_id"
+                    android:imeOptions="actionDone" />
+            </com.toroapp.toro.components.CustomTextInputLayout>
+
+            <Button
+                android:id="@+id/btnInspect"
+                style="@style/btn_common"
+                android:layout_marginLeft="@dimen/_20sdp"
+                android:layout_marginRight="@dimen/_20sdp"
+                android:text="@string/lbl_start_inspection" />
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
 </LinearLayout>

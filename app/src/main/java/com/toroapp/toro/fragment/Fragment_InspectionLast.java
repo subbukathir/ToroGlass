@@ -2,26 +2,19 @@ package com.toroapp.toro.fragment;
 
 import android.Manifest;
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
-import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.annotation.IdRes;
 import android.support.annotation.Nullable;
@@ -74,8 +67,6 @@ import java.util.Date;
 import java.util.List;
 
 import permissions.dispatcher.NeedsPermission;
-import permissions.dispatcher.OnShowRationale;
-import permissions.dispatcher.PermissionRequest;
 
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
@@ -88,9 +79,9 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  * Created by subbu on 25/11/16.
  */
 
-public class  Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
+public class Fragment_InspectionLast extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
         InspectionDataListener,ImagePickListener{
-    private static final String MODULE = Fragment_Inspection.class.getSimpleName();
+    private static final String MODULE = Fragment_InspectionLast.class.getSimpleName();
     private static String TAG = "";
 
     private AppCompatActivity mActivity;
@@ -170,7 +161,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         Log.e(TAG, "onCreateView");
         try {
-            rootView = (View) inflater.inflate(R.layout.fragment_inspect1, container, false);
+            rootView = (View) inflater.inflate(R.layout.fragment_inspect3, container, false);
             initUI(rootView);
             setProperties();
         } catch (Exception ex) {
@@ -230,7 +221,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
                 mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
                 mVehicleId = mArgs.getString(AppUtils.ARGS_VEHICLEID);
-                mInspectionName = getString(R.string.lbl_ques_1);
+                mInspectionName = getString(R.string.lbl_ques_3);
                 mInspectionName = mInspectionName.substring(3);
                 mUniqueKey = mInspectionName + mModelName+mVehicleId;
                 Log.e(TAG,"Substring ins name :"+ mInspectionName + ": mVehicleId :"+mVehicleId);
@@ -257,6 +248,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         if(mModelName!=null){
             if(mInspectionName!=null){
                 if(mTested!=null){
+                    mRemarks = et_remarks.getText().toString().trim();
                     InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData,mVehicleId);
                     mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
                     gotoFragmentInspection2();
@@ -316,7 +308,7 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
                                 break;
                             case 1:
                                 Log.e(TAG,"option b");
-                                Intent intent = new   Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                Intent intent = new   Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(intent, 2);
                                 break;
                             default:
@@ -444,14 +436,15 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
         AppUtils.showDialog(mActivity,strErr);
     }
     private void gotoFragmentInspection2() {
-        Fragment fragment = new Fragment_Inspection2();
+        Fragment fragment = new Fragment_Final();
         Bundle data = new Bundle();
         data.putString(AppUtils.ARGS_MODEL,mModelName);
+        data.putString(AppUtils.ARGS_VEHICLEID,mVehicleId);
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION2);
-        fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION2);
+        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FINAL);
+        fragmentTransaction.addToBackStack(AppUtils.TAG_FINAL);
         fragmentTransaction.commit();
     }
     /**
@@ -613,7 +606,10 @@ public class  Fragment_Inspection extends Fragment implements View.OnClickListen
             }
         }
     }
+    @Override
+    public void onVehicleListSuccess(List<String> vehicleList) {
 
+    }
 
 
 }

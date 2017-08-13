@@ -1,5 +1,6 @@
 package com.toroapp.toro.fragment;
 
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -10,6 +11,7 @@ import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -21,8 +23,9 @@ import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.TextView;
-
-
+import com.popalay.tutors.TutorialListener;
+import com.popalay.tutors.Tutors;
+import com.popalay.tutors.TutorsBuilder;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.activities.MainActivity;
@@ -32,6 +35,9 @@ import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
 
@@ -40,11 +46,8 @@ import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
  * Created by vikram on 14/7/17.
  */
 
-public class Fragment_Login extends Fragment implements View.OnClickListener
-{
-    private static final String MODULE = MainActivity.class.getSimpleName();
-    private static String TAG = "";
-
+public class Fragment_Login extends Fragment implements View.OnClickListener,TutorialListener {
+    private static final String  TAG = Fragment_Login.class.getSimpleName();
     private AppCompatActivity mActivity;
     private android.support.v4.app.FragmentManager mManager;
     private Bundle mSavedInstanceState;
@@ -61,17 +64,14 @@ public class Fragment_Login extends Fragment implements View.OnClickListener
     private Button btnLogin;
     private Fragment mFragment = null;
     private View rootView;
-
+    private Map<String, View> tutorials;
+    private Iterator<Map.Entry<String, View>> iterator;
+    private Tutors tutors;
     private InspectionDbInitializer inspectionDbInitializer;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        TAG="onCreate";
-        Log.d(MODULE,TAG);
-
         try
         {
             mActivity = (AppCompatActivity) getActivity();
@@ -88,31 +88,26 @@ public class Fragment_Login extends Fragment implements View.OnClickListener
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
-        }
-        catch (Exception ex)
-        {
+        }catch (Exception ex){
             ex.printStackTrace();
         }
     }
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        TAG="onCreateView";
-        Log.d(MODULE,TAG);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)    {
+        Log.e(TAG, "onCreateView");
 
         rootView = inflater.inflate(R.layout.fragment_login, container, false);
         initView();
         //setUpActionBar();
+        //initTutorials();
         setProperties();
         return rootView;
     }
 
     public void initView()
     {
-        TAG="onCreateView";
-        Log.d(MODULE,TAG);
-        try
-        {
+        Log.e(TAG, "initView");
+        try        {
             til_uname = (TextInputLayout) rootView.findViewById(R.id.til_username);
             til_password = (TextInputLayout) rootView.findViewById(R.id.til_password);
             tie_username = (AppCompatEditText) rootView.findViewById(R.id.tie_username);
@@ -163,58 +158,56 @@ public class Fragment_Login extends Fragment implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View view)
-    {
-        TAG="onClick";
-        Log.d(MODULE,TAG);
+    public void onClick(View view) {
+        switch (view.getId()){
+            case R.id.btnLogin:
+                submitFormData();
+                /*iterator = tutorials.entrySet().iterator();
+                showTutorial(iterator);*/
+                break;
+            case R.id.tv_forgot_password:
+                fragmentTransition(new Fragment_ForgotPassword());
+                break;
+        }
+    }
+    private void setProperties(){
+        tie_username.setTypeface(font.getHelveticaRegular());
+        tie_password.setTypeface(font.getHelveticaRegular());
+        btnLogin.setTypeface(font.getHelveticaRegular());
 
-        try
-        {
-            switch (view.getId())
-            {
-                case R.id.btnLogin:
-                    submitFormData();
-                    break;
-                case R.id.tv_forgot_password:
-                    fragmentTransition(new Fragment_ForgotPassword());
-                    break;
+        tie_username.addTextChangedListener(new MyTextWatcher(tie_username));
+        tie_password.addTextChangedListener(new MyTextWatcher(tie_password));
+        btnLogin.setOnClickListener(this);
+        tv_forgot_password.setOnClickListener(this);
+        tutors = new TutorsBuilder()
+                .textColorRes(android.R.color.white)
+                .shadowColorRes(R.color.shadow)
+                .textSizeRes(R.dimen.textNormal)
+                .completeIconRes(R.drawable.ic_cross_24_white)
+                .spacingRes(R.dimen.spacingNormal)
+                .lineWidthRes(R.dimen.lineWidth)
+                .cancelable(false)
+                .build();
+
+        tutors.setListener(this);
+
+        ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                //Fragment_Login.this.tv_forgot_password.setAlpha((Float) animation.getAnimatedValue());
             }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
+        });
+
+        animator.setDuration(500);
+        animator.setRepeatMode(ValueAnimator.REVERSE);
+        animator.setRepeatCount(-1);
+        animator.start();
     }
 
-    private void setProperties()
-    {
-        TAG="setProperties";
-        Log.d(MODULE,TAG);
+    protected void submitFormData(){
 
-        try
-        {
-            tie_username.setTypeface(font.getRobotoRegular());
-            tie_password.setTypeface(font.getRobotoRegular());
-            btnLogin.setTypeface(font.getRobotoRegular());
-
-            tie_username.addTextChangedListener(new MyTextWatcher(tie_username));
-            tie_password.addTextChangedListener(new MyTextWatcher(tie_password));
-            btnLogin.setOnClickListener(this);
-            tv_forgot_password.setOnClickListener(this);
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
-
-    protected void submitFormData()
-    {
-        TAG="submitFormData";
-        Log.d(MODULE,TAG);
-
-        if(!validateUsername())
-        {
+        if(!validateUsername()){
             return;
         }
         if(!validatePassword())
@@ -227,24 +220,12 @@ public class Fragment_Login extends Fragment implements View.OnClickListener
         mActivity.finish();
     }
 
-    protected void fragmentTransition( Fragment _fragment)
-    {
-        TAG="fragmentTransition";
-        Log.d(MODULE,TAG);
-
-        try
-        {
-            this.mFragment = _fragment;
-            FragmentTransaction _fragmentTransaction = mActivity.getSupportFragmentManager().beginTransaction();
-            _fragmentTransaction.replace(R.id.frame_container_login,mFragment,TAG_FORGOT_PASSWORD);
-            _fragmentTransaction.addToBackStack(TAG_FORGOT_PASSWORD);
-            _fragmentTransaction.commit();
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-
+    protected void fragmentTransition( Fragment _fragment){
+        this.mFragment = _fragment;
+        FragmentTransaction _fragmentTransaction = mActivity.getSupportFragmentManager().beginTransaction();
+        _fragmentTransaction.replace(R.id.frame_container_login,mFragment,TAG_FORGOT_PASSWORD);
+        _fragmentTransaction.addToBackStack(TAG_FORGOT_PASSWORD);
+        _fragmentTransaction.commit();
     }
     private boolean validateUsername()
     {
@@ -327,5 +308,38 @@ public class Fragment_Login extends Fragment implements View.OnClickListener
         }
 
     }
+/**
+ * show case code
+ */
+private void initTutorials() {
+    tutorials = new LinkedHashMap<>();
+    tutorials.put("It's a toolbar", tie_username);
+    tutorials.put("It's a button", tie_password);
+    tutorials.put("It's a borderless button", btnLogin);
+    tutorials.put("It's a text", tv_forgot_password);
+}
 
+    @Override
+    public void onNext() {
+        showTutorial(iterator);
+    }
+
+    @Override
+    public void onComplete() {
+        tutors.close();
+    }
+
+    @Override
+    public void onCompleteAll() {
+        tutors.close();
+    }
+    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
+        if (iterator == null) {
+            return;
+        }
+        if (iterator.hasNext()) {
+            Map.Entry<String, View> next = iterator.next();
+            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
+        }
+    }
 }

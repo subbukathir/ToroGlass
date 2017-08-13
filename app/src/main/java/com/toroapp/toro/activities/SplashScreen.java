@@ -20,7 +20,7 @@ import java.io.Reader;
 public class SplashScreen extends AppCompatActivity {
     private static final String TAG = SplashScreen.class.getSimpleName();
 
-    private static final int SPLASH_TIME_OUT = 3000;
+    private static final int SPLASH_TIME_OUT = 2000;
 
     private Context mContext;
     Reader reader;

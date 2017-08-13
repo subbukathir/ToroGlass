@@ -11,6 +11,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,12 +46,13 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
     Font font = MyApplication.getInstance().getFontInstance();
     AppCompatActivity mActivity;
     FragmentManager mManager;
+    Toolbar mToolbar;
     CoordinatorLayout cl_main;
     RecyclerView recyclerView;
     LinearLayoutManager mLayoutManager;
     TextView text_view_loading_message;
     LinearLayout layout_loading_message;
-    TextView text_view_message, text_view_empty,tv_select_model;
+    TextView text_view_message, text_view_empty,tv_select_model,tv_select_vehicle_id;
     LinearLayout layout_loading;
     RelativeLayout layout_empty;
     ViewInspectionListAdapter mAdapter;
@@ -58,8 +60,9 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
     Bundle mArgs;
     SharedPreferences mPreferences;
     InspectionDbInitializer inspectionDb;
+    private List<String> mVehicleList = new ArrayList<>();
     Snackbar snackbar;
-    private String mStrEmpId = null,mModelName=null;
+    private String mStrEmpId = null,mModelName=null,mVehicleId=null;
     private String mLoginData = null;
 
     @Override
@@ -98,6 +101,7 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             recyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
             tv_select_model = (TextView) view.findViewById(R.id.tv_select_model_name);
+            tv_select_vehicle_id = (TextView) view.findViewById(R.id.tv_select_vehicle_id);
             text_view_loading_message = (TextView) view.findViewById(R.id.text_view_message);
             layout_loading_message = (LinearLayout) view.findViewById(R.id.layout_loading);
 
@@ -105,13 +109,18 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
             layout_empty = (RelativeLayout) view.findViewById(R.id.layout_empty);
             text_view_empty = (TextView) view.findViewById(R.id.text_view_empty);
             text_view_message = (TextView) view.findViewById(R.id.text_view_message);
-
+            setupActionBar();
             setProperties();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
+    public void setupActionBar()    {
+        mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
+        mToolbar.setTitle(getResources().getString(R.string.lbl_report));
+        mActivity.setSupportActionBar(mToolbar);
+        mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+    }
     public void setProperties() {
         Log.d(TAG,"setProperties");
         try {
@@ -123,7 +132,7 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
             text_view_loading_message.setTypeface(font.getHelveticaRegular());
             //getSearchInspectionData();
             tv_select_model.setOnClickListener(this);
-
+            tv_select_vehicle_id.setOnClickListener(this);
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -146,10 +155,41 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
         if(view.getId()==R.id.tv_select_model_name){
             getModelName();
         }
+        if (view.getId() == R.id.tv_select_vehicle_id){
+            getVehicleId();
+        }
     }
-
+    public void getVehicleId(){
+        Log.e(TAG,"getVehicleId");
+        try
+        {
+            if(mVehicleList.size()>0){
+                new MaterialDialog.Builder(mActivity)
+                        .title(R.string.lbl_select_vehicle_id)
+                        .items(mVehicleList)
+                        .itemsCallbackSingleChoice(-1, new MaterialDialog.ListCallbackSingleChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, View view, int which, CharSequence text) {
+                                if(which>=0 ){
+                                    mVehicleId = text.toString();
+                                    inspectionDb.getAllDataByVehicleId(AppDatabase.getAppDatabase(mActivity),mVehicleId,AppUtils.MODE_GETALL_USING_VEHICLE);
+                                    tv_select_vehicle_id.setText(text.toString());
+                                    tv_select_vehicle_id.setTypeface(font.getHelveticaBold());
+                                }
+                                return true;
+                            }
+                        })
+                        .positiveText(R.string.lbl_choose)
+                        .show();
+            }else AppUtils.showDialog(mActivity,getString(R.string.msg_select_model_name));
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
     public void getModelName(){
-        Log.e(TAG,"getDate");
+        Log.e(TAG,"getModelName");
         try
         {
             new MaterialDialog.Builder(mActivity)
@@ -271,5 +311,11 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
     public void onDataReceivedErr(String strErr) {
         Log.e(TAG,"onDataReceivedErr " + strErr);
         showEmptyView(strErr);
+    }
+
+    @Override
+    public void onVehicleListSuccess(List<String> vehicleList) {
+        mVehicleList = vehicleList;
+        showEmptyView(getString(R.string.lbl_select_vehicle_id));
     }
 }

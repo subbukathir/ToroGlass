@@ -39,9 +39,10 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
     private FragmentManager mManager;
     private Handler mHandler;
     private Button btnContinue, btnSelectNewModel;
-
+    private String mModelName=null;
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
+    private Bundle mArgs;
     private Snackbar snackbar;
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,7 +56,10 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
             mHandler = new Handler();
             mManager = mActivity.getSupportFragmentManager();
             font= MyApplication.getInstance().getFontInstance();
-
+            mArgs = getArguments();
+            if(mArgs!=null && mArgs.containsKey(AppUtils.ARGS_MODEL)){
+                mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
+            }
         }
         catch (Exception ex)
         {
@@ -105,14 +109,15 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
     }
 
     private void gotoFragment(Fragment fragment,String tag) {
+        Bundle data = new Bundle();
+        data.putString(AppUtils.ARGS_MODEL,mModelName);
+        fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,tag);
-        if(tag.equals(AppUtils.TAG_MANUAL)){
-            for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
-                mManager.popBackStack();
-            }
-        }else fragmentTransaction.addToBackStack(tag);
+        fragmentTransaction.replace(R.id.frame_container, fragment);
+        for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
+            mManager.popBackStack();
+        }
         fragmentTransaction.commit();
     }
 
@@ -120,7 +125,7 @@ public class Fragment_Final extends Fragment implements View.OnClickListener
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_continue:
-                gotoFragment(new Fragment_ViewInspectionList(),AppUtils.TAG_INSPECTIONLIST);
+                gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
                 break;
             case R.id.btn_select_new_model:
                 gotoFragment(new Fragment_Manual(),AppUtils.TAG_MANUAL);
