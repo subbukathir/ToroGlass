@@ -42,6 +42,7 @@
     <string name="lbl_ques_3">3. Toe-in set properly</string>
 
     <string name="lbl_loading">Loading...</string>
+    <string name="lbl_say_user_name">Say your username...</string>
     <string name="msg_receive_inspection_empty">Inspection data empty</string>
     <string name="lbl_select_model">Select model</string>
     <string name="lbl_search_model">Search model</string>

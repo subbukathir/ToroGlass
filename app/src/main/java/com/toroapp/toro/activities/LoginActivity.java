@@ -8,6 +8,9 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -22,6 +25,7 @@ import android.widget.TextView;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.fragment.Fragment_Login;
+import com.toroapp.toro.fragment.Fragment_Username;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.ConnectivityStatus;
 import com.toroapp.toro.utils.Font;
@@ -49,6 +53,7 @@ public class LoginActivity extends AppCompatActivity
     private TextView text_view_title;
     private CollapsingToolbarLayout collapsing_toolbar;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -63,6 +68,8 @@ public class LoginActivity extends AppCompatActivity
         mPreferences = this.getSharedPreferences(AppUtils.SHARED_PREFS,MODE_PRIVATE);
         mEditor = mPreferences.edit();
         mManager = getSupportFragmentManager();
+
+
         getLoginData();
     }
 
@@ -107,7 +114,7 @@ public class LoginActivity extends AppCompatActivity
 
         try
         {
-            Fragment fragment = new Fragment_Login();
+            Fragment fragment = new Fragment_Username();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame_container_login, fragment);
@@ -118,6 +125,8 @@ public class LoginActivity extends AppCompatActivity
             ex.printStackTrace();
         }
     }
+
+
 
 
 }

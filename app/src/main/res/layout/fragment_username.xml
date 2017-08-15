@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/match_parent_style"
+    android:orientation="vertical">
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nsv_login"
+        style="@style/match_parent_style"
+        android:fillViewport="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            style="@style/match_wrap_style"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:id="@+id/frame_layout_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
+
+            <com.toroapp.toro.components.CustomTextInputLayout
+                android:id="@+id/til_username"
+                style="@style/text_input_layout_common">
+
+                <android.support.v7.widget.AppCompatEditText
+                    android:id="@+id/et_username"
+                    style="@style/text_input_edittext_common"
+                    android:hint="@string/msg_enter_username" />
+
+            </com.toroapp.toro.components.CustomTextInputLayout>
+
+            <android.support.v7.widget.AppCompatButton
+                android:id="@+id/btnNext"
+                style="@style/btn_common"
+                android:layout_marginLeft="@dimen/_35sdp"
+                android:layout_marginRight="@dimen/_35sdp"
+                android:text="@string/lbl_login" />
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</LinearLayout>
