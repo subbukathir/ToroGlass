@@ -3,8 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/match_wrap_style"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="@dimen/_16sdp">
+    android:paddingTop="@dimen/_10sdp"
+    android:paddingBottom="@dimen/_10sdp"
+    android:orientation="vertical">
 
     <android.support.v7.widget.AppCompatTextView
         android:id="@+id/text_view_search_title"
@@ -12,16 +13,17 @@
         android:layout_height="wrap_content"
         android:drawableLeft="@drawable/ic_action_keyboard_voice"
         android:drawablePadding="@dimen/_8sdp"
+        android:padding="@dimen/_10sdp"
         android:text="@string/lbl_say_user_name"
         android:textColor="@color/color_white"
         android:textSize="@dimen/_16sdp" />
 
     <ProgressBar
         android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:layout_width="wrap_content"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:layout_margin="@dimen/_16sdp" />
+        android:layout_gravity="center"
+        android:indeterminate="true" />
 
 </LinearLayout>

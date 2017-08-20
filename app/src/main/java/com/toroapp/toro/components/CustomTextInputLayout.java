@@ -25,7 +25,7 @@ public class CustomTextInputLayout extends TextInputLayout
     private static final String MODULE = MainActivity.class.getSimpleName();
     private static String TAG = "";
 
-    Font font = MyApplication.getInstance().getFontInstance();
+    Font font;
     float mTextSize;
     AppCompatActivity mActivity;
 
@@ -33,6 +33,7 @@ public class CustomTextInputLayout extends TextInputLayout
     {
         super(context);
         initFont(context);
+
     }
 
     public CustomTextInputLayout(Context context, AttributeSet attrs)
@@ -48,6 +49,7 @@ public class CustomTextInputLayout extends TextInputLayout
         TAG="initFont";
         Log.d(MODULE,TAG);
 
+        font = MyApplication.getInstance().getFontInstance();
         EditText editText = getEditText();
         if (editText != null)
         {
