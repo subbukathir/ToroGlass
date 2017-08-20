@@ -38,9 +38,9 @@ import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
  * Created by vikram on 14/7/17.
  */
 
-public class Fragment_Username extends Fragment implements VoiceListener
+public class Fragment_Password extends Fragment implements VoiceListener
 {
-    private static final String MODULE = Fragment_Username.class.getSimpleName();
+    private static final String MODULE = Fragment_Password.class.getSimpleName();
     private static String TAG = "";
 
     private AppCompatActivity mActivity;
@@ -52,11 +52,11 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private Font font = MyApplication.getInstance().getFontInstance();
 
     private Toolbar mToolbar;
-    private AppCompatEditText et_username;
-    private TextInputLayout til_username;
+    private AppCompatEditText et_password;
+    private TextInputLayout til_password;
     private TextView text_view_title;
-    private AppCompatButton btnNext;
-    private String mUsername=null;
+    private AppCompatButton btnLogin;
+    private String mPassword =null;
     private Fragment mFragment = null;
     private View rootView;
     private Fragment_Voice_Recognition fragmentVoiceRecognition;
@@ -100,7 +100,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
         TAG="onCreateView";
         Log.d(MODULE,TAG);
 
-        rootView = inflater.inflate(R.layout.fragment_username, container, false);
+        rootView = inflater.inflate(R.layout.fragment_password, container, false);
         initView();
         //setUpActionBar();
         //initTutorials();
@@ -116,13 +116,12 @@ public class Fragment_Username extends Fragment implements VoiceListener
         {
             setUpActionBar();
             frame_layout_voice = (FrameLayout) rootView.findViewById(R.id.frame_layout_voice);
-            til_username = (TextInputLayout) rootView.findViewById(R.id.til_username);
-            et_username = (AppCompatEditText) rootView.findViewById(R.id.et_username);
-            btnNext = (AppCompatButton) rootView.findViewById(R.id.btnNext);
+            til_password = (TextInputLayout) rootView.findViewById(R.id.til_password);
+            et_password = (AppCompatEditText) rootView.findViewById(R.id.et_password);
+            btnLogin = (AppCompatButton) rootView.findViewById(R.id.btnLogin);
             setProperties();
             if(frame_layout_voice.getChildCount()==0)
                 addVoiceRecognition(fragmentVoiceRecognition);
-
         }
         catch (Exception ex)
         {
@@ -158,8 +157,11 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
         try
         {
-            et_username.setTypeface(font.getRobotoRegular());
-            btnNext.setTypeface(font.getRobotoRegular());
+            et_password.setTypeface(font.getRobotoRegular());
+            btnLogin.setTypeface(font.getRobotoRegular());
+
+            btnLogin.setOnClickListener(_OnClickListener);
+            et_password.addTextChangedListener(new MyTextWatcher(et_password));
         }
         catch (Exception ex)
         {
@@ -175,7 +177,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
         try
         {
-            if(!validateUsername())
+            if(!validatePassword())
             {
                 return;
             }
@@ -207,7 +209,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
                 public void run()
                 {
                     //Do something after 100ms
-                    fragment.startListening(getString(R.string.lbl_say_user_name));
+                    fragment.startListening(getString(R.string.lbl_say_password));
                 }
             }, 3000);
         }
@@ -219,9 +221,8 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
     protected void fragmentTransition( Fragment _fragment)
     {
-        TAG="submitFormData";
+        TAG="fragmentTransition";
         Log.d(MODULE,TAG);
-
         try
         {
             this.mFragment = _fragment;
@@ -236,12 +237,10 @@ public class Fragment_Username extends Fragment implements VoiceListener
         }
     }
 
-    private boolean validateUsername()
+    private boolean validatePassword()
     {
-
         TAG="submitFormData";
         Log.d(MODULE,TAG);
-
         try
         {
             /*if (!AppUtils.validateEmail(tie_username.getText().toString().trim()))
@@ -251,15 +250,15 @@ public class Fragment_Username extends Fragment implements VoiceListener
                 return false;
             }
             else */
-            mUsername = et_username.getText().toString().trim();
-            if(mUsername.isEmpty())
+            mPassword = et_password.getText().toString().trim();
+            if(mPassword.isEmpty())
             {
-                til_username.setError(getString(R.string.msg_enter_your_username));
+                til_password.setError(getString(R.string.msg_enter_your_password));
                 return false;
             }
             else
             {
-                til_username.setErrorEnabled(false);
+                til_password.setErrorEnabled(false);
             }
         }
         catch (Exception ex)
@@ -280,7 +279,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
     public void hideKeyboard()
     {
         InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.hideSoftInputFromWindow(et_username.getWindowToken(), 0);
+        imm.hideSoftInputFromWindow(et_password.getWindowToken(), 0);
     }
 
     View.OnClickListener _OnClickListener = new View.OnClickListener()
@@ -291,7 +290,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
             switch (view.getId())
             {
-                case R.id.btnNext:
+                case R.id.btnLogin:
                      submitFormData();
                      break;
                 case R.id.tv_forgot_password:
@@ -324,8 +323,8 @@ public class Fragment_Username extends Fragment implements VoiceListener
         {
             switch (view.getId())
             {
-                case R.id.tie_username:
-                    validateUsername();
+                case R.id.tie_password:
+                    validatePassword();
                     break;
             }
         }
@@ -340,7 +339,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
         try
         {
-            if(success) et_username.setText(text);
+            if(success) et_password.setText(text);
             else Log.d(MODULE,TAG + " Text : " + text);
         }
         catch (Exception ex)

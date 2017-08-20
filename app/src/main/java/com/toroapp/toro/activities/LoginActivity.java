@@ -1,16 +1,9 @@
 package com.toroapp.toro.activities;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
-import android.os.Handler;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,22 +14,15 @@ import android.util.Log;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
-import com.toroapp.toro.fragment.Fragment_Login;
 import com.toroapp.toro.fragment.Fragment_Username;
 import com.toroapp.toro.utils.AppUtils;
-import com.toroapp.toro.utils.ConnectivityStatus;
 import com.toroapp.toro.utils.Font;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity
 {
-    private static final String MODULE = MainActivity.class.getSimpleName();
+    private static final String MODULE = LoginActivity.class.getSimpleName();
     private static String TAG = "";
 
     private String jsonResult;
