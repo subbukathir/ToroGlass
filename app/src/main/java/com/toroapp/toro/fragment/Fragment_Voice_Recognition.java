@@ -254,7 +254,8 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         TAG="onError";
         Log.d(MODULE,TAG);
         Log.e(MODULE,TAG + errorMessage);
-        voiceListener.onVoiceEnd(true,errorMessage);
+        progressBar.setVisibility(View.GONE);
+        voiceListener.onVoiceEnd(false,errorMessage);
     }
 
     @Override

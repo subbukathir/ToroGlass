@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
@@ -84,6 +85,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private View rootView;
     private Fragment_Voice_Recognition fragmentVoiceRecognition;
     private FrameLayout frame_layout_voice;
+    private CountDownTimer timer;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -233,6 +235,8 @@ public class Fragment_Username extends Fragment implements VoiceListener
                     fragment.startListening(getString(R.string.lbl_say_user_name));
                 }
             }, 3000);
+            startTimer.start();
+
         }
         catch (Exception ex)
         {
@@ -262,7 +266,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private boolean validateUsername()
     {
 
-        TAG="submitFormData";
+        TAG="validateUsername";
         Log.d(MODULE,TAG);
 
         try
@@ -363,13 +367,52 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
         try
         {
-            if(success) et_username.setText(text);
-            else Log.d(MODULE,TAG + " Text : " + text);
+            Log.d(MODULE,TAG + " Text : " + text);
+            if(success)
+            {
+                et_username.setText(text);
+                startTimer.cancel();
+                endTimer.cancel();
+            }
+            else
+            {
+                endTimer.start();
+            }
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
     }
+
+    CountDownTimer startTimer = new CountDownTimer(10000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            endTimer.start();
+        }
+    };
+
+    CountDownTimer endTimer = new CountDownTimer(5000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            startTimer.start();
+        }
+    };
 
 }

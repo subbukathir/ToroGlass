@@ -12,12 +12,11 @@
 
         <LinearLayout
             style="@style/match_wrap_style"
-            android:layout_gravity="center"
             android:orientation="vertical">
 
             <FrameLayout
                 android:id="@+id/frame_layout_voice"
-                android:layout_width="wrap_content"
+                style="@style/match_wrap_style"
                 android:layout_height="match_parent">
 
             </FrameLayout>
