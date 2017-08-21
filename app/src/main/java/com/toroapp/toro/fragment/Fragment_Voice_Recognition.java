@@ -1,6 +1,5 @@
 package com.toroapp.toro.fragment;
 
-import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -13,46 +12,27 @@ import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.popalay.tutors.TutorialListener;
-import com.popalay.tutors.Tutors;
-import com.popalay.tutors.TutorsBuilder;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
-import com.toroapp.toro.activities.MainActivity;
 import com.toroapp.toro.listeners.VoiceListener;
-import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 import static android.Manifest.permission.RECORD_AUDIO;
 import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
-import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
 
 
 /**
@@ -197,9 +177,12 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         {
             if(speech!=null)
             {
-                text_view_search_title.setText(text);
-                progressBar.setVisibility(View.VISIBLE);
-                speech.startListening(recognizerIntent);
+                if(mActivity!=null && isAdded()){
+                    text_view_search_title.setText(text);
+                    progressBar.setVisibility(View.VISIBLE);
+                    speech.startListening(recognizerIntent);
+                }
+
             }
         }
         catch (Exception ex)
@@ -413,7 +396,7 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
                     {
                         if (shouldShowRequestPermissionRationale(permissionsRejected.get(0)))
                         {
-                            showMessageOKCancel("These permissions are mandatory for the application. Please allow access.",
+                            showMessageOKCancel("These permissions are mandatory for the applicatio9n. Please allow access.",
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {

@@ -35,6 +35,12 @@
                     android:textSize="@dimen/_13sdp"
                     android:textStyle="bold" />
             </LinearLayout>
+            <FrameLayout
+                android:id="@+id/frame_layout_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
+
+            </FrameLayout>
 
             <LinearLayout
                 style="@style/match_wrap_style"
