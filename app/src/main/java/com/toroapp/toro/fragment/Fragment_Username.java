@@ -1,7 +1,6 @@
 package com.toroapp.toro.fragment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -27,7 +26,6 @@ import android.widget.TextView;
 
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
-import com.toroapp.toro.activities.MainActivity;
 import com.toroapp.toro.listeners.VoiceListener;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
@@ -162,6 +160,9 @@ public class Fragment_Username extends Fragment implements VoiceListener
         {
             et_username.setTypeface(font.getRobotoRegular());
             btnNext.setTypeface(font.getRobotoRegular());
+
+            btnNext.setOnClickListener(_OnClickListener);
+            et_username.addTextChangedListener(new MyTextWatcher(et_username));
         }
         catch (Exception ex)
         {
@@ -181,9 +182,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
             {
                 return;
             }
-            Intent intent = new Intent(mActivity, MainActivity.class);
-            startActivity(intent);
-            mActivity.finish();
+            fragmentTransition(new Fragment_Password());
         }
         catch (Exception ex)
         {
@@ -208,6 +207,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
                 @Override
                 public void run()
                 {
+                    if(isAdded() && mActivity !=null)
                     //Do something after 100ms
                     fragment.startListening(getString(R.string.lbl_say_user_name));
                 }
@@ -229,6 +229,9 @@ public class Fragment_Username extends Fragment implements VoiceListener
         try
         {
             this.mFragment = _fragment;
+            Bundle data = new Bundle();
+            data.putString(AppUtils.ARGS_USERNAME,mUsername);
+            mFragment.setArguments(data);
             FragmentTransaction _fragmentTransaction = mActivity.getSupportFragmentManager().beginTransaction();
             _fragmentTransaction.replace(R.id.frame_container_login,mFragment,TAG_FORGOT_PASSWORD);
             _fragmentTransaction.addToBackStack(TAG_FORGOT_PASSWORD);
@@ -389,6 +392,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
         public void onFinish()
         {
             startTimer.start();
+
         }
     };
 

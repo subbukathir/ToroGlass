@@ -9,11 +9,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -34,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -55,6 +55,7 @@ import com.toroapp.toro.R;
 import com.toroapp.toro.classes.Action;
 import com.toroapp.toro.listeners.ImagePickListener;
 import com.toroapp.toro.listeners.InspectionDataListener;
+import com.toroapp.toro.listeners.VoiceListener;
 import com.toroapp.toro.localstorage.database.AppDatabase;
 import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
 import com.toroapp.toro.localstorage.entity.InspectionEntity;
@@ -62,10 +63,7 @@ import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +78,6 @@ import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
-import static com.toroapp.toro.utils.AppUtils.REQUEST_PICK_PHOTO;
 import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
 
 /**
@@ -88,7 +85,7 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener, ImagePickListener,TutorialListener {
+        InspectionDataListener, ImagePickListener,TutorialListener,VoiceListener {
     private static final String MODULE = Fragment_Inspection.class.getSimpleName();
     private static String TAG = "";
 
@@ -137,6 +134,9 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     private Iterator<Map.Entry<String, View>> iterator;
     private Tutors tutors;
 
+    private Fragment_Voice_Recognition fragmentVoiceRecognition;
+    private FrameLayout frame_layout_voice;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -168,7 +168,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 if (permissionsToRequest.size() > 0)
                     requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             }
-
+            fragmentVoiceRecognition = new Fragment_Voice_Recognition();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -213,6 +213,9 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             btnNext = (Button) rootView.findViewById(R.id.btn_next);
             iv_captured_image = (ImageView) rootView.findViewById(R.id.iv_captured_image);
             iv_info = (ImageView) rootView.findViewById(R.id.iv_info);
+            frame_layout_voice = (FrameLayout) rootView.findViewById(R.id.frame_layout_voice);
+            if(frame_layout_voice.getChildCount()==0)
+                addVoiceRecognition(fragmentVoiceRecognition);
             setupActionBar();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -712,5 +715,90 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
         }
     }
+    protected void addVoiceRecognition(final Fragment_Voice_Recognition fragment)
+    {
+        TAG="addVoiceRecognition";
+        Log.d(MODULE,TAG);
 
+        try
+        {
+            fragment.setVoiceListener(this);
+            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
+            transaction.replace(R.id.frame_layout_voice,fragment,Fragment_Voice_Recognition.class.getName());
+            transaction.commit();
+            final Handler handler = new Handler();
+            handler.postDelayed(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    if(isAdded() && mActivity !=null)
+                    //Do something after 100ms
+                    fragment.startListening(getString(R.string.lbl_say_yer_or_no));
+                }
+            }, 3000);
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onVoiceEnd(boolean success, String text) {
+        TAG="onVoiceEnd";
+        Log.d(MODULE,TAG);
+
+        try
+        {
+            Log.d(MODULE,TAG + " Text : " + text);
+            if(success)
+            {
+                if(text.contains("yes") || text.contains("no")){
+                    mTested = text.toString();
+                    if(text.equalsIgnoreCase("yes"))rdb_yes.setChecked(true);
+                    if (text.equalsIgnoreCase("no"))rdb_no.setChecked(true);
+                }
+                startTimer.cancel();
+                endTimer.cancel();
+            }
+            else
+            {
+                endTimer.start();
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+    }
+    CountDownTimer startTimer = new CountDownTimer(10000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            endTimer.start();
+        }
+    };
+
+    CountDownTimer endTimer = new CountDownTimer(5000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            startTimer.start();
+        }
+    };
 }

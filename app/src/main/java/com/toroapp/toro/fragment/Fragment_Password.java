@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -208,6 +209,7 @@ public class Fragment_Password extends Fragment implements VoiceListener
                 @Override
                 public void run()
                 {
+                    if(isAdded() && mActivity !=null)
                     //Do something after 100ms
                     fragment.startListening(getString(R.string.lbl_say_password));
                 }
@@ -339,13 +341,50 @@ public class Fragment_Password extends Fragment implements VoiceListener
 
         try
         {
-            if(success) et_password.setText(text);
-            else Log.d(MODULE,TAG + " Text : " + text);
+            if(success) {
+                et_password.setText(text);
+                startTimer.cancel();
+                endTimer.cancel();
+            }
+            else {
+                Log.d(MODULE,TAG + " Text : " + text);
+                endTimer.start();
+            }
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
         }
     }
+    CountDownTimer startTimer = new CountDownTimer(10000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            endTimer.start();
+        }
+    };
+
+    CountDownTimer endTimer = new CountDownTimer(5000,1000)
+    {
+        @Override
+        public void onTick(long l)
+        {
+
+        }
+
+        @Override
+        public void onFinish()
+        {
+            startTimer.start();
+        }
+    };
+
 
 }

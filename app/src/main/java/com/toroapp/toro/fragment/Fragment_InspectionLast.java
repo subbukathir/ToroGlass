@@ -1,6 +1,5 @@
 package com.toroapp.toro.fragment;
 
-import android.Manifest;
 import android.animation.ValueAnimator;
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -9,8 +8,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,7 +44,6 @@ import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 import com.popalay.tutors.TutorialListener;
 import com.popalay.tutors.Tutors;
 import com.popalay.tutors.TutorsBuilder;
-import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
@@ -61,10 +57,7 @@ import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -73,14 +66,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import permissions.dispatcher.NeedsPermission;
-
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
-import static com.toroapp.toro.utils.AppUtils.REQUEST_PICK_PHOTO;
-import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
 
 /**
  * Created by subbu on 25/11/16.
@@ -292,7 +281,7 @@ public class Fragment_InspectionLast extends Fragment implements View.OnClickLis
                 if(mTested!=null){
                     mRemarks = et_remarks.getText().toString().trim();
                     InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData,mVehicleId);
-                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
+                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity, AppUtils.MODE_INSERT);
                     gotoFragmentInspection2();
                 }else AppUtils.showDialog(mActivity,getString(R.string.msg_choose_yes_or_no));
             }else AppUtils.showDialog(mActivity,getString(R.string.msg_inspection_name_empty));
@@ -417,7 +406,7 @@ public class Fragment_InspectionLast extends Fragment implements View.OnClickLis
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FINAL);
+        fragmentTransaction.replace(R.id.frame_container, fragment, AppUtils.TAG_FINAL);
         fragmentTransaction.addToBackStack(AppUtils.TAG_FINAL);
         fragmentTransaction.commit();
     }

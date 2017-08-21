@@ -10,6 +10,7 @@
             style="@style/wrapcontent_style"
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
+            android:layout_toLeftOf="@+id/tv_remarks"
             android:text="@string/lbl_ques_1"/>
         <TextView
             android:id="@+id/tv_remarks"

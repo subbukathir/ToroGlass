@@ -85,8 +85,7 @@
     <style name="wrapcontent_style">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_margin">@dimen/_5sdp</item>
-        <item name="android:padding">@dimen/_5sdp</item>
+        <item name="android:layout_margin">@dimen/_2sdp</item>
         <item name="android:textStyle">normal</item>
         <item name="android:textSize">@dimen/_10sdp</item>
         <item name="android:textColor">@color/primary_text</item>

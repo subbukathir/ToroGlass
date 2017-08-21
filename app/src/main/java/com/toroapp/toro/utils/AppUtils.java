@@ -35,7 +35,6 @@ import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -73,6 +72,9 @@ public class AppUtils extends Dialog {
     //Ags variables
     public static final String ARGS_MODEL = "arg_model";
     public static final String ARGS_VEHICLEID = "arg_vehicle_id";
+
+    public static final String ARGS_USERNAME = "arg_username";
+    public static final String ARGS_PASSWORD = "arg_password";
 
     public static final String IS_NETWORK_AVAILABLE = "is_network_available";
     public static final String NETWORK_AVAILABLE = "network_available";

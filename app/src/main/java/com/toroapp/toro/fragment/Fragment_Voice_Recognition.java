@@ -177,9 +177,12 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         {
             if(speech!=null)
             {
-                text_view_search_title.setText(text);
-                progressBar.setVisibility(View.VISIBLE);
-                speech.startListening(recognizerIntent);
+                if(mActivity!=null && isAdded()){
+                    text_view_search_title.setText(text);
+                    progressBar.setVisibility(View.VISIBLE);
+                    speech.startListening(recognizerIntent);
+                }
+
             }
         }
         catch (Exception ex)

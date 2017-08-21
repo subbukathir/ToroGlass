@@ -293,7 +293,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
                 if(mTested!=null){
                     mRemarks = et_remarks.getText().toString().trim();
                     InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData,mVehicleId);
-                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity,AppUtils.MODE_INSERT);
+                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity, AppUtils.MODE_INSERT);
                     gotoFragmentInspection2();
                 }else AppUtils.showDialog(mActivity,getString(R.string.msg_choose_yes_or_no));
             }else AppUtils.showDialog(mActivity,getString(R.string.msg_inspection_name_empty));
@@ -486,7 +486,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION3);
+        fragmentTransaction.replace(R.id.frame_container, fragment, AppUtils.TAG_FRAGMENT_INSPECTION3);
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION3);
         fragmentTransaction.commit();
     }
