@@ -29,6 +29,7 @@ import com.toroapp.toro.R;
 import com.toroapp.toro.listeners.VoiceListener;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
+import com.vuzix.speech.VoiceControl;
 
 import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
 
@@ -61,6 +62,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private Fragment_Voice_Recognition fragmentVoiceRecognition;
     private FrameLayout frame_layout_voice;
     private CountDownTimer timer;
+    private VoiceControl vc;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -163,6 +165,20 @@ public class Fragment_Username extends Fragment implements VoiceListener
 
             btnNext.setOnClickListener(_OnClickListener);
             et_username.addTextChangedListener(new MyTextWatcher(et_username));
+
+            // Create the VoiceControl object and pass it the context.
+            vc = new VoiceControl(mActivity)
+            {
+                @Override
+                protected void onRecognition(String word)
+                {
+                    // Set the TextView to contain whatever word the recognition
+                    // service picks up. It is important that the View is cast to
+                    // a TextView via parentheses before setText is called.
+                    et_username.setText(word);
+                }
+            };
+            // Basic grammar is included by default.
         }
         catch (Exception ex)
         {
@@ -201,7 +217,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
             transaction.replace(R.id.frame_layout_voice,fragment,Fragment_Voice_Recognition.class.getName());
             transaction.commit();
-            final Handler handler = new Handler();
+            /*final Handler handler = new Handler();
             handler.postDelayed(new Runnable()
             {
                 @Override
@@ -211,8 +227,8 @@ public class Fragment_Username extends Fragment implements VoiceListener
                     //Do something after 100ms
                     fragment.startListening(getString(R.string.lbl_say_user_name));
                 }
-            }, 3000);
-            startTimer.start();
+            }, 3000);*/
+            //startTimer.start();
 
         }
         catch (Exception ex)
