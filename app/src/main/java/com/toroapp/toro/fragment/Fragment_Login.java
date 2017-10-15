@@ -1,23 +1,14 @@
 package com.toroapp.toro.fragment;
 
 import android.animation.ValueAnimator;
-import android.annotation.TargetApi;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
@@ -30,14 +21,13 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
-import com.popalay.tutors.TutorialListener;
-import com.popalay.tutors.Tutors;
-import com.popalay.tutors.TutorsBuilder;
+
+import com.michael.easydialog.EasyDialog;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.activities.MainActivity;
-import com.toroapp.toro.listeners.InspectionDataListener;
 import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
@@ -45,14 +35,8 @@ import com.toroapp.toro.utils.Font;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static android.Manifest.permission.CAMERA;
-import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
-import static android.Manifest.permission.RECORD_AUDIO;
-import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
-import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
 import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
 
 
@@ -60,7 +44,7 @@ import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
  * Created by vikram on 14/7/17.
  */
 
-public class Fragment_Login extends Fragment implements View.OnClickListener,TutorialListener,RecognitionListener
+public class Fragment_Login extends Fragment implements View.OnClickListener
 {
     private static final String MODULE = Fragment.class.getSimpleName();
     private static String TAG = "";
@@ -84,13 +68,12 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
     private TextView tv_forgot_password;
     private Button btnLogin;
     private Fragment mFragment = null;
-    private View rootView;
+    private View rootView,infoView;
     private Map<String, View> tutorials;
     private Iterator<Map.Entry<String, View>> iterator;
-    private Tutors tutors;
     private InspectionDbInitializer inspectionDbInitializer;
-    private SpeechRecognizer speech = null;
     private Intent recognizerIntent;
+    private ImageView info_view;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -115,28 +98,6 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
-            permissions.add(RECORD_AUDIO);
-            permissionsToRequest = findUnAskedPermissions(permissions);
-            //get the permissions we have asked for before but are not granted..
-            //we will store this in a global list to access later.
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (permissionsToRequest.size() > 0)
-                    requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
-            }
-
-
-            speech = SpeechRecognizer.createSpeechRecognizer(mActivity);
-            speech.setRecognitionListener(this);
-            recognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE,
-                    "en");
-            recognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,
-                    mActivity.getPackageName());
-            recognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_WEB_SEARCH);
-            recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
-
 
         }catch (Exception ex){
             ex.printStackTrace();
@@ -148,7 +109,10 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         Log.d(MODULE,TAG);
 
         rootView = inflater.inflate(R.layout.fragment_login, container, false);
+
+        infoView = inflater.inflate(R.layout.info_view_login, container, false);
         initView();
+
         //setUpActionBar();
         //initTutorials();
         setProperties();
@@ -165,10 +129,11 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
             tie_username = (AppCompatEditText) rootView.findViewById(R.id.tie_username);
             tie_password = (AppCompatEditText) rootView.findViewById(R.id.tie_password);
             tv_forgot_password = (TextView) rootView.findViewById(R.id.tv_forgot_password);
+            info_view = (ImageView) rootView.findViewById(R.id.info_view);
             btnLogin = (Button) rootView.findViewById(R.id.btnLogin);
+
             btnLogin.setOnClickListener(this);
-            speech.cancel();
-            speech.startListening(recognizerIntent);
+            info_view.setOnClickListener(this);
         }
         catch (Exception ex)
         {
@@ -221,8 +186,39 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
             case R.id.tv_forgot_password:
                 fragmentTransition(new Fragment_ForgotPassword());
                 break;
+            case R.id.info_view:
+                showInfoView();
+                break;
         }
     }
+
+    private void showInfoView() {
+        try {
+            if(infoView.getParent()!=null)
+                ((ViewGroup)infoView.getParent()).removeView(infoView); // <- fix
+
+            new EasyDialog(mActivity)
+                    // .setLayoutResourceId(R.layout.layout_tip_content_horizontal)//layout resource id
+                    .setLayout(infoView)
+                    .setBackgroundColor(mActivity.getResources().getColor(R.color.calendarBackground))
+                    // .setLocation(new location[])//point in screen
+                    .setLocationByAttachedView(info_view)
+                    .setGravity(EasyDialog.GRAVITY_TOP)
+                    .setAnimationTranslationShow(EasyDialog.DIRECTION_X, 1000, -600, 100, -50, 50, 0)
+                    .setAnimationAlphaShow(1000, 0.3f, 1.0f)
+                    .setAnimationTranslationDismiss(EasyDialog.DIRECTION_X, 500, -50, 800)
+                    .setAnimationAlphaDismiss(500, 1.0f, 0.0f)
+                    .setTouchOutsideDismiss(true)
+                    .setMatchParent(true)
+                    .setMarginLeftAndRight(24, 24)
+                    .setOutsideColor(mActivity.getResources().getColor(R.color.transparent))
+                    .show();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
+    }
+
     private void setProperties(){
         tie_username.setTypeface(font.getRobotoRegular());
         tie_password.setTypeface(font.getRobotoRegular());
@@ -232,18 +228,6 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         tie_password.addTextChangedListener(new MyTextWatcher(tie_password));
         btnLogin.setOnClickListener(this);
         tv_forgot_password.setOnClickListener(this);
-
-        tutors = new TutorsBuilder()
-                .textColorRes(android.R.color.white)
-                .shadowColorRes(R.color.shadow)
-                .textSizeRes(R.dimen.textNormal)
-                .completeIconRes(R.drawable.ic_cross_24_white)
-                .spacingRes(R.dimen.spacingNormal)
-                .lineWidthRes(R.dimen.lineWidth)
-                .cancelable(false)
-                .build();
-
-        tutors.setListener(this);
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -362,40 +346,7 @@ public class Fragment_Login extends Fragment implements View.OnClickListener,Tut
         }
 
     }
-/**
- * show case code
- */
-private void initTutorials() {
-    tutorials = new LinkedHashMap<>();
-    tutorials.put("It's a toolbar", tie_username);
-    tutorials.put("It's a button", tie_password);
-    tutorials.put("It's a borderless button", btnLogin);
-    tutorials.put("It's a text", tv_forgot_password);
-}
 
-    @Override
-    public void onNext() {
-        showTutorial(iterator);
-    }
-
-    @Override
-    public void onComplete() {
-        tutors.close();
-    }
-
-    @Override
-    public void onCompleteAll() {
-        tutors.close();
-    }
-    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
-        if (iterator == null) {
-            return;
-        }
-        if (iterator.hasNext()) {
-            Map.Entry<String, View> next = iterator.next();
-            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
-        }
-    }
 
     @Override
     public void onPause() {
@@ -403,193 +354,5 @@ private void initTutorials() {
 
         TAG="onPause";
         Log.d(MODULE,TAG);
-
-        if (speech != null) {
-            speech.destroy();
-            Log.d(MODULE,TAG);
-        }
-
     }
-
-    @Override
-    public void onBeginningOfSpeech() {
-        TAG="onBeginningOfSpeech";
-        Log.d(MODULE,TAG);
-
-    }
-
-    @Override
-    public void onBufferReceived(byte[] buffer) {
-        TAG="onBufferReceived";
-        Log.d(MODULE,TAG);
-
-    }
-
-    @Override
-    public void onEndOfSpeech() {
-        TAG="onEndOfSpeech";
-        Log.d(MODULE,TAG);
-    }
-
-    @Override
-    public void onError(int errorCode) {
-        String errorMessage = getErrorText(errorCode);
-        TAG="onError";
-        Log.d(MODULE,TAG);
-        Log.e(MODULE,TAG + errorMessage);
-    }
-
-    @Override
-    public void onEvent(int arg0, Bundle arg1) {
-        TAG="onEvent";
-        Log.d(MODULE,TAG);
-    }
-
-    @Override
-    public void onPartialResults(Bundle arg0) {
-        TAG="onPartialResults";
-        Log.d(MODULE,TAG);
-    }
-
-    @Override
-    public void onReadyForSpeech(Bundle arg0) {
-        TAG="onReadyForSpeech";
-        Log.d(MODULE,TAG);
-    }
-
-    @Override
-    public void onResults(Bundle results) {
-        TAG="onResults";
-        Log.d(MODULE,TAG);
-        ArrayList<String> matches = results
-                .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-        String text = "";
-        for (String result : matches)
-            text += result + "\n";
-        tie_username.setText(text);
-
-    }
-
-    @Override
-    public void onRmsChanged(float rmsdB) {
-        TAG="onRmsChanged";
-        Log.d(MODULE,TAG);
-    }
-
-    public String getErrorText(int errorCode) {
-        String message;
-        switch (errorCode) {
-            case SpeechRecognizer.ERROR_AUDIO:
-                message = "Audio recording error";
-                break;
-            case SpeechRecognizer.ERROR_CLIENT:
-                message = "Client side error";
-                break;
-            case SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS:
-                message = "Insufficient permissions";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK:
-                message = "Network error";
-                break;
-            case SpeechRecognizer.ERROR_NETWORK_TIMEOUT:
-                message = "Network timeout";
-                break;
-            case SpeechRecognizer.ERROR_NO_MATCH:
-                message = "No match";
-                break;
-            case SpeechRecognizer.ERROR_RECOGNIZER_BUSY:
-                message = "RecognitionService busy";
-                speech.destroy();
-                speech.startListening(recognizerIntent);
-                break;
-            case SpeechRecognizer.ERROR_SERVER:
-                message = "error from server";
-                break;
-            case SpeechRecognizer.ERROR_SPEECH_TIMEOUT:
-                message = "No speech input";
-                break;
-            default:
-                message = "Didn't understand, please try again.";
-                break;
-        }
-        return message;
-    }
-
-    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
-        ArrayList<String> result = new ArrayList<String>();
-
-        for (String perm : wanted) {
-            if (!hasPermission(perm)) {
-                result.add(perm);
-            }
-        }
-
-        return result;
-    }
-
-    private boolean hasPermission(String permission) {
-        if (canMakeSmores()) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                return (mActivity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
-            }
-        }
-        return true;
-    }
-
-    private boolean canMakeSmores() {
-        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
-    }
-
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
-        new AlertDialog.Builder(mActivity)
-                .setMessage(message)
-                .setPositiveButton("OK", okListener)
-                .setNegativeButton("Cancel", null)
-                .create()
-                .show();
-    }
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        //MainActivityPermissionsDispatcher.onRequestPermissionsResult(mActivity, requestCode, grantResults);
-        switch (requestCode) {
-
-            case ALL_PERMISSIONS_RESULT:
-                for (String perms : permissionsToRequest) {
-                    if (hasPermission(perms)) {
-
-                    } else {
-
-                        permissionsRejected.add(perms);
-                    }
-                }
-
-                if (permissionsRejected.size() > 0) {
-
-
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
-                            showMessageOKCancel("These permissions are mandatory for the application. Please allow access.",
-                                    new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-
-                                                //Log.d("API123", "permisionrejected " + permissionsRejected.size());
-
-                                                requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);
-                                            }
-                                        }
-                                    });
-                            return;
-                        }
-                    }
-
-                }
-
-                break;
-        }
-    }
-
 }

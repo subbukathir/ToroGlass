@@ -13,24 +13,25 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:orientation="vertical">
+
             <LinearLayout
                 style="@style/match_wrap_style"
                 android:layout_marginLeft="@dimen/_20sdp"
                 android:layout_marginRight="@dimen/_20sdp"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tv_lbl_choose_model"
                     style="@style/textview_label"
                     android:textSize="@dimen/_14sdp"
                     android:text="@string/lbl_select_model"
-                    android:layout_marginLeft="@dimen/_20sdp"/>
+                    android:layout_marginLeft="@dimen/_20sdp" />
 
                 <android.support.v7.widget.AppCompatAutoCompleteTextView
                     android:id="@+id/autoCompleteText"
                     style="@style/text_input_edittext_common"
                     android:hint="@string/lbl_enter_model_name" />
             </LinearLayout>
-
 
 
             <com.toroapp.toro.components.CustomTextInputLayout
@@ -50,13 +51,14 @@
                 android:layout_marginLeft="@dimen/_20sdp"
                 android:layout_marginRight="@dimen/_20sdp"
                 android:text="@string/lbl_start_inspection" />
+
             <ImageView
                 android:id="@+id/iv_info"
                 style="@style/wrap_content_style"
                 android:layout_gravity="bottom|end|right"
                 android:padding="@dimen/_10sdp"
                 android:layout_margin="@dimen/_10sdp"
-                android:src="@drawable/ic_info"/>
+                android:src="@drawable/ic_info" />
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

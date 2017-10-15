@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
@@ -33,9 +32,7 @@ import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
-import com.popalay.tutors.TutorialListener;
-import com.popalay.tutors.Tutors;
-import com.popalay.tutors.TutorsBuilder;
+import com.michael.easydialog.EasyDialog;
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
 import com.toroapp.toro.activities.MainActivity;
@@ -48,23 +45,19 @@ import com.toroapp.toro.utils.Font;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by subbu on 25/11/16.
  */
 
-public class Fragment_Manual extends Fragment implements View.OnClickListener,InspectionDataListener,TutorialListener
-{
+public class Fragment_Manual extends Fragment implements View.OnClickListener, InspectionDataListener {
     private static final String MODULE = MainActivity.class.getSimpleName();
     private static String TAG = "";
 
     private AppCompatActivity mActivity;
     private Context mContext;
-    private Font font= MyApplication.getInstance().getFontInstance();
+    private Font font = MyApplication.getInstance().getFontInstance();
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private FragmentManager mManager;
@@ -74,7 +67,7 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
     private TextInputLayout til_vehicleId;
     private TextInputEditText tie_vehicleId;
     private Button btnInspect;
-    private String mStringJson=null,mModelName="",mVehicleId=null;
+    private String mStringJson = null, mModelName = "", mVehicleId = null;
     private String[] strArrayModels;
     private ArrayList<String> listModel;
     private List<String> listVehicleId = new ArrayList<>();
@@ -84,68 +77,59 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
     private Snackbar snackbar;
     //showcase
     private ImageView iv_info;
-    private Map<String, View> tutorials;
-    private Iterator<Map.Entry<String, View>> iterator;
-    private Tutors tutors;
     private InspectionDbInitializer mInspectionDb;
     private AHBottomNavigation mBottomNavigation;
+    View rootView = null, infoView = null;
 
     @Override
-    public void onCreate(Bundle savedInstanceState)
-    {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TAG="onCreate";
-        Log.d(MODULE,TAG);
+        TAG = "onCreate";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             mActivity = (AppCompatActivity) getActivity();
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
             mEditor = mPreferences.edit();
             mInspectionDb = new InspectionDbInitializer(this);
             mHandler = new Handler();
-            mStringJson = mPreferences.getString(AppUtils.SHARED_LOGIN,null);
+            mStringJson = mPreferences.getString(AppUtils.SHARED_LOGIN, null);
             mManager = mActivity.getSupportFragmentManager();
-            font= MyApplication.getInstance().getFontInstance();
+            font = MyApplication.getInstance().getFontInstance();
             mArgs = getArguments();
             strArrayModels = getResources().getStringArray(R.array.array_model);
             listModel = new ArrayList<>(Arrays.asList(strArrayModels));
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
+
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        TAG="onCreateView";
-        Log.d(MODULE,TAG);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TAG = "onCreateView";
+        Log.d(MODULE, TAG);
 
-        View rootView=null;
         try {
-            rootView = (View) inflater.inflate(R.layout.fragment_manual,container,false);
+            rootView = (View) inflater.inflate(R.layout.fragment_manual, container, false);
+            infoView = inflater.inflate(R.layout.info_view_login, container, false);
             initUI(rootView);
-            initTutorials();
             setProperties();
-        }catch (Exception ex)  {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
         return rootView;
     }
 
-    private void initUI(View rootView)
-    {
-        TAG="initUI";
-        Log.d(MODULE,TAG);
+    private void initUI(View rootView) {
+        TAG = "initUI";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             cl_main = (CoordinatorLayout) mActivity.findViewById(R.id.cl_main);
             mBottomNavigation = (AHBottomNavigation) mActivity.findViewById(R.id.bottom_navigation);
             mBottomNavigation.setVisibility(View.VISIBLE);
@@ -155,35 +139,45 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
             btnInspect = (Button) rootView.findViewById(R.id.btnInspect);
             iv_info = (ImageView) rootView.findViewById(R.id.iv_info);
             setupActionBar();
-        }catch (Exception ex) {  ex.printStackTrace();  }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
-    public void setupActionBar()    {
+
+    public void setupActionBar() {
         mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
         mToolbar.setTitle(getResources().getString(R.string.app_name));
         mActivity.setSupportActionBar(mToolbar);
         mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
     }
-    private void setProperties()
-    {
-        TAG="setProperties";
-        Log.d(MODULE,TAG);
+
+    private void setProperties() {
+        TAG = "setProperties";
+        Log.d(MODULE, TAG);
 
         autoCompleteTextView.setTypeface(font.getRobotoRegular());
         tie_vehicleId.addTextChangedListener(new Fragment_Manual.MyTextWatcher(tie_vehicleId));
-        if(mArgs!=null && mArgs.containsKey(AppUtils.ARGS_MODEL)){
-            mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
-            mInspectionDb.getAllDataByModelName(AppDatabase.getAppDatabase(mActivity),mModelName,AppUtils.MODE_GETALL_USING_MODEL);
-            autoCompleteTextView.setText(mModelName);
-            autoCompleteTextView.setEnabled(false);
-            autoCompleteTextView.setClickable(false);
-            tie_vehicleId.setFocusable(true);
-        }else {
+        if (mArgs != null && mArgs.containsKey(AppUtils.ARGS_MODEL)) {
+            if (!mArgs.getString(AppUtils.ARGS_MODEL).equalsIgnoreCase("")) {
+                String[] modelNames = mArgs.get(AppUtils.ARGS_MODEL).toString().split("#");
+                mModelName = modelNames[0];
+                mVehicleId = modelNames[1];
+                Log.d(MODULE, TAG + " model :" + mModelName + " : vehicle id : " + mVehicleId);
+                mInspectionDb.getAllDataByModelName(AppDatabase.getAppDatabase(mActivity), mModelName, AppUtils.MODE_GETALL_USING_MODEL);
+                autoCompleteTextView.setText(mModelName);
+                tie_vehicleId.setText(mVehicleId);
+                tie_vehicleId.setClickable(false);
+                autoCompleteTextView.setEnabled(false);
+                autoCompleteTextView.setClickable(false);
+            }
+
+        } else {
             autoCompleteTextView.setHint(getString(R.string.lbl_select_model));
             autoCompleteTextView.setEnabled(true);
             autoCompleteTextView.setClickable(true);
         }
         btnInspect.setOnClickListener(this);
-        ArrayAdapter mAdapter = new ArrayAdapter(mActivity,android.R.layout.simple_spinner_dropdown_item,listModel);
+        ArrayAdapter mAdapter = new ArrayAdapter(mActivity, android.R.layout.simple_spinner_dropdown_item, listModel);
         autoCompleteTextView.setAdapter(mAdapter);
         autoCompleteTextView.setThreshold(1);
         autoCompleteTextView.setTypeface(font.getRobotoRegular());
@@ -191,14 +185,14 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 mModelName = listModel.get(i);
-               final MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
-                        .customView(R.layout.dialog_selected_model,false)
+                final MaterialDialog dialog = new MaterialDialog.Builder(mActivity)
+                        .customView(R.layout.dialog_selected_model, false)
                         .build();
 
                 View view1 = dialog.getCustomView();
                 ImageView iv_model;
-                TextView tv_lbl_selected_model,tv_model_name;
-                Button btnOkay,btnBack;
+                TextView tv_lbl_selected_model, tv_model_name;
+                Button btnOkay, btnBack;
                 iv_model = (ImageView) view1.findViewById(R.id.iv_selected_model);
                 tv_lbl_selected_model = (TextView) view1.findViewById(R.id.tv_lbl_selected_model);
                 tv_model_name = (TextView) view1.findViewById(R.id.tv_selected_model);
@@ -220,27 +214,16 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
                     public void onClick(View view) {
                         //gotoFragmentInspection();
                         dialog.dismiss();
-                        mInspectionDb.getAllDataByModelName(AppDatabase.getAppDatabase(mActivity),mModelName,AppUtils.MODE_GETALL_USING_MODEL);
+                        mInspectionDb.getAllDataByModelName(AppDatabase.getAppDatabase(mActivity), mModelName, AppUtils.MODE_GETALL_USING_MODEL);
                     }
                 });
-                Log.e(TAG,"onItemClick "+ mModelName);
+                Log.e(TAG, "onItemClick " + mModelName);
                 dialog.show();
             }
         });
-        Log.e(TAG,"text " + autoCompleteTextView.getText().toString());
+        Log.e(TAG, "text " + autoCompleteTextView.getText().toString());
         //show case
         iv_info.setOnClickListener(this);
-        tutors = new TutorsBuilder()
-                .textColorRes(android.R.color.white)
-                .shadowColorRes(R.color.colorBlue)
-                .textSizeRes(R.dimen.textNormal)
-                .completeIconRes(R.drawable.ic_cross_24_white)
-                .spacingRes(R.dimen.spacingNormal)
-                .lineWidthRes(R.dimen.lineWidth)
-                .cancelable(false)
-                .build();
-
-        tutors.setListener(this);
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -260,25 +243,24 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
     private void gotoFragmentInspection() {
         Fragment fragment = new Fragment_Inspection();
         Bundle data = new Bundle();
-        data.putString(AppUtils.ARGS_MODEL,mModelName);
-        data.putString(AppUtils.ARGS_VEHICLEID,mVehicleId);
+        data.putString(AppUtils.ARGS_MODEL, mModelName);
+        data.putString(AppUtils.ARGS_VEHICLEID, mVehicleId);
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-        fragmentTransaction.replace(R.id.frame_container, fragment,AppUtils.TAG_FRAGMENT_INSPECTION);
+        fragmentTransaction.replace(R.id.frame_container, fragment, AppUtils.TAG_FRAGMENT_INSPECTION);
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION);
         fragmentTransaction.commit();
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
+        switch (view.getId()) {
             case R.id.btnInspect:
                 submitForm();
                 break;
             case R.id.iv_info:
-                iterator = tutorials.entrySet().iterator();
-                showTutorial(iterator);
+                showInfoView();
                 break;
         }
     }
@@ -287,44 +269,46 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
         hideKeyboard();
         mModelName = autoCompleteTextView.getText().toString().trim();
         if (!validateVehicleId()) return;
-        if(!mModelName.isEmpty()){
-            if(listModel.contains(mModelName)){
-                Log.e(TAG,"string contain");
+        if (!mModelName.isEmpty()) {
+            if (!mVehicleId.isEmpty()) {
+                Log.e(TAG, "string contain");
                 gotoFragmentInspection();
-            }else AppUtils.showDialog(mActivity,getString(R.string.msg_select_valid_model_name));
+            } else AppUtils.showDialog(mActivity, "Kindly give vehicle id");
 
-        }else AppUtils.showDialog(mActivity,getString(R.string.msg_select_model_name));
+
+        } else AppUtils.showDialog(mActivity, getString(R.string.msg_select_model_name));
     }
 
-    private boolean validateVehicleId()    {
+    private boolean validateVehicleId() {
         mVehicleId = tie_vehicleId.getText().toString().trim();
         if (mVehicleId.isEmpty()) {
             til_vehicleId.setError(getString(R.string.msg_vehicleId_empty));
             requestFocus(tie_vehicleId);
             return false;
         }
-        if(!listVehicleId.isEmpty() && listVehicleId.contains(mVehicleId)){
+        if (!listVehicleId.isEmpty() && listVehicleId.contains(mVehicleId)) {
             til_vehicleId.setError(getString(R.string.msg_vehicle_id_found));
             requestFocus(tie_vehicleId);
             return false;
-        }
-        else {
+        } else {
             til_vehicleId.setErrorEnabled(false);
         }
 
         return true;
     }
-    private void requestFocus(View view)    {
-        if (view.requestFocus())
-        {
+
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
             mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
-    public void hideKeyboard()    {
-        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(tie_vehicleId.getWindowToken(), 0);
     }
-    private class MyTextWatcher implements TextWatcher    {
+
+    private class MyTextWatcher implements TextWatcher {
 
         private View view;
 
@@ -332,10 +316,14 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
             this.view = view;
         }
 
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {        }
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)     {       }
-        public void afterTextChanged(Editable editable)        {
-            switch (view.getId()){
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        }
+
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
                 case R.id.tie_vehicle_id:
                     validateVehicleId();
                     break;
@@ -345,50 +333,47 @@ public class Fragment_Manual extends Fragment implements View.OnClickListener,In
 
     @Override
     public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList) {
-        Log.e(TAG,"onDataReceivedSuccess");
+        Log.e(TAG, "onDataReceivedSuccess");
     }
 
     @Override
-    public void onVehicleListSuccess(List<String> vehicleList,int mode) {
-        Log.e(TAG,"onVehicleListSuccess");
-        if(mode == AppUtils.MODE_GETALL_USING_MODEL)   listVehicleId = vehicleList;
+    public void onVehicleListSuccess(List<String> vehicleList, int mode) {
+        Log.e(TAG, "onVehicleListSuccess");
+        if (mode == AppUtils.MODE_GETALL_USING_MODEL) listVehicleId = vehicleList;
     }
 
     @Override
     public void onDataReceivedErr(String strErr) {
-        Log.e(TAG,"onDataReceivedErr");
+        Log.e(TAG, "onDataReceivedErr");
     }
+
     /**
      * show case code
      */
-    private void initTutorials() {
-        tutorials = new LinkedHashMap<>();
-        tutorials.put("It's a autoComplete textview if you type model name it will suggest complete name", autoCompleteTextView);
-        tutorials.put("It's a editable box to type unique vehicle id for model name, if already present in db will show u the result", tie_vehicleId);
-        tutorials.put("It's a button, if you press the button take you to next screen for inspection ", btnInspect);
-    }
+    private void showInfoView() {
+        try {
+            if (infoView.getParent() != null)
+                ((ViewGroup) infoView.getParent()).removeView(infoView); // <- fix
 
-    @Override
-    public void onNext() {
-        showTutorial(iterator);
-    }
-
-    @Override
-    public void onComplete() {
-        tutors.close();
-    }
-
-    @Override
-    public void onCompleteAll() {
-        tutors.close();
-    }
-    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
-        if (iterator == null) {
-            return;
+            new EasyDialog(mActivity)
+                    // .setLayoutResourceId(R.layout.layout_tip_content_horizontal)//layout resource id
+                    .setLayout(infoView)
+                    .setBackgroundColor(mActivity.getResources().getColor(R.color.calendarBackground))
+                    // .setLocation(new location[])//point in screen
+                    .setLocationByAttachedView(iv_info)
+                    .setGravity(EasyDialog.GRAVITY_TOP)
+                    .setAnimationTranslationShow(EasyDialog.DIRECTION_X, 1000, -600, 100, -50, 50, 0)
+                    .setAnimationAlphaShow(1000, 0.3f, 1.0f)
+                    .setAnimationTranslationDismiss(EasyDialog.DIRECTION_X, 500, -50, 800)
+                    .setAnimationAlphaDismiss(500, 1.0f, 0.0f)
+                    .setTouchOutsideDismiss(true)
+                    .setMatchParent(true)
+                    .setMarginLeftAndRight(24, 24)
+                    .setOutsideColor(mActivity.getResources().getColor(R.color.transparent))
+                    .show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        if (iterator.hasNext()) {
-            Map.Entry<String, View> next = iterator.next();
-            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
-        }
+
     }
 }

@@ -24,6 +24,7 @@ public class SplashScreen extends AppCompatActivity {
 
     private Context mContext;
     Reader reader;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,7 +53,7 @@ public class SplashScreen extends AppCompatActivity {
     }
 
 
-    private class PrefetchJsonData extends AsyncTask<Void, Void, Void>{
+    private class PrefetchJsonData extends AsyncTask<Void, Void, Void> {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -61,7 +62,7 @@ public class SplashScreen extends AppCompatActivity {
         @Override
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
-            Intent intent = new Intent(SplashScreen.this,LoginActivity.class);
+            Intent intent = new Intent(SplashScreen.this, LoginActivity.class);
             startActivity(intent);
             finish();
         }
@@ -72,7 +73,7 @@ public class SplashScreen extends AppCompatActivity {
 
             try {
 
-            } catch (Exception ex){
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return null;

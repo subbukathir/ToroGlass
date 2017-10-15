@@ -13,8 +13,7 @@ import com.toroapp.toro.R;
 public class SimpleDividerItemDecoration extends RecyclerView.ItemDecoration {
     private Drawable mDivider;
 
-    public SimpleDividerItemDecoration(Context context)
-    {
+    public SimpleDividerItemDecoration(Context context) {
         mDivider = ContextCompat.getDrawable(context, R.drawable.item_divider);//context.getResources().getDrawable(R.drawable.line_divider);
     }
 

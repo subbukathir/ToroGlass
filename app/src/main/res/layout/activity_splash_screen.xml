@@ -6,30 +6,32 @@
     android:background="@color/colorBackground"
     tools:context="com.toroapp.toro.activities.SplashScreen">
 
-<LinearLayout
-    style="@style/match_wrap_style"
-    android:layout_centerInParent="true"
-    android:orientation="vertical">
-    <ImageView
-        android:layout_width="@dimen/_100sdp"
-        android:layout_height="@dimen/_130sdp"
-        android:layout_gravity="center"
-        android:src="@drawable/logo"/>
-    <TextView
-        style="@style/textview_style"
-        android:text="@string/lbl_inspection"
-        android:textAlignment="center"
-        android:textSize="@dimen/_40sdp"
-        android:textAllCaps="true"
-        android:textColor="@color/primary_text"/>
-    <ProgressBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:id="@+id/progressBar" />
-</LinearLayout>
+    <LinearLayout
+        style="@style/match_wrap_style"
+        android:layout_centerInParent="true"
+        android:orientation="vertical">
 
+        <ImageView
+            android:layout_width="@dimen/_100sdp"
+            android:layout_height="@dimen/_130sdp"
+            android:layout_gravity="center"
+            android:src="@drawable/logo" />
+
+        <TextView
+            style="@style/textview_style"
+            android:text="@string/lbl_inspection"
+            android:textAlignment="center"
+            android:textSize="@dimen/_40sdp"
+            android:textAllCaps="true"
+            android:textColor="@color/primary_text" />
+
+        <ProgressBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:id="@+id/progressBar" />
+    </LinearLayout>
 
 
 </RelativeLayout>

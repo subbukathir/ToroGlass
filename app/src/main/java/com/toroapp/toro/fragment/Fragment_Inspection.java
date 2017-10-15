@@ -12,7 +12,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
@@ -33,21 +32,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import com.aurelhubert.ahbottomnavigation.AHBottomNavigation;
+import com.michael.easydialog.EasyDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
-import com.popalay.tutors.TutorialListener;
-import com.popalay.tutors.Tutors;
-import com.popalay.tutors.TutorsBuilder;
 import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
@@ -55,7 +51,6 @@ import com.toroapp.toro.R;
 import com.toroapp.toro.classes.Action;
 import com.toroapp.toro.listeners.ImagePickListener;
 import com.toroapp.toro.listeners.InspectionDataListener;
-import com.toroapp.toro.listeners.VoiceListener;
 import com.toroapp.toro.localstorage.database.AppDatabase;
 import com.toroapp.toro.localstorage.dbhelper.InspectionDbInitializer;
 import com.toroapp.toro.localstorage.entity.InspectionEntity;
@@ -67,10 +62,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
 
@@ -85,7 +77,7 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class Fragment_Inspection extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener, ImagePickListener,TutorialListener,VoiceListener {
+        InspectionDataListener, ImagePickListener {
     private static final String MODULE = Fragment_Inspection.class.getSimpleName();
     private static String TAG = "";
 
@@ -120,7 +112,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     private Toolbar mToolbar;
     private TextView text_view_title;
     private Bundle mArgs;
-    View rootView = null;
+    View rootView = null, infoView = null;
     private Snackbar snackbar;
     private AHBottomNavigation mBottomNavigation;
     //local db
@@ -130,12 +122,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
     //showcase
     private ImageView iv_info;
-    private Map<String, View> tutorials;
-    private Iterator<Map.Entry<String, View>> iterator;
-    private Tutors tutors;
 
-    private Fragment_Voice_Recognition fragmentVoiceRecognition;
-    private FrameLayout frame_layout_voice;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -168,7 +155,6 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 if (permissionsToRequest.size() > 0)
                     requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             }
-            fragmentVoiceRecognition = new Fragment_Voice_Recognition();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -182,8 +168,8 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
         try {
             rootView = (View) inflater.inflate(R.layout.fragment_inspect1, container, false);
+            infoView = inflater.inflate(R.layout.info_view_login, container, false);
             initUI(rootView);
-            initTutorials();
             setProperties();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -213,9 +199,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             btnNext = (Button) rootView.findViewById(R.id.btn_next);
             iv_captured_image = (ImageView) rootView.findViewById(R.id.iv_captured_image);
             iv_info = (ImageView) rootView.findViewById(R.id.iv_info);
-            frame_layout_voice = (FrameLayout) rootView.findViewById(R.id.frame_layout_voice);
-            if(frame_layout_voice.getChildCount()==0)
-                addVoiceRecognition(fragmentVoiceRecognition);
+
             setupActionBar();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -273,17 +257,6 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
 
             //show case
             iv_info.setOnClickListener(this);
-            tutors = new TutorsBuilder()
-                    .textColorRes(android.R.color.white)
-                    .shadowColorRes(R.color.colorBlue)
-                    .textSizeRes(R.dimen.textNormal)
-                    .completeIconRes(R.drawable.ic_cross_24_white)
-                    .spacingRes(R.dimen.spacingNormal)
-                    .lineWidthRes(R.dimen.lineWidth)
-                    .cancelable(false)
-                    .build();
-
-            tutors.setListener(this);
 
             ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
             animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -303,6 +276,33 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
         }
     }
 
+    private void showInfoView() {
+        try {
+            if (infoView.getParent() != null)
+                ((ViewGroup) infoView.getParent()).removeView(infoView); // <- fix
+
+            new EasyDialog(mActivity)
+                    // .setLayoutResourceId(R.layout.layout_tip_content_horizontal)//layout resource id
+                    .setLayout(infoView)
+                    .setBackgroundColor(mActivity.getResources().getColor(R.color.calendarBackground))
+                    // .setLocation(new location[])//point in screen
+                    .setLocationByAttachedView(iv_info)
+                    .setGravity(EasyDialog.GRAVITY_TOP)
+                    .setAnimationTranslationShow(EasyDialog.DIRECTION_X, 1000, -600, 100, -50, 50, 0)
+                    .setAnimationAlphaShow(1000, 0.3f, 1.0f)
+                    .setAnimationTranslationDismiss(EasyDialog.DIRECTION_X, 500, -50, 800)
+                    .setAnimationAlphaDismiss(500, 1.0f, 0.0f)
+                    .setTouchOutsideDismiss(true)
+                    .setMatchParent(true)
+                    .setMarginLeftAndRight(24, 24)
+                    .setOutsideColor(mActivity.getResources().getColor(R.color.transparent))
+                    .show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
@@ -313,8 +313,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
                 submitData();
                 break;
             case R.id.iv_info:
-                iterator = tutorials.entrySet().iterator();
-                showTutorial(iterator);
+                showInfoView();
                 break;
         }
     }
@@ -480,7 +479,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
     }
 
     @Override
-    public void onVehicleListSuccess(List<String> vehicleList,int mode) {
+    public void onVehicleListSuccess(List<String> vehicleList, int mode) {
 
     }
 
@@ -604,7 +603,7 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             captureIntent.putExtra("return-data", true);
             startActivityForResult(captureIntent, 101);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -681,124 +680,5 @@ public class Fragment_Inspection extends Fragment implements View.OnClickListene
             }
         }
     }
-    /**
-     * show case code
-     */
-    private void initTutorials() {
-        tutorials = new LinkedHashMap<>();
-        tutorials.put("It's a choosable option for Rops installed or not?", radioGroup);
-        tutorials.put("It's a editable box to type remarks about the option you chooses", et_remarks);
-        tutorials.put("It's a button, if you press the button it will ask mode of picture taken based on option photo is taken ", btn_capture_photo);
-        tutorials.put("It's a button if you press take you to next question current data will store in local database", btnNext);
-    }
 
-    @Override
-    public void onNext() {
-        showTutorial(iterator);
-    }
-
-    @Override
-    public void onComplete() {
-        tutors.close();
-    }
-
-    @Override
-    public void onCompleteAll() {
-        tutors.close();
-    }
-    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
-        if (iterator == null) {
-            return;
-        }
-        if (iterator.hasNext()) {
-            Map.Entry<String, View> next = iterator.next();
-            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
-        }
-    }
-    protected void addVoiceRecognition(final Fragment_Voice_Recognition fragment)
-    {
-        TAG="addVoiceRecognition";
-        Log.d(MODULE,TAG);
-
-        try
-        {
-            fragment.setVoiceListener(this);
-            FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame_layout_voice,fragment,Fragment_Voice_Recognition.class.getName());
-            transaction.commit();
-            final Handler handler = new Handler();
-            handler.postDelayed(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    if(isAdded() && mActivity !=null)
-                    //Do something after 100ms
-                    fragment.startListening(getString(R.string.lbl_say_yer_or_no));
-                }
-            }, 3000);
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
-
-    @Override
-    public void onVoiceEnd(boolean success, String text) {
-        TAG="onVoiceEnd";
-        Log.d(MODULE,TAG);
-
-        try
-        {
-            Log.d(MODULE,TAG + " Text : " + text);
-            if(success)
-            {
-                if(text.contains("yes") || text.contains("no")){
-                    mTested = text.toString();
-                    if(text.equalsIgnoreCase("yes"))rdb_yes.setChecked(true);
-                    if (text.equalsIgnoreCase("no"))rdb_no.setChecked(true);
-                }
-                startTimer.cancel();
-                endTimer.cancel();
-            }
-            else
-            {
-                endTimer.start();
-            }
-        }
-        catch (Exception ex)
-        {
-            ex.printStackTrace();
-        }
-    }
-    CountDownTimer startTimer = new CountDownTimer(10000,1000)
-    {
-        @Override
-        public void onTick(long l)
-        {
-
-        }
-
-        @Override
-        public void onFinish()
-        {
-            endTimer.start();
-        }
-    };
-
-    CountDownTimer endTimer = new CountDownTimer(5000,1000)
-    {
-        @Override
-        public void onTick(long l)
-        {
-
-        }
-
-        @Override
-        public void onFinish()
-        {
-            startTimer.start();
-        }
-    };
 }

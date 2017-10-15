@@ -6,13 +6,16 @@
 
     <android.support.v4.widget.NestedScrollView
         android:id="@+id/nsv_login"
+        style="@style/match_parent_style"
         android:fillViewport="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        style="@style/match_parent_style">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+
         <LinearLayout
             style="@style/match_wrap_style"
             android:layout_gravity="center"
             android:orientation="vertical">
+
             <com.toroapp.toro.components.CustomTextInputLayout
                 android:id="@+id/til_username"
                 style="@style/text_input_layout_common">
@@ -20,8 +23,9 @@
                 <android.support.v7.widget.AppCompatEditText
                     android:id="@+id/tie_username"
                     style="@style/text_input_edittext_common"
-                    android:hint="@string/msg_enter_username"/>
+                    android:hint="@string/msg_enter_username" />
             </com.toroapp.toro.components.CustomTextInputLayout>
+
             <com.toroapp.toro.components.CustomTextInputLayout
                 android:id="@+id/til_password"
                 style="@style/text_input_layout_common">
@@ -33,6 +37,7 @@
                     android:imeOptions="actionDone"
                     android:inputType="textPassword" />
             </com.toroapp.toro.components.CustomTextInputLayout>
+
             <Button
                 android:id="@+id/btnLogin"
                 style="@style/btn_common"
@@ -44,10 +49,17 @@
                 android:id="@+id/tv_forgot_password"
                 style="@style/match_wrap_style"
                 android:layout_marginTop="@dimen/_30sdp"
-                android:text="@string/msg_forget_password"
                 android:gravity="center"
-                android:textSize="@dimen/_16sdp"
-                android:textColor="@color/color_white" />
+                android:text="@string/msg_forget_password"
+                android:textColor="@color/color_white"
+                android:textSize="@dimen/_16sdp" />
+
+            <ImageView
+                android:id="@+id/info_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|right"
+                android:src="@drawable/ic_info" />
         </LinearLayout>
 
     </android.support.v4.widget.NestedScrollView>

@@ -39,8 +39,7 @@ import static com.toroapp.toro.utils.AppUtils.ALL_PERMISSIONS_RESULT;
  * Created by vikram on 14/7/17.
  */
 
-public class Fragment_Voice_Recognition extends Fragment implements RecognitionListener
-{
+public class Fragment_Voice_Recognition extends Fragment implements RecognitionListener {
     private static final String MODULE = Fragment_Voice_Recognition.class.getName();
     private static String TAG = "";
 
@@ -66,15 +65,13 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
     private VoiceListener voiceListener;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TAG="onCreate";
-        Log.d(MODULE,TAG);
+        TAG = "onCreate";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             mActivity = (AppCompatActivity) getActivity();
             setHasOptionsMenu(true);
             setRetainInstance(false);
@@ -82,10 +79,9 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
             mSavedInstanceState = savedInstanceState;
             mManager = mActivity.getSupportFragmentManager();
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
-            mEditor= mPreferences.edit();
+            mEditor = mPreferences.edit();
             mArgs = getArguments();
-            if (mActivity.getCurrentFocus() != null)
-            {
+            if (mActivity.getCurrentFocus() != null) {
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
@@ -94,8 +90,7 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
             //get the permissions we have asked for before but are not granted..
             //we will store this in a global list to access later.
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 if (permissionsToRequest.size() > 0)
                     requestPermissions(permissionsToRequest.toArray(new String[permissionsToRequest.size()]), ALL_PERMISSIONS_RESULT);
             }
@@ -113,18 +108,15 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
             recognizerIntent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 3);
 
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        TAG="onCreateView";
-        Log.d(MODULE,TAG);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TAG = "onCreateView";
+        Log.d(MODULE, TAG);
 
         rootView = inflater.inflate(R.layout.fragment_voice_recognition, container, false);
         initView();
@@ -132,161 +124,134 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         return rootView;
     }
 
-    public void initView()
-    {
-        TAG="initView";
-        Log.d(MODULE,TAG);
-        try
-        {
+    public void initView() {
+        TAG = "initView";
+        Log.d(MODULE, TAG);
+        try {
             text_view_search_title = (AppCompatTextView) rootView.findViewById(R.id.text_view_search_title);
             progressBar = (ProgressBar) rootView.findViewById(R.id.progressBar);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void setProperties()
-    {
-        TAG="setProperties";
-        Log.d(MODULE,TAG);
-        try
-        {
+    private void setProperties() {
+        TAG = "setProperties";
+        Log.d(MODULE, TAG);
+        try {
             text_view_search_title.setTypeface(font.getRobotoRegular());
             progressBar.setVisibility(View.GONE);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
 
-    public void setVoiceListener(VoiceListener voiceListener)
-    {
+    public void setVoiceListener(VoiceListener voiceListener) {
         this.voiceListener = voiceListener;
     }
 
-    public void startListening(String text)
-    {
-        TAG="startListening";
-        Log.d(MODULE,TAG);
+    public void startListening(String text) {
+        TAG = "startListening";
+        Log.d(MODULE, TAG);
 
-        try
-        {
-            if(speech!=null)
-            {
-                if(mActivity!=null && isAdded()){
+        try {
+            if (speech != null) {
+                if (mActivity != null && isAdded()) {
                     text_view_search_title.setText(text);
                     progressBar.setVisibility(View.VISIBLE);
                     speech.startListening(recognizerIntent);
                 }
 
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public void onPause()
-    {
+    public void onPause() {
         super.onPause();
 
-        TAG="onPause";
-        Log.d(MODULE,TAG);
+        TAG = "onPause";
+        Log.d(MODULE, TAG);
 
-        if (speech != null)
-        {
+        if (speech != null) {
             speech.destroy();
-            Log.d(MODULE,TAG);
+            Log.d(MODULE, TAG);
         }
 
     }
 
     @Override
-    public void onBeginningOfSpeech()
-    {
-        TAG="onBeginningOfSpeech";
-        Log.d(MODULE,TAG);
+    public void onBeginningOfSpeech() {
+        TAG = "onBeginningOfSpeech";
+        Log.d(MODULE, TAG);
 
     }
 
     @Override
-    public void onBufferReceived(byte[] buffer)
-    {
-        TAG="onBufferReceived";
-        Log.d(MODULE,TAG);
+    public void onBufferReceived(byte[] buffer) {
+        TAG = "onBufferReceived";
+        Log.d(MODULE, TAG);
     }
 
     @Override
-    public void onEndOfSpeech()
-    {
-        TAG="onEndOfSpeech";
-        Log.d(MODULE,TAG);
+    public void onEndOfSpeech() {
+        TAG = "onEndOfSpeech";
+        Log.d(MODULE, TAG);
         progressBar.setVisibility(View.GONE);
     }
 
     @Override
-    public void onError(int errorCode)
-    {
+    public void onError(int errorCode) {
         String errorMessage = getErrorText(errorCode);
-        TAG="onError";
-        Log.d(MODULE,TAG);
-        Log.e(MODULE,TAG + errorMessage);
+        TAG = "onError";
+        Log.d(MODULE, TAG);
+        Log.e(MODULE, TAG + errorMessage);
         progressBar.setVisibility(View.GONE);
-        voiceListener.onVoiceEnd(false,errorMessage);
+        voiceListener.onVoiceEnd(false, errorMessage);
     }
 
     @Override
-    public void onEvent(int arg0, Bundle arg1)
-    {
-        TAG="onEvent";
-        Log.d(MODULE,TAG);
+    public void onEvent(int arg0, Bundle arg1) {
+        TAG = "onEvent";
+        Log.d(MODULE, TAG);
     }
 
     @Override
-    public void onPartialResults(Bundle arg0)
-    {
-        TAG="onPartialResults";
-        Log.d(MODULE,TAG);
+    public void onPartialResults(Bundle arg0) {
+        TAG = "onPartialResults";
+        Log.d(MODULE, TAG);
     }
 
     @Override
-    public void onReadyForSpeech(Bundle arg0)
-    {
-        TAG="onReadyForSpeech";
-        Log.d(MODULE,TAG);
+    public void onReadyForSpeech(Bundle arg0) {
+        TAG = "onReadyForSpeech";
+        Log.d(MODULE, TAG);
     }
 
     @Override
-    public void onResults(Bundle results)
-    {
-        TAG="onResults";
-        Log.d(MODULE,TAG);
+    public void onResults(Bundle results) {
+        TAG = "onResults";
+        Log.d(MODULE, TAG);
         ArrayList<String> matches = results
                 .getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         String text = "";
-        text=matches.get(0);
-        voiceListener.onVoiceEnd(true,text);
+        text = matches.get(0);
+        voiceListener.onVoiceEnd(true, text);
     }
 
     @Override
-    public void onRmsChanged(float rmsdB)
-    {
-        TAG="onRmsChanged";
-        Log.d(MODULE,TAG);
+    public void onRmsChanged(float rmsdB) {
+        TAG = "onRmsChanged";
+        Log.d(MODULE, TAG);
     }
 
-    public String getErrorText(int errorCode)
-    {
+    public String getErrorText(int errorCode) {
         String message;
 
-        switch (errorCode)
-        {
+        switch (errorCode) {
             case SpeechRecognizer.ERROR_AUDIO:
                 message = "Audio recording error";
                 break;
@@ -323,14 +288,11 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         return message;
     }
 
-    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted)
-    {
+    private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
 
-        for (String perm : wanted)
-        {
-            if (!hasPermission(perm))
-            {
+        for (String perm : wanted) {
+            if (!hasPermission(perm)) {
                 result.add(perm);
             }
         }
@@ -338,25 +300,20 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
         return result;
     }
 
-    private boolean hasPermission(String permission)
-    {
-        if (canMakeSmores())
-        {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-            {
+    private boolean hasPermission(String permission) {
+        if (canMakeSmores()) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 return (mActivity.checkSelfPermission(permission) == PackageManager.PERMISSION_GRANTED);
             }
         }
         return true;
     }
 
-    private boolean canMakeSmores()
-    {
+    private boolean canMakeSmores() {
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP_MR1);
     }
 
-    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener)
-    {
+    private void showMessageOKCancel(String message, DialogInterface.OnClickListener okListener) {
         new AlertDialog.Builder(mActivity)
                 .setMessage(message)
                 .setPositiveButton("OK", okListener)
@@ -367,41 +324,31 @@ public class Fragment_Voice_Recognition extends Fragment implements RecognitionL
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
-    {
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         //MainActivityPermissionsDispatcher.onRequestPermissionsResult(mActivity, requestCode, grantResults);
-        switch (requestCode)
-        {
+        switch (requestCode) {
 
             case ALL_PERMISSIONS_RESULT:
-                for (String perms : permissionsToRequest)
-                {
-                    if (hasPermission(perms))
-                    {
+                for (String perms : permissionsToRequest) {
+                    if (hasPermission(perms)) {
 
-                    }
-                    else
-                    {
+                    } else {
 
                         permissionsRejected.add(perms);
                     }
                 }
 
-                if (permissionsRejected.size() > 0)
-                {
+                if (permissionsRejected.size() > 0) {
 
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    {
-                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0)))
-                        {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (shouldShowRequestPermissionRationale(permissionsRejected.get(0))) {
                             showMessageOKCancel("These permissions are mandatory for the applicatio9n. Please allow access.",
                                     new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog, int which) {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                                            {
+                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
 
                                                 //Log.d("API123", "permisionrejected " + permissionsRejected.size());
                                                 requestPermissions(permissionsRejected.toArray(new String[permissionsRejected.size()]), ALL_PERMISSIONS_RESULT);

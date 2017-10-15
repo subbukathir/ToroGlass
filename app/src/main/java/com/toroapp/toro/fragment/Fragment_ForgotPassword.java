@@ -152,7 +152,6 @@ public class Fragment_ForgotPassword extends Fragment {
             }
 
 
-
         } catch (Exception ex) {
             ex.printStackTrace();
         }

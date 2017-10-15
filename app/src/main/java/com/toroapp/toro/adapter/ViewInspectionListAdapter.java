@@ -39,14 +39,14 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
     private boolean isFooterEnabled = false;
 
     public ViewInspectionListAdapter(AppCompatActivity mActivity, List<InspectionEntity> inspectionEntities) {
-        Log.d( TAG,"ViewComplaintListAdapter");
+        Log.d(TAG, "ViewComplaintListAdapter");
 
         this.mActivity = mActivity;
         this.inspectionEntityList = inspectionEntities;
         font = MyApplication.getInstance().getFontInstance();
     }
 
-    public void setListener(ClickListener listener){
+    public void setListener(ClickListener listener) {
         mCallback = listener;
     }
 
@@ -57,7 +57,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        Log.d(TAG,"onCreateViewHolder");
+        Log.d(TAG, "onCreateViewHolder");
         RecyclerView.ViewHolder mHolder = null;
         if (viewType == VIEW_ITEM) {
             View layoutView = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_item_inspection, parent, false);
@@ -71,7 +71,7 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder mHolder, final int position) {
-        Log.d( TAG,"onBindViewHolder");
+        Log.d(TAG, "onBindViewHolder");
 
         try {
             //Animation animation = AnimationUtils.loadAnimation(mActivity, (position > lastPosition) ? R.anim.up_from_bottom : R.anim.down_from_top);
@@ -81,16 +81,18 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
                 final InspectionListHolder holder = (InspectionListHolder) mHolder;
                 InspectionEntity item = inspectionEntityList.get(position);
                 holder.tv_inspection_name.setText(item.getInspectionName());
-                if(item.getTestedValue().equals("Yes")) holder.iv_tested.setImageResource(R.drawable.ic_tick_green);
+                if (item.getTestedValue().equals("Yes"))
+                    holder.iv_tested.setImageResource(R.drawable.ic_tick_green);
                 else holder.iv_tested.setImageResource(R.drawable.ic_cross_red);
-                if(item.getImageData()!=null) holder.iv_capturedImage.setImageBitmap(AppUtils.decodeBase64toImage(item.getImageData()));
+                if (item.getImageData() != null)
+                    holder.iv_capturedImage.setImageBitmap(AppUtils.decodeBase64toImage(item.getImageData()));
                 else holder.iv_capturedImage.setImageResource(R.drawable.ic_logo);
-                if(item.getRemarks()!=null) holder.tv_remarks.setText(item.getRemarks());
+                if (item.getRemarks() != null) holder.tv_remarks.setText(item.getRemarks());
                 else holder.tv_remarks.setText(R.string.msg_no_remarks_found);
                 holder.iv_capturedImage.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        mCallback.onClick(holder.iv_capturedImage,position);
+                        mCallback.onClick(holder.iv_capturedImage, position);
                     }
                 });
             } else if (mHolder instanceof LoadingMessageHolder) {
@@ -121,8 +123,8 @@ public class ViewInspectionListAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public class InspectionListHolder extends RecyclerView.ViewHolder {
-        TextView tv_inspection_name,tv_remarks;
-        ImageView iv_tested,iv_capturedImage;
+        TextView tv_inspection_name, tv_remarks;
+        ImageView iv_tested, iv_capturedImage;
         View itemView;
 
         public InspectionListHolder(View itemView) {

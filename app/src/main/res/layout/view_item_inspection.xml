@@ -2,34 +2,39 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/match_wrap_style"
     android:orientation="vertical">
+
     <RelativeLayout
         style="@style/match_wrap_style"
         android:orientation="horizontal">
+
         <TextView
             android:id="@+id/tv_inspection_name"
             style="@style/wrapcontent_style"
             android:layout_centerInParent="true"
             android:layout_alignParentLeft="true"
             android:layout_toLeftOf="@+id/tv_remarks"
-            android:text="@string/lbl_ques_1"/>
+            android:text="@string/lbl_ques_1" />
+
         <TextView
             android:id="@+id/tv_remarks"
             style="@style/wrapcontent_style"
             android:layout_centerInParent="true"
             android:layout_toLeftOf="@+id/iv_tested_value"
-            android:text="@string/lbl_ques_1"/>
+            android:text="@string/lbl_ques_1" />
+
         <ImageView
             android:id="@+id/iv_tested_value"
             style="@style/wrapcontent_style"
             android:src="@drawable/ic_checkbox_fill"
             android:layout_toLeftOf="@+id/iv_captured_image"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true" />
+
         <ImageView
             android:id="@+id/iv_captured_image"
             style="@style/imageview_item"
             android:src="@drawable/ic_logo"
             android:layout_centerVertical="true"
-            android:layout_alignParentRight="true"/>
+            android:layout_alignParentRight="true" />
     </RelativeLayout>
 
 </LinearLayout>

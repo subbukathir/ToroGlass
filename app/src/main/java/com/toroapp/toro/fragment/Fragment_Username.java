@@ -38,8 +38,7 @@ import static com.toroapp.toro.utils.AppUtils.TAG_FORGOT_PASSWORD;
  * Created by vikram on 14/7/17.
  */
 
-public class Fragment_Username extends Fragment implements VoiceListener
-{
+public class Fragment_Username extends Fragment implements VoiceListener {
     private static final String MODULE = Fragment_Username.class.getSimpleName();
     private static String TAG = "";
 
@@ -56,7 +55,7 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private TextInputLayout til_username;
     private TextView text_view_title;
     private AppCompatButton btnNext;
-    private String mUsername=null;
+    private String mUsername = null;
     private Fragment mFragment = null;
     private View rootView;
     private Fragment_Voice_Recognition fragmentVoiceRecognition;
@@ -65,15 +64,13 @@ public class Fragment_Username extends Fragment implements VoiceListener
     private VoiceControl vc;
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState)
-    {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TAG="onCreate";
-        Log.d(MODULE,TAG);
+        TAG = "onCreate";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             mActivity = (AppCompatActivity) getActivity();
             setHasOptionsMenu(true);
             setRetainInstance(false);
@@ -81,26 +78,22 @@ public class Fragment_Username extends Fragment implements VoiceListener
             mSavedInstanceState = savedInstanceState;
             mManager = mActivity.getSupportFragmentManager();
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
-            mEditor= mPreferences.edit();
+            mEditor = mPreferences.edit();
             mArgs = getArguments();
-            if (mActivity.getCurrentFocus() != null)
-            {
+            if (mActivity.getCurrentFocus() != null) {
                 InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(mActivity.getCurrentFocus().getWindowToken(), 0);
             }
             fragmentVoiceRecognition = new Fragment_Voice_Recognition();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-    {
-        TAG="onCreateView";
-        Log.d(MODULE,TAG);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        TAG = "onCreateView";
+        Log.d(MODULE, TAG);
 
         rootView = inflater.inflate(R.layout.fragment_username, container, false);
         initView();
@@ -110,35 +103,29 @@ public class Fragment_Username extends Fragment implements VoiceListener
         return rootView;
     }
 
-    public void initView()
-    {
-        TAG="initView";
-        Log.d(MODULE,TAG);
-        try
-        {
+    public void initView() {
+        TAG = "initView";
+        Log.d(MODULE, TAG);
+        try {
             setUpActionBar();
             frame_layout_voice = (FrameLayout) rootView.findViewById(R.id.frame_layout_voice);
             til_username = (TextInputLayout) rootView.findViewById(R.id.til_username);
             et_username = (AppCompatEditText) rootView.findViewById(R.id.et_username);
             btnNext = (AppCompatButton) rootView.findViewById(R.id.btnNext);
             setProperties();
-            if(frame_layout_voice.getChildCount()==0)
+            if (frame_layout_voice.getChildCount() == 0)
                 addVoiceRecognition(fragmentVoiceRecognition);
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    public void setUpActionBar()
-    {
-        TAG="setUpActionBar";
-        Log.d(MODULE,TAG);
+    public void setUpActionBar() {
+        TAG = "setUpActionBar";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             mToolbar = (Toolbar) mActivity.findViewById(R.id.toolbar);
             text_view_title = (TextView) mActivity.findViewById(R.id.text_view_title);
             text_view_title.setTypeface(font.getRobotoRegular());
@@ -146,20 +133,16 @@ public class Fragment_Username extends Fragment implements VoiceListener
             mActivity.setSupportActionBar(mToolbar);
             mActivity.getSupportActionBar().setHomeAsUpIndicator(null);
             mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private void setProperties()
-    {
-        TAG="setProperties";
-        Log.d(MODULE,TAG);
+    private void setProperties() {
+        TAG = "setProperties";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             et_username.setTypeface(font.getRobotoRegular());
             btnNext.setTypeface(font.getRobotoRegular());
 
@@ -167,11 +150,9 @@ public class Fragment_Username extends Fragment implements VoiceListener
             et_username.addTextChangedListener(new MyTextWatcher(et_username));
 
             // Create the VoiceControl object and pass it the context.
-            vc = new VoiceControl(mActivity)
-            {
+            vc = new VoiceControl(mActivity) {
                 @Override
-                protected void onRecognition(String word)
-                {
+                protected void onRecognition(String word) {
                     // Set the TextView to contain whatever word the recognition
                     // service picks up. It is important that the View is cast to
                     // a TextView via parentheses before setText is called.
@@ -179,43 +160,34 @@ public class Fragment_Username extends Fragment implements VoiceListener
                 }
             };
             // Basic grammar is included by default.
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    protected void submitFormData()
-    {
+    protected void submitFormData() {
 
-        TAG="submitFormData";
-        Log.d(MODULE,TAG);
+        TAG = "submitFormData";
+        Log.d(MODULE, TAG);
 
-        try
-        {
-            if(!validateUsername())
-            {
+        try {
+            if (!validateUsername()) {
                 return;
             }
             fragmentTransition(new Fragment_Password());
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    protected void addVoiceRecognition(final Fragment_Voice_Recognition fragment)
-    {
-        TAG="addVoiceRecognition";
-        Log.d(MODULE,TAG);
+    protected void addVoiceRecognition(final Fragment_Voice_Recognition fragment) {
+        TAG = "addVoiceRecognition";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             fragment.setVoiceListener(this);
             FragmentTransaction transaction = getChildFragmentManager().beginTransaction();
-            transaction.replace(R.id.frame_layout_voice,fragment,Fragment_Voice_Recognition.class.getName());
+            transaction.replace(R.id.frame_layout_voice, fragment, Fragment_Voice_Recognition.class.getName());
             transaction.commit();
             /*final Handler handler = new Handler();
             handler.postDelayed(new Runnable()
@@ -230,43 +202,35 @@ public class Fragment_Username extends Fragment implements VoiceListener
             }, 3000);*/
             //startTimer.start();
 
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    protected void fragmentTransition( Fragment _fragment)
-    {
-        TAG="submitFormData";
-        Log.d(MODULE,TAG);
+    protected void fragmentTransition(Fragment _fragment) {
+        TAG = "submitFormData";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             this.mFragment = _fragment;
             Bundle data = new Bundle();
-            data.putString(AppUtils.ARGS_USERNAME,mUsername);
+            data.putString(AppUtils.ARGS_USERNAME, mUsername);
             mFragment.setArguments(data);
             FragmentTransaction _fragmentTransaction = mActivity.getSupportFragmentManager().beginTransaction();
-            _fragmentTransaction.replace(R.id.frame_container_login,mFragment,TAG_FORGOT_PASSWORD);
+            _fragmentTransaction.replace(R.id.frame_container_login, mFragment, TAG_FORGOT_PASSWORD);
             _fragmentTransaction.addToBackStack(TAG_FORGOT_PASSWORD);
             _fragmentTransaction.commit();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    private boolean validateUsername()
-    {
+    private boolean validateUsername() {
 
-        TAG="validateUsername";
-        Log.d(MODULE,TAG);
+        TAG = "validateUsername";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             /*if (!AppUtils.validateEmail(tie_username.getText().toString().trim()))
             {
                 til_uname.setError(getString(R.string.msg_email_violation));
@@ -275,57 +239,45 @@ public class Fragment_Username extends Fragment implements VoiceListener
             }
             else */
             mUsername = et_username.getText().toString().trim();
-            if(mUsername.isEmpty())
-            {
+            if (mUsername.isEmpty()) {
                 til_username.setError(getString(R.string.msg_enter_your_username));
                 return false;
-            }
-            else
-            {
+            } else {
                 til_username.setErrorEnabled(false);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
         return true;
     }
 
-    private void requestFocus(View view)
-    {
-        if (view.requestFocus())
-        {
+    private void requestFocus(View view) {
+        if (view.requestFocus()) {
             mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
         }
     }
 
-    public void hideKeyboard()
-    {
-        InputMethodManager imm = (InputMethodManager)mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
+    public void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) mActivity.getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(et_username.getWindowToken(), 0);
     }
 
-    View.OnClickListener _OnClickListener = new View.OnClickListener()
-    {
+    View.OnClickListener _OnClickListener = new View.OnClickListener() {
         @Override
-        public void onClick(View view)
-        {
+        public void onClick(View view) {
 
-            switch (view.getId())
-            {
+            switch (view.getId()) {
                 case R.id.btnNext:
-                     submitFormData();
-                     break;
+                    submitFormData();
+                    break;
                 case R.id.tv_forgot_password:
-                     fragmentTransition(new Fragment_ForgotPassword());
-                     break;
+                    fragmentTransition(new Fragment_ForgotPassword());
+                    break;
             }
         }
     };
 
-    private class MyTextWatcher implements TextWatcher
-    {
+    private class MyTextWatcher implements TextWatcher {
 
         private View view;
 
@@ -333,20 +285,16 @@ public class Fragment_Username extends Fragment implements VoiceListener
             this.view = view;
         }
 
-        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2)
-        {
+        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
         }
 
-        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2)
-        {
+        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
         }
 
-        public void afterTextChanged(Editable editable)
-        {
-            switch (view.getId())
-            {
+        public void afterTextChanged(Editable editable) {
+            switch (view.getId()) {
                 case R.id.tie_username:
                     validateUsername();
                     break;
@@ -356,57 +304,44 @@ public class Fragment_Username extends Fragment implements VoiceListener
     }
 
     @Override
-    public void onVoiceEnd(boolean success, String text)
-    {
-        TAG="onVoiceEnd";
-        Log.d(MODULE,TAG);
+    public void onVoiceEnd(boolean success, String text) {
+        TAG = "onVoiceEnd";
+        Log.d(MODULE, TAG);
 
-        try
-        {
-            Log.d(MODULE,TAG + " Text : " + text);
-            if(success)
-            {
+        try {
+            Log.d(MODULE, TAG + " Text : " + text);
+            if (success) {
                 et_username.setText(text);
                 startTimer.cancel();
                 endTimer.cancel();
-            }
-            else
-            {
+            } else {
                 endTimer.start();
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
-    CountDownTimer startTimer = new CountDownTimer(10000,1000)
-    {
+    CountDownTimer startTimer = new CountDownTimer(10000, 1000) {
         @Override
-        public void onTick(long l)
-        {
+        public void onTick(long l) {
 
         }
 
         @Override
-        public void onFinish()
-        {
+        public void onFinish() {
             endTimer.start();
         }
     };
 
-    CountDownTimer endTimer = new CountDownTimer(5000,1000)
-    {
+    CountDownTimer endTimer = new CountDownTimer(5000, 1000) {
         @Override
-        public void onTick(long l)
-        {
+        public void onTick(long l) {
 
         }
 
         @Override
-        public void onFinish()
-        {
+        public void onFinish() {
             startTimer.start();
 
         }

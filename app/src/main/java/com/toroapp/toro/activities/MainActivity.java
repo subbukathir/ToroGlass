@@ -51,13 +51,13 @@ public class MainActivity extends AppCompatActivity {
     private FrameLayout frame_container;
     private Toolbar toolbar;
     private Drawable drawableLogo;
-    private static int tabIndex=0;
+    private static int tabIndex = 0;
     private List<BroadcastReceiver> receivers = new ArrayList<BroadcastReceiver>();
     private AHBottomNavigation bottomNavigation;
-    private AHBottomNavigationItem ahbChooseByModel,ahbChooseByBarcode,ahbReport;
+    private AHBottomNavigationItem ahbChooseByModel, ahbChooseByBarcode, ahbReport;
     // toolbar titles respected to selected nav menu item
     private String[] activityTitles;
-    private static String mNetworkInfo =null;
+    private static String mNetworkInfo = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,15 +79,14 @@ public class MainActivity extends AppCompatActivity {
         loadFragment();
     }
 
-    public void setBottomNavigation()
-    {
-        Log.e(TAG,"setBottomNavigation");
+    public void setBottomNavigation() {
+        Log.e(TAG, "setBottomNavigation");
 
 
         //create items
-        ahbChooseByModel= new AHBottomNavigationItem(R.string.lbl_choose_by_model,R.drawable.ic_chooseby_model,R.color.colorWhite);
-        ahbChooseByBarcode = new AHBottomNavigationItem(R.string.lbl_read_barcode,R.drawable.ic_chooseby_barcode,R.color.colorWhite);
-        ahbReport = new AHBottomNavigationItem(R.string.lbl_report,R.drawable.ic_report,R.color.colorWhite);
+        ahbChooseByModel = new AHBottomNavigationItem(R.string.lbl_choose_by_model, R.drawable.ic_chooseby_model, R.color.colorWhite);
+        ahbChooseByBarcode = new AHBottomNavigationItem(R.string.lbl_read_barcode, R.drawable.ic_chooseby_barcode, R.color.colorWhite);
+        ahbReport = new AHBottomNavigationItem(R.string.lbl_report, R.drawable.ic_report, R.color.colorWhite);
 
         // Add items
         bottomNavigation.addItem(ahbChooseByModel);
@@ -117,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onTabSelected(int position, boolean wasSelected) {
                 // Do something cool here...
-                switch (position)
-                {
+                switch (position) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case 0:
                         tabIndex = 0;
@@ -136,35 +134,34 @@ public class MainActivity extends AppCompatActivity {
         });
         loadFragment();
         bottomNavigation.setOnNavigationPositionListener(new AHBottomNavigation.OnNavigationPositionListener() {
-            @Override public void onPositionChange(int y) {
+            @Override
+            public void onPositionChange(int y) {
                 // Manage the new y position
             }
         });
 
 
     }
-    public void loadFragment(){
-        Log.e(TAG,"loadFragment");
+
+    public void loadFragment() {
+        Log.e(TAG, "loadFragment");
         setupActionbar();
-        Runnable mPendingRunnable = new Runnable()
-        {
+        Runnable mPendingRunnable = new Runnable() {
             @Override
-            public void run()
-            {
+            public void run() {
                 // update the main content by replacing fragments
-                for(int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
+                for (int i = 0; i < mManager.getBackStackEntryCount(); ++i) {
                     mManager.popBackStack();
                 }
                 Fragment fragment = getFragment();
                 FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+                fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
                 fragmentTransaction.replace(R.id.frame_container, fragment);
                 fragmentTransaction.commit();
             }
         };
 
-        if (mPendingRunnable != null)
-        {
+        if (mPendingRunnable != null) {
             mHandler.post(mPendingRunnable);
         }
     }
@@ -206,10 +203,10 @@ public class MainActivity extends AppCompatActivity {
         menu.findItem(R.id.action_logo).setIcon(drawableLogo);
         return true;
     }
-    private Fragment getFragment(){
-        Log.e(TAG,"getFragment");
-        switch (tabIndex)
-        {
+
+    private Fragment getFragment() {
+        Log.e(TAG, "getFragment");
+        switch (tabIndex) {
             case 0:
                 // manual testing
                 return new Fragment_Manual();

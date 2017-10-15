@@ -12,7 +12,7 @@ import android.support.annotation.Nullable;
 public class InspectionEntity {
 
     @PrimaryKey
-    @ColumnInfo(name="uniqueKey")
+    @ColumnInfo(name = "uniqueKey")
     private String uniqueKey;
 
     @ColumnInfo(name = "inspectionName")

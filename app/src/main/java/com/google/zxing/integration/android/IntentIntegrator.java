@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
@@ -20,6 +21,7 @@ import android.content.pm.ResolveInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+
 public class IntentIntegrator {
     public static final int REQUEST_CODE = 0x0000c0de; // Only use bottom 16 bits
     private static final String TAG = IntentIntegrator.class.getSimpleName();
@@ -51,7 +53,8 @@ public class IntentIntegrator {
     private String buttonYes;
     private String buttonNo;
     private List<String> targetApplications;
-    private final Map<String,Object> moreExtras;
+    private final Map<String, Object> moreExtras;
+
     public IntentIntegrator(Activity activity) {
         this.activity = activity;
         title = DEFAULT_TITLE;
@@ -59,65 +62,84 @@ public class IntentIntegrator {
         buttonYes = DEFAULT_YES;
         buttonNo = DEFAULT_NO;
         targetApplications = TARGET_ALL_KNOWN;
-        moreExtras = new HashMap<String,Object>(3);
+        moreExtras = new HashMap<String, Object>(3);
     }
+
     public String getTitle() {
         return title;
     }
+
     public void setTitle(String title) {
         this.title = title;
     }
+
     public void setTitleByID(int titleID) {
         title = activity.getString(titleID);
     }
+
     public String getMessage() {
         return message;
     }
+
     public void setMessage(String message) {
         this.message = message;
     }
+
     public void setMessageByID(int messageID) {
         message = activity.getString(messageID);
     }
+
     public String getButtonYes() {
         return buttonYes;
     }
+
     public void setButtonYes(String buttonYes) {
         this.buttonYes = buttonYes;
     }
+
     public void setButtonYesByID(int buttonYesID) {
         buttonYes = activity.getString(buttonYesID);
     }
+
     public String getButtonNo() {
         return buttonNo;
     }
+
     public void setButtonNo(String buttonNo) {
         this.buttonNo = buttonNo;
     }
+
     public void setButtonNoByID(int buttonNoID) {
         buttonNo = activity.getString(buttonNoID);
     }
+
     public Collection<String> getTargetApplications() {
         return targetApplications;
     }
+
     public final void setTargetApplications(List<String> targetApplications) {
         if (targetApplications.isEmpty()) {
             throw new IllegalArgumentException("No target applications");
         }
         this.targetApplications = targetApplications;
     }
+
     public void setSingleTargetApplication(String targetApplication) {
         this.targetApplications = Collections.singletonList(targetApplication);
     }
-    public Map<String,?> getMoreExtras() {
+
+    public Map<String, ?> getMoreExtras() {
         return moreExtras;
     }
+
     public final void addExtra(String key, Object value) {
         moreExtras.put(key, value);
     }
+
     public final AlertDialog initiateScan() {
         return initiateScan(ALL_CODE_TYPES);
     }
+
     public final AlertDialog initiateScan(Collection<String> desiredBarcodeFormats) {
         Intent intentScan = new Intent(BS_PACKAGE + ".SCAN");
         intentScan.addCategory(Intent.CATEGORY_DEFAULT);
@@ -144,9 +166,11 @@ public class IntentIntegrator {
         startActivityForResult(intentScan, REQUEST_CODE);
         return null;
     }
+
     protected void startActivityForResult(Intent intent, int code) {
         activity.startActivityForResult(intent, code);
     }
+
     private String findTargetAppPackage(Intent intent) {
         PackageManager pm = activity.getPackageManager();
         List<ResolveInfo> availableApps = pm.queryIntentActivities(intent, PackageManager.MATCH_DEFAULT_ONLY);
@@ -160,6 +184,7 @@ public class IntentIntegrator {
         }
         return null;
     }
+
     private AlertDialog showDownloadDialog() {
         AlertDialog.Builder downloadDialog = new AlertDialog.Builder(activity);
         downloadDialog.setTitle(title);
@@ -180,10 +205,12 @@ public class IntentIntegrator {
         });
         downloadDialog.setNegativeButton(buttonNo, new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {}
+            public void onClick(DialogInterface dialogInterface, int i) {
+            }
         });
         return downloadDialog.show();
     }
+
     public static IntentResult parseActivityResult(int requestCode, int resultCode, Intent intent) {
         if (requestCode == REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK) {
@@ -203,6 +230,7 @@ public class IntentIntegrator {
         }
         return null;
     }
+
     public final AlertDialog shareText(CharSequence text, CharSequence type) {
         Intent intent = new Intent();
         intent.addCategory(Intent.CATEGORY_DEFAULT);
@@ -220,11 +248,13 @@ public class IntentIntegrator {
         activity.startActivity(intent);
         return null;
     }
+
     private static List<String> list(String... values) {
         return Collections.unmodifiableList(Arrays.asList(values));
     }
+
     private void attachMoreExtras(Intent intent) {
-        for (Map.Entry<String,Object> entry : moreExtras.entrySet()) {
+        for (Map.Entry<String, Object> entry : moreExtras.entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
 // Kind of hacky

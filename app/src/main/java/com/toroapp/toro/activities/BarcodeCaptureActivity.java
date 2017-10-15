@@ -95,7 +95,6 @@ public final class BarcodeCaptureActivity extends AppCompatActivity {
     }
 
 
-
     /**
      * Handles the requesting of the camera permission.  This includes
      * showing a "Snackbar" message of why the permission is needed then

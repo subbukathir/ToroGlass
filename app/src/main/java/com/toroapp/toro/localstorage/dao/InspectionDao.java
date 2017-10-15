@@ -34,7 +34,7 @@ public interface InspectionDao {
     List<InspectionEntity> getAllByModelName(String modelName);
 
     @Query("SELECT * FROM InspectionEntity where modelName LIKE :modelName AND vehicleId LIKE  :vehicleId")
-    List<InspectionEntity> getAllByVehicleId(String modelName,String vehicleId);
+    List<InspectionEntity> getAllByVehicleId(String modelName, String vehicleId);
 
     @Query("SELECT DISTINCT vehicleId FROM InspectionEntity WHERE modelName LIKE  :modelName")
     List<String> getDistictVehicles(String modelName);

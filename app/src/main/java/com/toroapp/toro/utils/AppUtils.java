@@ -119,12 +119,11 @@ public class AppUtils extends Dialog {
     public static final String PHOTO_ALBUM = AppUtils.root.getAbsolutePath() + AppUtils.RootPath;
 
 
-     public static int SHARED_INT_DIALOG_PICKER = 1400;
+    public static int SHARED_INT_DIALOG_PICKER = 1400;
     public static String SHARED_DIALOG_PICKER = "Shared_Dialog_Picker";
 
 
     /**
-     *
      * global methods
      */
     public static void showDialog(Context context, String StrpositiveText, String StrMsg) {
@@ -158,28 +157,30 @@ public class AppUtils extends Dialog {
         MaterialDialog dialog = builder.build();
         dialog.show();
     }
-    public static Bitmap decodeBase64toImage(String data){
+
+    public static Bitmap decodeBase64toImage(String data) {
         byte[] decodedString = Base64.decode(data, Base64.DEFAULT);
         Bitmap decodedByte = BitmapFactory.decodeByteArray(decodedString, 0, decodedString.length);
         return decodedByte;
     }
-    public static String encodeImage(Bitmap bm)
-    {
+
+    public static String encodeImage(Bitmap bm) {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        bm.compress(Bitmap.CompressFormat.JPEG,100,baos);
+        bm.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] b = baos.toByteArray();
         String encImage = Base64.encodeToString(b, Base64.DEFAULT);
-        Log.e(TAG,"encoded string ::" + encImage);
+        Log.e(TAG, "encoded string ::" + encImage);
         return encImage;
     }
-    public static String convertBitmapToBase64(String path){
-        Log.e(TAG,"convertBitmapToBase64");
+
+    public static String convertBitmapToBase64(String path) {
+        Log.e(TAG, "convertBitmapToBase64");
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         Bitmap bitmap = BitmapFactory.decodeFile(path);
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] imageBytes = baos.toByteArray();
         String encImage = Base64.encodeToString(imageBytes, Base64.DEFAULT);
-        Log.e(TAG,"encoded string ::" + encImage);
+        Log.e(TAG, "encoded string ::" + encImage);
         return encImage;
     }
 

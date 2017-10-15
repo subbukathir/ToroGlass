@@ -19,8 +19,7 @@ import java.lang.reflect.Field;
 /**
  * Created by daemonsoft on 24/5/16.
  */
-public class CustomTextInputLayout extends TextInputLayout
-{
+public class CustomTextInputLayout extends TextInputLayout {
 
     private static final String MODULE = MainActivity.class.getSimpleName();
     private static String TAG = "";
@@ -29,35 +28,30 @@ public class CustomTextInputLayout extends TextInputLayout
     float mTextSize;
     AppCompatActivity mActivity;
 
-    public CustomTextInputLayout(Context context)
-    {
+    public CustomTextInputLayout(Context context) {
         super(context);
         initFont(context);
 
     }
 
-    public CustomTextInputLayout(Context context, AttributeSet attrs)
-    {
+    public CustomTextInputLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         mActivity = (AppCompatActivity) context;
         initFont(context);
     }
 
-    private void initFont(Context context)
-    {
+    private void initFont(Context context) {
 
-        TAG="initFont";
-        Log.d(MODULE,TAG);
+        TAG = "initFont";
+        Log.d(MODULE, TAG);
 
         font = MyApplication.getInstance().getFontInstance();
         EditText editText = getEditText();
-        if (editText != null)
-        {
+        if (editText != null) {
             editText.setTypeface(font.getRobotoRegular());
             editText.setSingleLine(true);
         }
-        try
-        {
+        try {
             // Retrieve the CollapsingTextHelper Field
             final Field cthf = TextInputLayout.class.getDeclaredField("mCollapsingTextHelper");
             cthf.setAccessible(true);
@@ -70,13 +64,11 @@ public class CustomTextInputLayout extends TextInputLayout
             // Apply your Typeface to the CollapsingTextHelper TextPaint
             ((TextPaint) tpf.get(cth)).setTypeface(font.getRobotoRegular());
             mTextSize = (float) mActivity.getResources().getDimension(R.dimen.text_size_medium);
-            int textColor = ContextCompat.getColor(mActivity,R.color.color_white);
+            int textColor = ContextCompat.getColor(mActivity, R.color.color_white);
             ((TextPaint) tpf.get(cth)).setTextSize(mTextSize);
             ((TextPaint) tpf.get(cth)).setColor(textColor);
             ((TextPaint) tpf.get(cth)).setTypeface(font.getRobotoRegular());
-        }
-        catch (Exception ignored)
-        {
+        } catch (Exception ignored) {
             ignored.printStackTrace();
         }
     }

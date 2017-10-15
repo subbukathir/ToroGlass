@@ -39,14 +39,12 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import com.michael.easydialog.EasyDialog;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.FailReason;
 import com.nostra13.universalimageloader.core.listener.ImageLoadingListener;
 import com.nostra13.universalimageloader.utils.DiskCacheUtils;
 import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
-import com.popalay.tutors.TutorialListener;
-import com.popalay.tutors.Tutors;
-import com.popalay.tutors.TutorsBuilder;
 import com.soundcloud.android.crop.BuildConfig;
 import com.soundcloud.android.crop.Crop;
 import com.toroapp.toro.MyApplication;
@@ -68,10 +66,7 @@ import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import permissions.dispatcher.NeedsPermission;
 
@@ -87,7 +82,7 @@ import static com.toroapp.toro.utils.AppUtils.REQUEST_TAKE_PHOTO;
  */
 
 public class Fragment_Inspection2 extends Fragment implements View.OnClickListener, RadioGroup.OnCheckedChangeListener,
-        InspectionDataListener,ImagePickListener,TutorialListener {
+        InspectionDataListener, ImagePickListener {
     private static final String MODULE = Fragment_Inspection2.class.getSimpleName();
     private static String TAG = "";
 
@@ -99,37 +94,34 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
     private FragmentManager mManager;
     private Handler mHandler;
 
-    private TextView tv_model_name,tv_lbl_title_vehicle_id, tv_lbl_basic_check, tv_lbl_quesno, tv_lbl_question;
+    private TextView tv_model_name, tv_lbl_title_vehicle_id, tv_lbl_basic_check, tv_lbl_quesno, tv_lbl_question;
     private RadioGroup radioGroup;
     private RadioButton rdb_yes, rdb_no;
     private EditText et_remarks;
-    private Button btn_capture_photo,btnNext;
+    private Button btn_capture_photo, btnNext;
     private ImageView iv_captured_image;
     private Uri mImageCaptureUri;
     private String mStringJson = null;
 
     Bitmap myBitmap;
     Uri picUri;
-    private String mUniqueKey=null, mModelName=null, mVehicleId=null,mInspectionName=null,mRemarks =null,mTested=null,mImageData = null;
+    private String mUniqueKey = null, mModelName = null, mVehicleId = null, mInspectionName = null, mRemarks = null, mTested = null, mImageData = null;
     private String mCurrentPhotoPath;
     public static int mRequest = 0;
     private ArrayList<String> permissionsToRequest;
     private ArrayList<String> permissionsRejected = new ArrayList<>();
     private ArrayList<String> permissions = new ArrayList<>();
 
-    private static final String AUTHORITY="com.toroapp.toro";
+    private static final String AUTHORITY = "com.toroapp.toro";
     private CoordinatorLayout cl_main;
     private Toolbar mToolbar;
     private Bundle mArgs;
-    View rootView = null;
+    View rootView = null, infoView;
     private Snackbar snackbar;
     //local db
     private InspectionDbInitializer mInspectionDb;
     //showcase
     private ImageView iv_info;
-    private Map<String, View> tutorials;
-    private Iterator<Map.Entry<String, View>> iterator;
-    private Tutors tutors;
     private ImageLoader imageLoader;
 
     @Override
@@ -173,8 +165,8 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         Log.e(TAG, "onCreateView");
         try {
             rootView = (View) inflater.inflate(R.layout.fragment_inspect2, container, false);
+            infoView = inflater.inflate(R.layout.info_view_login, container, false);
             initUI(rootView);
-            initTutorials();
             setProperties();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -229,31 +221,20 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         radioGroup.setOnCheckedChangeListener(this);
         btn_capture_photo.setOnClickListener(this);
         btnNext.setOnClickListener(this);
-        if(mArgs!=null){
-            if(mArgs.containsKey(AppUtils.ARGS_MODEL)){
+        if (mArgs != null) {
+            if (mArgs.containsKey(AppUtils.ARGS_MODEL)) {
                 mModelName = mArgs.getString(AppUtils.ARGS_MODEL);
                 mVehicleId = mArgs.getString(AppUtils.ARGS_VEHICLEID);
                 mInspectionName = getString(R.string.lbl_ques_2);
                 mInspectionName = mInspectionName.substring(3);
-                mUniqueKey = mInspectionName + mModelName+mVehicleId;
-                Log.e(TAG,"Substring ins name :"+ mInspectionName + ": mVehicleId :"+mVehicleId);
+                mUniqueKey = mInspectionName + mModelName + mVehicleId;
+                Log.e(TAG, "Substring ins name :" + mInspectionName + ": mVehicleId :" + mVehicleId);
                 tv_model_name.setText(mModelName);
                 tv_lbl_title_vehicle_id.setText(mVehicleId);
             }
         }
         //show case
         iv_info.setOnClickListener(this);
-        tutors = new TutorsBuilder()
-                .textColorRes(android.R.color.white)
-                .shadowColorRes(R.color.colorBlue)
-                .textSizeRes(R.dimen.textNormal)
-                .completeIconRes(R.drawable.ic_cross_24_white)
-                .spacingRes(R.dimen.spacingNormal)
-                .lineWidthRes(R.dimen.lineWidth)
-                .cancelable(false)
-                .build();
-
-        tutors.setListener(this);
 
         ValueAnimator animator = ValueAnimator.ofFloat(0f, 1f);
         animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -280,24 +261,23 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
                 submitData();
                 break;
             case R.id.iv_info:
-                iterator = tutorials.entrySet().iterator();
-                showTutorial(iterator);
+                showInfoView();
                 break;
         }
     }
 
     private void submitData() {
-        Log.e(TAG,"submitData");
-        if(mModelName!=null){
-            if(mInspectionName!=null){
-                if(mTested!=null){
+        Log.e(TAG, "submitData");
+        if (mModelName != null) {
+            if (mInspectionName != null) {
+                if (mTested != null) {
                     mRemarks = et_remarks.getText().toString().trim();
-                    InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey,mInspectionName,mModelName,mTested,mRemarks,mImageData,mVehicleId);
-                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity),inspectionEntity, AppUtils.MODE_INSERT);
+                    InspectionEntity inspectionEntity = new InspectionEntity(mUniqueKey, mInspectionName, mModelName, mTested, mRemarks, mImageData, mVehicleId);
+                    mInspectionDb.insertSingleData(AppDatabase.getAppDatabase(mActivity), inspectionEntity, AppUtils.MODE_INSERT);
                     gotoFragmentInspection2();
-                }else AppUtils.showDialog(mActivity,getString(R.string.msg_choose_yes_or_no));
-            }else AppUtils.showDialog(mActivity,getString(R.string.msg_inspection_name_empty));
-        }else AppUtils.showDialog(mActivity,getString(R.string.msg_model_name_empty));
+                } else AppUtils.showDialog(mActivity, getString(R.string.msg_choose_yes_or_no));
+            } else AppUtils.showDialog(mActivity, getString(R.string.msg_inspection_name_empty));
+        } else AppUtils.showDialog(mActivity, getString(R.string.msg_model_name_empty));
     }
 
     @Override
@@ -306,6 +286,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         mTested = rdb.getText().toString();
         Log.e(TAG, "checked ::" + mTested);
     }
+
     private ArrayList<String> findUnAskedPermissions(ArrayList<String> wanted) {
         ArrayList<String> result = new ArrayList<String>();
 
@@ -340,7 +321,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
                 .show();
     }
 
-    private void ShowSelectPhotoOption()    {
+    private void ShowSelectPhotoOption() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.lbl_select_photo)
                 .setItems(R.array.array_photo_option, new DialogInterface.OnClickListener() {
@@ -350,8 +331,8 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
                                 startCamera();
                                 break;
                             case 1:
-                                Log.e(TAG,"option b");
-                                Intent intent = new   Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                                Log.e(TAG, "option b");
+                                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(intent, 2);
                                 break;
                             default:
@@ -363,6 +344,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         builder.show();
 
     }
+
     @NeedsPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
     public void startCamera() {
         try {
@@ -370,19 +352,22 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         } catch (IOException e) {
         }
     }
-    private void setImageToImageView(String path){
-        Log.e(TAG,"setImageToImageView");
+
+    private void setImageToImageView(String path) {
+        Log.e(TAG, "setImageToImageView");
         Uri imageUri = Uri.parse(path);
         File file = new File(imageUri.getPath());
         try {
             InputStream mStreamPic = new FileInputStream(file);
             iv_captured_image.setImageBitmap(BitmapFactory.decodeStream(mStreamPic));
-            if(mRequest==REQUEST_PICK_PHOTO) AppUtils.convertBitmapToBase64(path);
-            else if (mRequest ==REQUEST_TAKE_PHOTO) AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
+            if (mRequest == REQUEST_PICK_PHOTO) AppUtils.convertBitmapToBase64(path);
+            else if (mRequest == REQUEST_TAKE_PHOTO)
+                AppUtils.encodeImage(((BitmapDrawable) iv_captured_image.getDrawable()).getBitmap());
         } catch (FileNotFoundException e) {
             return;
         }
     }
+
     @TargetApi(Build.VERSION_CODES.M)
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -468,21 +453,23 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
             }
         }
     }
+
     @Override
     public void onDataReceivedSuccess(List<InspectionEntity> inspectionEntityList) {
-    Log.e(TAG,"onDataReceivedSuccess");
+        Log.e(TAG, "onDataReceivedSuccess");
     }
 
     @Override
     public void onDataReceivedErr(String strErr) {
-        Log.e(TAG,"onDataReceivedErr");
-        AppUtils.showDialog(mActivity,strErr);
+        Log.e(TAG, "onDataReceivedErr");
+        AppUtils.showDialog(mActivity, strErr);
     }
+
     private void gotoFragmentInspection2() {
         Fragment fragment = new Fragment_InspectionLast();
         Bundle data = new Bundle();
-        data.putString(AppUtils.ARGS_MODEL,mModelName);
-        data.putString(AppUtils.ARGS_VEHICLEID,mVehicleId);
+        data.putString(AppUtils.ARGS_MODEL, mModelName);
+        data.putString(AppUtils.ARGS_VEHICLEID, mVehicleId);
         fragment.setArguments(data);
         FragmentTransaction fragmentTransaction = mManager.beginTransaction();
         fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
@@ -490,8 +477,8 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         fragmentTransaction.addToBackStack(AppUtils.TAG_FRAGMENT_INSPECTION3);
         fragmentTransaction.commit();
     }
+
     /**
-     *
      * Vikram's code
      */
     public void ShowSelectPhotoOption1() {
@@ -516,6 +503,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
         builder.show();
 
     }
+
     public void gotoFragmentImagePicker() {
         TAG = "gotoFragmentImagePicker";
         Log.d(MODULE, TAG);
@@ -536,41 +524,36 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
             ex.printStackTrace();
         }
     }
+
     @Override
-    public void onSingleImagePicked(String Str_Path)
-    {
+    public void onSingleImagePicked(String Str_Path) {
         TAG = "onSingleImagePicked";
         Log.d(MODULE, TAG);
         Log.d(MODULE, TAG + " Single Path : " + Str_Path);
 
-        try
-        {
+        try {
             Str_Path = "file://" + Str_Path;
 
-            imageLoader.displayImage(Str_Path, iv_captured_image, AppUtils.getOptions(), new ImageLoadingListener()
-            {
+            imageLoader.displayImage(Str_Path, iv_captured_image, AppUtils.getOptions(), new ImageLoadingListener() {
                 @Override
-                public void onLoadingStarted(String imageUri, View view)
-                {
+                public void onLoadingStarted(String imageUri, View view) {
                     Log.d(MODULE, TAG + " onLoadingStarted");
                 }
 
                 @Override
-                public void onLoadingFailed(String imageUri, View view, FailReason failReason)
-                {
+                public void onLoadingFailed(String imageUri, View view, FailReason failReason) {
                     Log.d(MODULE, TAG + " onLoadingFailed");
                 }
 
                 @Override
-                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage)
-                {
+                public void onLoadingComplete(String imageUri, View view, Bitmap loadedImage) {
                     Log.d(MODULE, TAG + " onLoadingComplete");
-                    if(view.getVisibility()==View.GONE)view.setVisibility(View.VISIBLE);
+                    if (view.getVisibility() == View.GONE) view.setVisibility(View.VISIBLE);
                     mImageData = AppUtils.encodeImage(loadedImage);
                 }
 
                 @Override
-                public void onLoadingCancelled(String imageUri, View view)                {
+                public void onLoadingCancelled(String imageUri, View view) {
                     Log.d(MODULE, TAG + " onLoadingCancelled");
                 }
             });
@@ -579,12 +562,14 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
             ex.printStackTrace();
         }
     }
+
     @Override
     public void onMultipleImagePicked(String[] Str_Path) {
         TAG = "onMultipleImagePicked";
         Log.d(MODULE, TAG);
 
     }
+
     private void dispatchTakePictureIntent1() {
         TAG = "dispatchTakePictureIntent";
         Log.d(MODULE, TAG);
@@ -597,7 +582,7 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
             captureIntent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
             captureIntent.putExtra("return-data", true);
             startActivityForResult(captureIntent, 101);
-        }catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -674,41 +659,37 @@ public class Fragment_Inspection2 extends Fragment implements View.OnClickListen
     }
 
     @Override
-    public void onVehicleListSuccess(List<String> vehicleList,int mode) {
+    public void onVehicleListSuccess(List<String> vehicleList, int mode) {
 
     }
+
     /**
      * show case code
      */
-    private void initTutorials() {
-        tutorials = new LinkedHashMap<>();
-        tutorials.put("It's a choosable option for this question", radioGroup);
-        tutorials.put("It's a editable box to type remarks about the option you chooses", et_remarks);
-        tutorials.put("It's a button, if you press the button it will ask mode of picture taken based on option photo is taken ", btn_capture_photo);
-        tutorials.put("It's a button if you press take you to next question current data will store in local database", btnNext);
-    }
+    private void showInfoView() {
+        try {
+            if (infoView.getParent() != null)
+                ((ViewGroup) infoView.getParent()).removeView(infoView); // <- fix
 
-    @Override
-    public void onNext() {
-        showTutorial(iterator);
-    }
-
-    @Override
-    public void onComplete() {
-        tutors.close();
-    }
-
-    @Override
-    public void onCompleteAll() {
-        tutors.close();
-    }
-    private void showTutorial(Iterator<Map.Entry<String, View>> iterator) {
-        if (iterator == null) {
-            return;
+            new EasyDialog(mActivity)
+                    // .setLayoutResourceId(R.layout.layout_tip_content_horizontal)//layout resource id
+                    .setLayout(infoView)
+                    .setBackgroundColor(mActivity.getResources().getColor(R.color.calendarBackground))
+                    // .setLocation(new location[])//point in screen
+                    .setLocationByAttachedView(iv_info)
+                    .setGravity(EasyDialog.GRAVITY_TOP)
+                    .setAnimationTranslationShow(EasyDialog.DIRECTION_X, 1000, -600, 100, -50, 50, 0)
+                    .setAnimationAlphaShow(1000, 0.3f, 1.0f)
+                    .setAnimationTranslationDismiss(EasyDialog.DIRECTION_X, 500, -50, 800)
+                    .setAnimationAlphaDismiss(500, 1.0f, 0.0f)
+                    .setTouchOutsideDismiss(true)
+                    .setMatchParent(true)
+                    .setMarginLeftAndRight(24, 24)
+                    .setOutsideColor(mActivity.getResources().getColor(R.color.transparent))
+                    .show();
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
-        if (iterator.hasNext()) {
-            Map.Entry<String, View> next = iterator.next();
-            tutors.show(mActivity.getSupportFragmentManager(), next.getValue(), next.getKey(), !iterator.hasNext());
-        }
+
     }
 }

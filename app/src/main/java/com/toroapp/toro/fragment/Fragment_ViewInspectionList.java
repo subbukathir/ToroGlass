@@ -79,7 +79,7 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
             mManager = mActivity.getSupportFragmentManager();
             mSavedInstanceState = savedInstanceState;
             inspectionDb = new InspectionDbInitializer(this);
-            inspectionDb.getAllModelNames(AppDatabase.getAppDatabase(mActivity),AppUtils.MODE_GETALL_MODEL);
+            inspectionDb.getAllModelNames(AppDatabase.getAppDatabase(mActivity), AppUtils.MODE_GETALL_MODEL);
             mArgs = getArguments();
             mActivity.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
             mPreferences = mActivity.getSharedPreferences(AppUtils.SHARED_PREFS, Context.MODE_PRIVATE);
@@ -196,7 +196,7 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
     public void getModelName() {
         Log.e(TAG, "getModelName");
         try {
-            if(mModelList.size()>0){
+            if (mModelList.size() > 0) {
                 new MaterialDialog.Builder(mActivity)
                         .title(R.string.lbl_select_model)
                         .items(mModelList)
@@ -332,7 +332,7 @@ public class Fragment_ViewInspectionList extends Fragment implements InspectionD
             tv_select_vehicle_id.setBackground(getResources().getDrawable(R.drawable.bg_border_spinner_red));
             tv_select_vehicle_id.setText(getString(R.string.lbl_select_vehicle_id));
             tv_select_vehicle_id.setPadding(10, 10, 10, 10);
-        }else if (mode == AppUtils.MODE_GETALL_MODEL){
+        } else if (mode == AppUtils.MODE_GETALL_MODEL) {
             mModelList = vehicleList;
         }
 

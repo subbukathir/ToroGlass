@@ -11,7 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters "armeabi", "armeabi-v7a","x86"
+            abiFilters "armeabi", "armeabi-v7a", "x86"
         }
     }
     buildTypes {
@@ -55,6 +55,6 @@ dependencies {
     compile 'com.github.hotchemi:permissionsdispatcher:' + rootProject.permissionDispatcher
     apt 'com.github.hotchemi:permissionsdispatcher-processor:' + rootProject.permissionDispatcher
     compile files('src/main/libs/zbar.jar')
-    compile 'com.github.popalay:tutors:1.0.6'
+    compile 'com.github.michaelye.easydialog:easydialog:1.4'
     compile files('libs/vuzix_speech.jar')
 }

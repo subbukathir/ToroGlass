@@ -16,12 +16,11 @@ import android.widget.TextView;
 
 import com.toroapp.toro.MyApplication;
 import com.toroapp.toro.R;
-import com.toroapp.toro.fragment.Fragment_Username;
+import com.toroapp.toro.fragment.Fragment_Login;
 import com.toroapp.toro.utils.AppUtils;
 import com.toroapp.toro.utils.Font;
 
-public class LoginActivity extends AppCompatActivity
-{
+public class LoginActivity extends AppCompatActivity {
     private static final String MODULE = LoginActivity.class.getSimpleName();
     private static String TAG = "";
 
@@ -31,7 +30,7 @@ public class LoginActivity extends AppCompatActivity
 
     private AppCompatActivity mActivity;
     private Context mContext;
-    private Font font= MyApplication.getInstance().getFontInstance();
+    private Font font = MyApplication.getInstance().getFontInstance();
     private FragmentManager mManager;
 
     private FrameLayout frame_container;
@@ -41,17 +40,16 @@ public class LoginActivity extends AppCompatActivity
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        TAG="onCreate";
-        Log.d(MODULE,TAG);
+        TAG = "onCreate";
+        Log.d(MODULE, TAG);
 
         setContentView(R.layout.activity_login);
 
         mActivity = this;
-        mPreferences = this.getSharedPreferences(AppUtils.SHARED_PREFS,MODE_PRIVATE);
+        mPreferences = this.getSharedPreferences(AppUtils.SHARED_PREFS, MODE_PRIVATE);
         mEditor = mPreferences.edit();
         mManager = getSupportFragmentManager();
 
@@ -59,60 +57,47 @@ public class LoginActivity extends AppCompatActivity
         getLoginData();
     }
 
-    private void getLoginData()
-    {
-        TAG="getLoginData";
-        Log.d(MODULE,TAG);
+    private void getLoginData() {
+        TAG = "getLoginData";
+        Log.d(MODULE, TAG);
 
-        String loginData = mPreferences.getString(AppUtils.SHARED_LOGIN,null);
-        if(loginData!=null && loginData.length()>0)
-        {
-            Log.e(TAG,"getLoginData " + loginData.toString());
-            Intent mainActivity = new Intent(this,MainActivity.class);
+        String loginData = mPreferences.getString(AppUtils.SHARED_LOGIN, null);
+        if (loginData != null && loginData.length() > 0) {
+            Log.e(TAG, "getLoginData " + loginData.toString());
+            Intent mainActivity = new Intent(this, MainActivity.class);
             startActivity(mainActivity);
             finish();
-        }
-        else loadFragment();
+        } else loadFragment();
     }
 
-    private void setupActionbar()
-    {
-        TAG="onStop";
-        Log.d(MODULE,TAG);
+    private void setupActionbar() {
+        TAG = "onStop";
+        Log.d(MODULE, TAG);
 
-        try
-        {
+        try {
             text_view_title = (TextView) findViewById(R.id.text_view_title);
             text_view_title.setTypeface(font.getRobotoRegular());
             text_view_title.setText(getString(R.string.app_name));
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 
     }
 
-    public void loadFragment()
-    {
-        Log.d(TAG,"loadFragment");
+    public void loadFragment() {
+        Log.d(TAG, "loadFragment");
         //setupActionbar();
 
-        try
-        {
-            Fragment fragment = new Fragment_Username();
+        try {
+            Fragment fragment = new Fragment_Login();
             FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in,android.R.anim.fade_out);
+            fragmentTransaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
             fragmentTransaction.replace(R.id.frame_container_login, fragment);
             fragmentTransaction.commit();
-        }
-        catch(Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
-
-
 
 
 }
